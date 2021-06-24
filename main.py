@@ -34,14 +34,7 @@ def train_titanic(configs,checkpoint_dir=None,train_dir=None,valid_dir=None,glov
     # loading data
     train_dataset = pd.read_csv(train_dir)
     valid_dataset = pd.read_csv(valid_dir)
-    #train_dataset = dataloader.IMDBDataset(train_dataset['Reviews'].values,train_dataset['Sentiment'].values,word2id)
-    #valid_dataset = dataloader.IMDBDataset(valid_dataset['Reviews'].values,valid_dataset['Sentiment'].values,word2id)
-    #t#rain_data_loader = torch.utils.data.DataLoader#(
-     #   train_dataset, batch_size=int(configs["batch_size"]), shuffle = True
-    #)
-    #valid_data_loader = torch.utils.data.DataLoader(
-     #   valid_dataset, batch_size=int(configs["batch_size"]), shuffle = False
-    #)
+
 
     count,dimensions = loadword2vec(glove_dir,word2vec_dir)
 #     print('count, dimensions', loadword2vec(glove_dir, word2vec_dir))
@@ -113,10 +106,10 @@ def main():
 
     train_dir = '/home/dongxx/projects/def-mercer/dongxx/project/pythonProject/train.csv'
     valid_dir ='/home/dongxx/projects/def-mercer/dongxx/project/pythonProject/test.csv'
-    glove_dir = '/home/dongxx/projects/def-mercer/dongxx/project/LSTM-baseline/glove.6B.100d.txt'
-    word2vec_dir = '/home/dongxx/projects/def-mercer/dongxx/project/LSTM-baseline/glove.6B.word2vec.100d.txt'
+    glove_dir = '/home/dongxx/projects/def-mercer/dongxx/project/word2vec/glove.6B.100d.txt'
+    word2vec_dir = '/home/dongxx/projects/def-mercer/dongxx/project/word2vec/glove.6B.word2vec.100d.txt'
     checkpoint_dir = config.MODEL_PATH
-    max_num_epochs = 20
+    max_num_epochs = 2
     num_samples = 3
     configs = {
          "hidden_dim": tune.choice([256]),
