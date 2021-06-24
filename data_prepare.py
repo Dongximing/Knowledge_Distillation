@@ -4,8 +4,8 @@ import numpy as np
 import matplotlib
 import matplotlib.pyplot as plt
 import seaborn as sns
-# from textblob import TextBlob
-# from nltk.corpus import stopwords
+####from textblob import TextBlob
+####from nltk.corpus import stopwords
 from sklearn import model_selection
 # import  nltk
 plt.switch_backend('agg')
