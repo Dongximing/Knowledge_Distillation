@@ -110,7 +110,7 @@ def main():
     word2vec_dir = '/home/dongxx/projects/def-mercer/dongxx/project/word2vec/glove.6B.word2vec.100d.txt'
     checkpoint_dir = config.MODEL_PATH
     max_num_epochs = 15
-    num_samples = 3
+    num_samples = 4
     configs = {
          "hidden_dim": tune.choice([256]),
          "lr" : tune.choice([1e-3]),
@@ -122,7 +122,7 @@ def main():
         mode="min",
         max_t=max_num_epochs,
         grace_period =10,
-        reduction_factor=1)
+        reduction_factor=2)
     reporter = CLIReporter(
         parameter_columns=["hidden_dim", "lr", "batch_size"],
         metric_columns=["loss", "accuracy", "training_iteration"])
