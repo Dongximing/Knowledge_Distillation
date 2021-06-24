@@ -28,7 +28,7 @@ def loadword2vec(glove_dir,word2vec_dir):
 
 
    
-#     print(word2id)
+#    ewqeq print(word2id)
 #     print(embedding)
 def train_titanic(configs,checkpoint_dir=None,train_dir=None,valid_dir=None,glove_dir=None,word2vec_dir=None):
     # loading data
