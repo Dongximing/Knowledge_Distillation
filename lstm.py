@@ -33,9 +33,12 @@ class LSTMBaseline(nn.Module):
         # hidden = self.dropout(t.cat((hidden[-2, :, :], hidden[-1, :, :]), dim=1))
         last_timesteps =text_length.unsqueeze(1)
         last_timesteps = last_timesteps-1
+        last_timesteps =torch.tensor(last_timesteps, dtype=torch.long)
+
         relative_hidden_size = self.hidden_size * 2
         last_timesteps = last_timesteps.repeat(1, relative_hidden_size)  # (1, B x H*)
         last_timesteps = last_timesteps.view(-1, 1, relative_hidden_size)  # (B, 1, H*)
+
         pooled_sequence_output = out.gather(  # (B, H*)
             dim=1,
             index=last_timesteps
