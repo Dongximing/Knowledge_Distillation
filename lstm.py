@@ -31,7 +31,7 @@ class LSTMBaseline(nn.Module):
         out, _ = t.nn.utils.rnn.pad_packed_sequence(packed_output, batch_first=True)
         hidden = self.dropout(t.cat((hidden[-2, :, :], hidden[-1, :, :]), dim=1))
 
-        hidden = t.index_select(hidden, 0, un_idx)
+        hidden = t.index_select(out, 0, un_idx)
 
         # hidden = [batch size, hid dim]
 

@@ -64,28 +64,28 @@ output, input_sizes = pad_packed_sequence(packed_output, batch_first=True)
 # print(ht)
 output = torch.index_select(output, 0, un_idx)
 # print(output[:,-1,:])
-a = [7,3,5]
-a= torch.tensor(a).unsqueeze(1)
-a = a.repeat(1,10)
-print(a)
-a = a.view(-1, 1,10)
-print(a.shape)
-print(a)
-print(output)
-pooled_sequence_output = output.gather(                      # (B, H*)
-            dim=1,
-            index=a
-        ).squeeze()
-print(pooled_sequence_output)
-# hidden = torch.index_select(ht, 0, un_idx)
-# Or if you just want the final hidden state?
-# final = torch.cat((ht[-2,:,:], ht[-1,:,:]), dim = 1)
-# print(final)
-# final= torch.index_select(final, 0, un_idx)
-# print(final)
-# # print(final.shape)
+# a = [7,3,5]
+# a= torch.tensor(a).unsqueeze(1)
+# a = a.repeat(1,10)
+# print(a)
+# a = a.view(-1, 1,10)
+# print(a.shape)
+# print(a)
 # print(output)
-# print(hidden.shape)
+# pooled_sequence_output = output.gather(                      # (B, H*)
+#             dim=1,
+#             index=a
+#         ).squeeze()
+# print(pooled_sequence_output)
+hidden = torch.index_select(ht, 0, un_idx)
+
+final = torch.cat((ht[-2,:,:], ht[-1,:,:]), dim = 1)
+print(final)
+final= torch.index_select(final, 0, un_idx)
+print(final)
+# print(final.shape)
+print(output)
+print(hidden.shape)
 #
 
 
