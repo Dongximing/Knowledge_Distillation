@@ -33,7 +33,7 @@ class LSTMBaseline(nn.Module):
         # hidden = self.dropout(t.cat((hidden[-2, :, :], hidden[-1, :, :]), dim=1))
         last_timesteps =text_length.unsqueeze(1)
         last_timesteps = last_timesteps-1
-        last_timesteps =torch.tensor(last_timesteps, dtype=torch.int64)
+        last_timesteps =torch.tensor(last_timesteps, dtype=torch.int64).to(device = 'cuda')
 
         relative_hidden_size = self.hidden_size * 2
         last_timesteps = last_timesteps.repeat(1, relative_hidden_size)  # (1, B x H*)
