@@ -112,9 +112,9 @@ def main():
     max_num_epochs = 15
     num_samples = 3
     configs = {
-         "hidden_dim": tune.choice([128,256]),
+         "hidden_dim": tune.choice([128]),
          "lr" : tune.choice([1e-3]),
-         "batch_size": tune.choice([32,])
+         "batch_size": tune.choice([32])
 
     }
     scheduler = ASHAScheduler(

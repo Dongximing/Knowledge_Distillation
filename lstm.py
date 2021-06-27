@@ -31,6 +31,7 @@ class LSTMBaseline(nn.Module):
         packed_output, (hidden, cell) = self.rnn(a_packed_input)
         out, _ = t.nn.utils.rnn.pad_packed_sequence(packed_output, batch_first=True)
         # hidden = self.dropout(t.cat((hidden[-2, :, :], hidden[-1, :, :]), dim=1))
+        out = t.index_select(out, 0, un_idx)
         last_timesteps =text_length.unsqueeze(1)
         last_timesteps = last_timesteps-1
         last_timesteps =torch.tensor(last_timesteps, dtype=torch.int64).to(device = 'cuda')
@@ -43,11 +44,11 @@ class LSTMBaseline(nn.Module):
             dim=1,
             index=last_timesteps
         ).squeeze()
-        hidden = t.index_select(pooled_sequence_output, 0, un_idx)
+
 
         # hidden = [batch size, hid dim]
 
-        output = self.fc(hidden)
+        output = self.fc(pooled_sequence_output)
 
 
 
