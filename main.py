@@ -105,12 +105,12 @@ def train_titanic(configs,checkpoint_dir=None,train_dir=None,valid_dir=None,glov
 def main():
 
     train_dir = '/home/dongxx/projects/def-mercer/dongxx/project/pythonProject/train.csv'
-    valid_dir ='/home/dongxx/projects/def-mercer/dongxx/project/pythonProject/test.csv'
+    valid_dir ='/home/dongxx/projects/def-mercer/dongxx/project/pythonProject/valid.csv'
     glove_dir = '/home/dongxx/projects/def-mercer/dongxx/project/word2vec/glove.6B.100d.txt'
     word2vec_dir = '/home/dongxx/projects/def-mercer/dongxx/project/word2vec/glove.6B.word2vec.100d.txt'
     checkpoint_dir = config.MODEL_PATH
     max_num_epochs = 15
-    num_samples = 3
+    num_samples = 1
     configs = {
          "hidden_dim": tune.choice([128]),
          "lr" : tune.choice([1e-3]),
