@@ -30,25 +30,26 @@ class LSTMBaseline(nn.Module):
         a_packed_input = t.nn.utils.rnn.pack_padded_sequence(input=seq, lengths=a_lengths.to('cpu'), batch_first=True)
         packed_output, (hidden, cell) = self.rnn(a_packed_input)
         out, _ = t.nn.utils.rnn.pad_packed_sequence(packed_output, batch_first=True)
-        # hidden = self.dropout(t.cat((hidden[-2, :, :], hidden[-1, :, :]), dim=1))
+        hidden = self.dropout(t.cat((hidden[-2, :, :], hidden[-1, :, :]), dim=1))
         out = t.index_select(out, 0, un_idx)
-        last_timesteps =text_length.unsqueeze(1)
-        last_timesteps = last_timesteps-1
-        last_timesteps =torch.tensor(last_timesteps, dtype=torch.int64).to(device = 'cuda')
-
-        relative_hidden_size = self.hidden_size * 2
-        last_timesteps = last_timesteps.repeat(1, relative_hidden_size)  # (1, B x H*)
-        last_timesteps = last_timesteps.view(-1, 1, relative_hidden_size)  # (B, 1, H*)
-
-        pooled_sequence_output = out.gather(  # (B, H*)
-            dim=1,
-            index=last_timesteps
-        ).squeeze()
+        hidden = t.index_select(hidden, 0, un_idx)
+        # last_timesteps =text_length.unsqueeze(1)
+        # last_timesteps = last_timesteps-1
+        # last_timesteps =torch.tensor(last_timesteps, dtype=torch.int64).to(device = 'cuda')
+        #
+        # relative_hidden_size = self.hidden_size * 2
+        # last_timesteps = last_timesteps.repeat(1, relative_hidden_size)  # (1, B x H*)
+        # last_timesteps = last_timesteps.view(-1, 1, relative_hidden_size)  # (B, 1, H*)
+        #
+        # pooled_sequence_output = out.gather(  # (B, H*)
+        #     dim=1,
+        #     index=last_timesteps
+        # ).squeeze()
 
 
         # hidden = [batch size, hid dim]
 
-        output = self.fc(pooled_sequence_output)
+        output = self.fc(hidden)
 
 
 
