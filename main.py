@@ -89,13 +89,12 @@ def train_titanic(configs,checkpoint_dir=None,train_dir=None,valid_dir=None,glov
 
         valid_loss, valid_acc = train.eval_fc(valid_data_loader,model,device,criterion)
 
-        if valid_loss < best_loss:
-            best_loss = valid_loss
-            tune.report(loss=best_loss, accuracy=valid_acc)
 
         with tune.checkpoint_dir(epoch) as checkpoint_dir:
             path = os.path.join(checkpoint_dir, "checkpoint")
             torch.save((model.state_dict(), optimizer.state_dict()), path)
+
+        tune.report(loss=valid_loss, accuracy=valid_acc)
         early_stopping(valid_loss, model)
 
         if early_stopping.early_stop:
@@ -130,7 +129,8 @@ def main():
         metric_columns=["loss", "accuracy", "training_iteration"])
     result = tune.run(
         partial(train_titanic, checkpoint_dir=checkpoint_dir, train_dir=train_dir, valid_dir= valid_dir,glove_dir = glove_dir,word2vec_dir =word2vec_dir),
-    
+        metric="loss",
+        mode="min",
         resources_per_trial={"cpu": 4,"gpu":4},
         config=configs,
         num_samples=num_samples,
