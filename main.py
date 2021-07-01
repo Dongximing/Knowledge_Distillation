@@ -135,7 +135,7 @@ def main():
         scheduler=scheduler,
         progress_reporter=reporter)
 
-    best_trial = result.get_best_trial(metric ="loss", mode ="min", scope = "all")
+    best_trial = result.get_best_trial(metric ="loss", mode ="min", scope = "last")
 
     print("Best trial config: {}".format(best_trial.config))
     print("Best trial final validation loss: {}".format(
