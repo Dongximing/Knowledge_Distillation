@@ -113,7 +113,7 @@ def main():
     num_samples = 1
     configs = {
          "hidden_dim": tune.choice([128]),
-         "lr" : tune.choice([1e-3]),
+         "lr" : tune.choice([1e-2]),
          "batch_size": tune.choice([32])
 
     }
@@ -121,7 +121,7 @@ def main():
         metric="loss",
         mode="min",
         max_t=max_num_epochs,
-        grace_period =10,
+        grace_period =8,
         reduction_factor=2)
     reporter = CLIReporter(
         parameter_columns=["hidden_dim", "lr", "batch_size"],
@@ -135,7 +135,7 @@ def main():
         scheduler=scheduler,
         progress_reporter=reporter)
 
-    best_trial = result.get_best_trial("loss", "min", "all")
+    best_trial = result.get_best_trial(metric ="loss", mode ="min", scope = "all")
 
     print("Best trial config: {}".format(best_trial.config))
     print("Best trial final validation loss: {}".format(
