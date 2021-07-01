@@ -139,9 +139,9 @@ def main():
 
     print("Best trial config: {}".format(best_trial.config))
     print("Best trial final validation loss: {}".format(
-        best_trial.best_result["loss"]))
+        best_trial.last_result["loss"]))
     print("Best trial final validation accuracy: {}".format(
-        best_trial.best_result["accuracy"]))
+        best_trial.last_result["accuracy"]))
 
 
 
