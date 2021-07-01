@@ -112,9 +112,9 @@ def main():
     max_num_epochs = 15
     num_samples = 5
     configs = {
-         "hidden_dim": tune.choice([128,256]),
+         "hidden_dim": tune.choice([128]),
          "lr" : tune.choice([1e-3]),
-         "batch_size": tune.choice([32,64])
+         "batch_size": tune.choice([32)
 
     }
     scheduler = ASHAScheduler(
@@ -135,13 +135,13 @@ def main():
         scheduler=scheduler,
         progress_reporter=reporter)
 
-    best_trial = result.get_best_trial("loss", "min", "last")
+    best_trial = result.get_best_trial("loss", "min", "all")
 
     print("Best trial config: {}".format(best_trial.config))
     print("Best trial final validation loss: {}".format(
-        best_trial.last_result["loss"]))
+        best_trial.best_result["loss"]))
     print("Best trial final validation accuracy: {}".format(
-        best_trial.last_result["accuracy"]))
+        best_trial.best_result["accuracy"]))
 
 
 
