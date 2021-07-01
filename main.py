@@ -77,8 +77,8 @@ def train_titanic(configs,checkpoint_dir=None,train_dir=None,valid_dir=None,glov
     optimizer = optim.Adam(model.parameters(),lr=configs["lr"])
     criterion = nn.BCEWithLogitsLoss()
     criterion = criterion.to(device)
-    patience = 3
-    early_stopping = EarlyStopping(patience, verbose=True)
+#     patience = 3
+#     early_stopping = EarlyStopping(patience, verbose=True)
 
     lr_scheduler = torch.optim.lr_scheduler.StepLR(optimizer, step_size=6, gamma=0.1)
     best_loss = float('inf')
@@ -95,12 +95,12 @@ def train_titanic(configs,checkpoint_dir=None,train_dir=None,valid_dir=None,glov
             torch.save((model.state_dict(), optimizer.state_dict()), path)
 
         tune.report(loss=valid_loss, accuracy=valid_acc)
-        early_stopping(valid_loss, model)
+#         early_stopping(valid_loss, model)
 
-        if early_stopping.early_stop:
-
-           print("Early stopping")
-           break
+#         if early_stopping.early_stop:
+#
+#            print("Early stopping")
+#            break
 
 
 def main():
@@ -129,8 +129,7 @@ def main():
         metric_columns=["loss", "accuracy", "training_iteration"])
     result = tune.run(
         partial(train_titanic, checkpoint_dir=checkpoint_dir, train_dir=train_dir, valid_dir= valid_dir,glove_dir = glove_dir,word2vec_dir =word2vec_dir),
-        metric="loss",
-        mode="min",
+
         resources_per_trial={"cpu": 4,"gpu":4},
         config=configs,
         num_samples=num_samples,
