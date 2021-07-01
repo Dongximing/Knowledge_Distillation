@@ -21,6 +21,6 @@ N_LAYERS =2
 BIDIRECTIONAL = True
 HIDDEN_DIM = 256
 DROPOUT = 0.25
-EPOCHS = 15
+EPOCHS = 10
 BATCH_size = 64
 MODEL_PATH ='/home/dongxx/projects/def-mercer/dongxx/project/LSTM-baseline/LSTM-basline.pt'
