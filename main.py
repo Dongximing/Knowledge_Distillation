@@ -114,7 +114,7 @@ def main():
     configs = {
          "hidden_dim": tune.choice([128]),
          "lr" : tune.choice([1e-3]),
-         "batch_size": tune.choice([32)
+         "batch_size": tune.choice([32])
 
     }
     scheduler = ASHAScheduler(
