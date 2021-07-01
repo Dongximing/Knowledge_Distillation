@@ -88,14 +88,14 @@ def train_titanic(configs,checkpoint_dir=None,train_dir=None,valid_dir=None,glov
         train_loss, train_acc = train.train_fc(train_data_loader,device,model,optimizer,criterion,lr_scheduler)
 
         valid_loss, valid_acc = train.eval_fc(valid_data_loader,model,device,criterion)
+
         if valid_loss < best_loss:
             best_loss = valid_loss
+            tune.report(loss=best_loss, accuracy=valid_acc)
 
-            with tune.checkpoint_dir(epoch) as checkpoint_dir:
-                path = os.path.join(checkpoint_dir, "checkpoint")
-                torch.save((model.state_dict(), optimizer.state_dict()), path)
-
-            tune.report(loss=valid_loss, accuracy=valid_acc)
+        with tune.checkpoint_dir(epoch) as checkpoint_dir:
+            path = os.path.join(checkpoint_dir, "checkpoint")
+            torch.save((model.state_dict(), optimizer.state_dict()), path)
         early_stopping(valid_loss, model)
 
         if early_stopping.early_stop:
@@ -114,7 +114,7 @@ def main():
     max_num_epochs = 10
     num_samples = 1
     configs = {
-         "hidden_dim": tune.choice([128]),
+         "hidden_dim": tune.choice([128,256]),
          "lr" : tune.choice([1e-2]),
          "batch_size": tune.choice([128])
 
