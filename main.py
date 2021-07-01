@@ -88,12 +88,14 @@ def train_titanic(configs,checkpoint_dir=None,train_dir=None,valid_dir=None,glov
         train_loss, train_acc = train.train_fc(train_data_loader,device,model,optimizer,criterion,lr_scheduler)
 
         valid_loss, valid_acc = train.eval_fc(valid_data_loader,model,device,criterion)
+        if valid_loss < best_loss:
+            best_loss = valid_loss
 
-        with tune.checkpoint_dir(epoch) as checkpoint_dir:
-            path = os.path.join(checkpoint_dir, "checkpoint")
-            torch.save((model.state_dict(), optimizer.state_dict()), path)
+            with tune.checkpoint_dir(epoch) as checkpoint_dir:
+                path = os.path.join(checkpoint_dir, "checkpoint")
+                torch.save((model.state_dict(), optimizer.state_dict()), path)
 
-        tune.report(loss=valid_loss, accuracy=valid_acc)
+            tune.report(loss=valid_loss, accuracy=valid_acc)
         early_stopping(valid_loss, model)
 
         if early_stopping.early_stop:
@@ -135,7 +137,7 @@ def main():
         scheduler=scheduler,
         progress_reporter=reporter)
 
-    best_trial = result.get_best_config(metric ="loss", mode ="min", scope = "all")
+    best_trial = result.get_best_trial(metric ="loss", mode ="min", scope ="all")
 
     print("Best trial config: {}".format(best_trial.config))
     print("Best trial final validation loss: {}".format(
