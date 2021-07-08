@@ -33,7 +33,7 @@ def train_fc(data_loader, device, model,optimizer, criterion,scheduler):
         print(outputs)
         print(targets)
         print(targets.size())
-        targets = torch.max(targets.squeeze(1), 1)[1]
+        targets = torch.max(targets, 1)[1]
         print(targets.size())
         print(targets)
         loss = criterion(outputs, targets)
@@ -59,7 +59,7 @@ def eval_fc(valid_loader, model, device, criterion):
 
             ids = ids.to(device, dtype=torch.long)
             lengths = lengths.to(device, dtype=torch.int)
-            targets = targets.to(device, dtype=torch.long).unsqueeze(1)
+            targets = targets.to(device, dtype=torch.long)
             targets = torch.max(targets, 1)[1]
             outputs = model(ids, lengths)
             # print(outputs.shape)
