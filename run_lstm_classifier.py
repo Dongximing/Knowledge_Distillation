@@ -113,7 +113,7 @@ def main():
     num_samples = 1
     configs = {
          "hidden_dim": tune.choice([256]),
-         "lr" : tune.choice([1e-3]),
+         "lr" : tune.choice([1e-2]),
          "batch_size": tune.choice([128])
 
     }
