@@ -27,11 +27,11 @@ def train_fc(data_loader, device, model,optimizer, criterion,scheduler):
         targets = d['target']
         ids = ids.to(device, dtype=torch.long)
         lengths = lengths.to(device, dtype=torch.int)
-        targets = targets.to(device, dtype=torch.long).unsqueeze(1)
+        targets = targets.to(device, dtype=torch.long)
         optimizer.zero_grad()
         outputs = model(ids,lengths)
         print(outputs)
-        # targets = torch.max(targets, 1)[1]
+        targets = torch.max(targets, 1)[1]
         print(targets.size())
         print(targets)
         loss = criterion(outputs, targets)
