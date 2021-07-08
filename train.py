@@ -32,6 +32,7 @@ def train_fc(data_loader, device, model,optimizer, criterion,scheduler):
         outputs = model(ids,lengths)
         targets = torch.max(targets, 1)[1]
         print(targets.size())
+        print(targets)
         loss = criterion(outputs, targets)
         acc = categorical_accuracy(outputs, targets)
         loss.backward()
