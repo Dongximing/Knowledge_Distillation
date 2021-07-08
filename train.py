@@ -31,6 +31,8 @@ def train_fc(data_loader, device, model,optimizer, criterion,scheduler):
         optimizer.zero_grad()
         outputs = model(ids,lengths)
         print(outputs)
+        print(targets)
+        print(targets.size())
         targets = torch.max(targets, 1)[1]
         print(targets.size())
         print(targets)
