@@ -30,7 +30,8 @@ def train_fc(data_loader, device, model,optimizer, criterion,scheduler):
         targets = targets.to(device, dtype=torch.long).unsqueeze(1)
         optimizer.zero_grad()
         outputs = model(ids,lengths)
-        targets = torch.max(targets, 1)[1]
+        print(outputs)
+        # targets = torch.max(targets, 1)[1]
         print(targets.size())
         print(targets)
         loss = criterion(outputs, targets)
