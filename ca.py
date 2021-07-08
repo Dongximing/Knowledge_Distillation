@@ -124,6 +124,11 @@
 # print(compute_loss(list, list1))
 import numpy as np
 import torch
+a = torch.tensor([[0,1]])
+print(a.size())
+b= torch.max(a, 1)[1]
+print(b)
+print("11111")
 from sklearn.preprocessing import MultiLabelBinarizer
 mlb = MultiLabelBinarizer()
 yt=mlb.fit_transform([{'sci-fi', 'thriller'}, {'comedy'}])
