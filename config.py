@@ -16,7 +16,7 @@ def seed_torch(seed = 100):
     torch.backends.cudnn.deterministic = True
     torch.backends.cudnn.enabled = False
     np.random.RandomState(seed)
-OUTPUT_DIM =1
+OUTPUT_DIM =2
 N_LAYERS =2
 BIDIRECTIONAL = True
 HIDDEN_DIM = 256

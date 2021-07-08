@@ -28,8 +28,7 @@ def loadword2vec(glove_dir,word2vec_dir):
 
 
    
-#    ewqeq print(word2id)
-#     print(embedding)
+
 def train_titanic(configs,checkpoint_dir=None,train_dir=None,valid_dir=None,glove_dir=None,word2vec_dir=None):
     # loading data
     train_dataset = pd.read_csv(train_dir)
@@ -46,7 +45,7 @@ def train_titanic(configs,checkpoint_dir=None,train_dir=None,valid_dir=None,glov
     word2id = {}
     for i, word in enumerate(wvmodel.index2word):
         word2id[word] = i+1
-    #print(torch.FloatTensor(wvmodel.vectors).shape)
+
     w2v = torch.FloatTensor(wvmodel.vectors)
     pad_unk = torch.zeros(1, 100)
     pad_unk = torch.FloatTensor(pad_unk)
@@ -75,7 +74,7 @@ def train_titanic(configs,checkpoint_dir=None,train_dir=None,valid_dir=None,glov
         model.load_state_dict(model_state)
         optimizer.load_state_dict(optimizer_state)
     optimizer = optim.Adam(model.parameters(),lr=configs["lr"])
-    criterion = nn.BCEWithLogitsLoss()
+    criterion = nn.CrossEntropyLoss()
     criterion = criterion.to(device)
 #     patience = 3
 #     early_stopping = EarlyStopping(patience, verbose=True)

@@ -3,11 +3,19 @@ import tqdm
 from tqdm import tqdm
 
 
-def binary_accuracy(preds, y):
-
-    rounded_preds = torch.round(torch.sigmoid(preds))
-    correct = (rounded_preds == y).float()
-    acc = correct.sum() / len(correct)
+# def binary_accuracy(preds, y):
+#
+#     rounded_preds = torch.round(torch.sigmoid(preds))
+#     correct = (rounded_preds == y).float()
+#     acc = correct.sum() / len(correct)
+#     return acc
+def categorical_accuracy(preds, y):
+    """
+    Returns accuracy per batch, i.e. if you get 8/10 right, this returns 0.8, NOT 8
+    """
+    top_pred = preds.argmax(1, keepdim = True)
+    correct = top_pred.eq(y.view_as(top_pred)).sum()
+    acc = correct.float() / y.shape[0]
     return acc
 def train_fc(data_loader, device, model,optimizer, criterion,scheduler):
     model.train()
@@ -23,7 +31,7 @@ def train_fc(data_loader, device, model,optimizer, criterion,scheduler):
         optimizer.zero_grad()
         outputs = model(ids,lengths)
         loss = criterion(outputs, targets)
-        acc = binary_accuracy(outputs, targets)
+        acc = categorical_accuracy(outputs, targets)
         loss.backward()
         # torch.nn.utils.clip_grad_norm_(model.parameters(), 1.0)
         optimizer.step()
@@ -54,7 +62,7 @@ def eval_fc(valid_loader, model, device, criterion):
 
 
 
-            acc = binary_accuracy(outputs, targets)
+            acc = categorical_accuracy(outputs, targets)
             epoch_loss += loss.item()
             epoch_acc += acc.item()
     return epoch_loss / len(valid_loader), epoch_acc / len(valid_loader)
