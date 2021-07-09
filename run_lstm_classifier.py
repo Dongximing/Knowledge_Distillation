@@ -79,7 +79,7 @@ def train_titanic(configs,checkpoint_dir=None,train_dir=None,valid_dir=None,glov
 #     patience = 3
 #     early_stopping = EarlyStopping(patience, verbose=True)
 
-    lr_scheduler = torch.optim.lr_scheduler.StepLR(optimizer, step_size=6, gamma=0.1)
+    lr_scheduler = torch.optim.lr_scheduler.StepLR(optimizer, step_size=8, gamma=0.1)
     best_loss = float('inf')
 
     for epoch in range (config.EPOCHS):
@@ -110,7 +110,7 @@ def main():
     word2vec_dir = '/home/dongxx/projects/def-mercer/dongxx/project/word2vec/glove.6B.word2vec.100d.txt'
     checkpoint_dir = config.MODEL_PATH
     max_num_epochs = 12
-    num_samples = 2
+    num_samples = 3
     configs = {
          "hidden_dim": tune.choice([256]),
          "lr" : tune.choice([1e-3]),
