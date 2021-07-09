@@ -109,12 +109,12 @@ def main():
     glove_dir = '/home/dongxx/projects/def-mercer/dongxx/project/word2vec/glove.6B.100d.txt'
     word2vec_dir = '/home/dongxx/projects/def-mercer/dongxx/project/word2vec/glove.6B.word2vec.100d.txt'
     checkpoint_dir = config.MODEL_PATH
-    max_num_epochs = 15
-    num_samples = 1
+    max_num_epochs = 12
+    num_samples = 2
     configs = {
          "hidden_dim": tune.choice([256]),
          "lr" : tune.choice([1e-3]),
-         "batch_size": tune.choice([64])
+         "batch_size": tune.choice([64,32])
 
     }
     scheduler = ASHAScheduler(
