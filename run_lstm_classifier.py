@@ -111,6 +111,7 @@ def main():
     checkpoint_dir = config.MODEL_PATH
     max_num_epochs = 12
     num_samples = 3
+    #
     configs = {
          "hidden_dim": tune.choice([256]),
          "lr" : tune.choice([1e-3]),
