@@ -24,3 +24,4 @@ DROPOUT = 0.25
 EPOCHS = 15
 BATCH_size = 64
 MODEL_PATH ='/home/dongxx/projects/def-mercer/dongxx/project/LSTM-baseline/LSTM-basline.pt'
+KD_MODEL_PATH ='/home/dongxx/projects/def-mercer/dongxx/project/pythonProject/bert.pt'
