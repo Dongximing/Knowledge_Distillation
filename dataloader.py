@@ -19,7 +19,7 @@ class IMDBDataset(Dataset):
         def __getitem__(self, item):
             review = str(self.review[item])
             review = " ".join(review.split())
-            inputs = self.tokenizer.encode_plus(review, None,
+            inputs = tokenizers.encode_plus(review, None,
                                                 add_special_tokens=True,
                                                 max_length=512,
                                                 pad_to_max_length=True)
