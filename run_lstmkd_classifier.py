@@ -15,7 +15,7 @@ import dataloader
 from lstm import LSTMBaseline
 from earlystopping import EarlyStopping
 import os
-
+from transformers import BertTokenizer, BertModel
 config.seed_torch()
 from functools import partial
 from ray import tune
@@ -129,12 +129,12 @@ def main():
     word2vec_dir = '/home/dongxx/projects/def-mercer/dongxx/project/word2vec/glove.6B.word2vec.100d.txt'
     checkpoint_dir = config.MODEL_PATH
     max_num_epochs = 15
-    num_samples = 3
+    num_samples = 1
     #
     configs = {
         "hidden_dim": tune.choice([256]),
         "lr": tune.choice([1e-3]),
-        "batch_size": tune.choice([64, 32])
+        "batch_size": tune.choice([64])
 
     }
     scheduler = ASHAScheduler(
