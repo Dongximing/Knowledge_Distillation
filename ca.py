@@ -22,25 +22,25 @@
 # with tqdm(total=100) as pbar:
 #     for i in range(10):
 #         pbar.update(10)
-# from torchtext.data.utils import get_tokenizer
-# from torchtext.data.utils import ngrams_iterator
-# from torchtext.vocab import Vocab
-# from torchtext.vocab import build_vocab_from_iterator
-# train_text = ["I fuck you", "I love you"]
-# label =["D1","D2"]
-#
-# def _text_iterator(text, labels=None, ngrams=1, yield_label=False):
-#     tokenizer = get_tokenizer('basic_english')
-#     for i, text in enumerate(text):
-#         texts = tokenizer(text)
-#         filtered_text = [word for word in texts ]
-#         if yield_label:
-#             label = labels[i]
-#             yield label, ngrams_iterator(filtered_text, ngrams)
-#         else:
-#             yield ngrams_iterator(filtered_text, ngrams)
-# vocab = build_vocab_from_iterator(_text_iterator(train_text, label,1))
-# print(vocab.get_stoi())
+from torchtext.data.utils import get_tokenizer
+from torchtext.data.utils import ngrams_iterator
+from torchtext.vocab import Vocab
+from torchtext.vocab import build_vocab_from_iterator
+train_text = ["I fuck you", "I love you"]
+label =["D1","D2"]
+
+def _text_iterator(text, labels=None, ngrams=1, yield_label=False):
+    tokenizer = get_tokenizer('basic_english')
+    for i, text in enumerate(text):
+        texts = tokenizer(text)
+
+        filtered_text = [word for word in texts ]
+
+
+        yield ngrams_iterator(filtered_text, ngrams)
+vocab = build_vocab_from_iterator(_text_iterator(train_text, label,1))
+
+print(vocab.get_stoi())
 # def pad_sequence(sequences, ksz, batch_first=False, padding_value=0.0):
 #     # type: (List[Tensor], bool, float) -> Tensor
 #     r"""Pad a list of variable length Tensors with ``padding_value``
@@ -122,42 +122,42 @@
 #     loss = self.criterion(scores, targets.contiguous().view(-1))
 #     return loss
 # print(compute_loss(list, list1))
-import numpy as np
-import torch
-
-from sklearn.preprocessing import MultiLabelBinarizer
-
-print(yt)
-labels = []
-
-
-
-print(labels)
-def pad_sequence(sequences, ksz, batch_first=False, padding_value=0.0):
-
-
-    max_size = sequences[0].size()
-    trailing_dims = max_size[1:]
-    max_len = max([s.size(0) for s in sequences])
-    if max_len < ksz:
-        max_len = ksz
-    if batch_first:
-        out_dims = (len(sequences), max_len) + trailing_dims
-    else:
-        out_dims = (max_len, len(sequences)) + trailing_dims
-
-    out_tensor = sequences[0].new_full(out_dims, padding_value)
-    for i, tensor in enumerate(sequences):
-        length = tensor.size(0)
-        # use index notation to prevent duplicate references to the tensor
-        if batch_first:
-            out_tensor[i, :length, ...] = tensor
-        else:
-            out_tensor[:length, i, ...] = tensor
-
-    return out_tensor
-text = pad_sequence(labels, ksz=3, batch_first=True)
-print(text)
+# import numpy as np
+# import torch
+#
+# from sklearn.preprocessing import MultiLabelBinarizer
+#
+# print(yt)
+# labels = []
+#
+#
+#
+# print(labels)
+# def pad_sequence(sequences, ksz, batch_first=False, padding_value=0.0):
+#
+#
+#     max_size = sequences[0].size()
+#     trailing_dims = max_size[1:]
+#     max_len = max([s.size(0) for s in sequences])
+#     if max_len < ksz:
+#         max_len = ksz
+#     if batch_first:
+#         out_dims = (len(sequences), max_len) + trailing_dims
+#     else:
+#         out_dims = (max_len, len(sequences)) + trailing_dims
+#
+#     out_tensor = sequences[0].new_full(out_dims, padding_value)
+#     for i, tensor in enumerate(sequences):
+#         length = tensor.size(0)
+#         # use index notation to prevent duplicate references to the tensor
+#         if batch_first:
+#             out_tensor[i, :length, ...] = tensor
+#         else:
+#             out_tensor[:length, i, ...] = tensor
+#
+#     return out_tensor
+# text = pad_sequence(labels, ksz=3, batch_first=True)
+# print(text)
 
 
 
