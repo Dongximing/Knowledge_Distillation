@@ -106,9 +106,9 @@ def train_titanic(configs, checkpoint_dir=None, train_dir=None, valid_dir=None, 
             best_loss = valid_loss
             torch.save(model.state_dict(), 'kd.pt')
 
-        with tune.checkpoint_dir(epoch) as checkpoint_dir:
-            path = os.path.join(checkpoint_dir, "checkpoint")
-            torch.save((model.state_dict(), optimizer.state_dict()), path)
+        # with tune.checkpoint_dir(epoch) as checkpoint_dir:
+        #     path = os.path.join(checkpoint_dir, "checkpoint")
+        #     torch.save((model.state_dict(), optimizer.state_dict()), path)
 
         tune.report(loss=valid_loss, accuracy=valid_acc)
 

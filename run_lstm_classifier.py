@@ -87,11 +87,16 @@ def train_titanic(configs,checkpoint_dir=None,train_dir=None,valid_dir=None,glov
         train_loss, train_acc = train.train_fc(train_data_loader,device,model,optimizer,criterion,lr_scheduler)
 
         valid_loss, valid_acc = train.eval_fc(valid_data_loader,model,device,criterion)
+        print(f'\tTrain Loss: {train_loss:.3f} | Train Acc: {train_acc * 100:.2f}%')
+        print(f'\t Val. Loss: {valid_loss:.3f} |  Val. Acc: {valid_acc * 100:.2f}%')
+        if valid_loss < best_loss:
+            best_loss = valid_loss
+            torch.save(model.state_dict(), 'baseline.pt')
 
 
-        with tune.checkpoint_dir(epoch) as checkpoint_dir:
-            path = os.path.join(checkpoint_dir, "checkpoint")
-            torch.save((model.state_dict(), optimizer.state_dict()), path)
+        # with tune.checkpoint_dir(epoch) as checkpoint_dir:
+        #     path = os.path.join(checkpoint_dir, "checkpoint")
+        #     torch.save((model.state_dict(), optimizer.state_dict()), path)
 
         tune.report(loss=valid_loss, accuracy=valid_acc)
 #         early_stopping(valid_loss, model)
