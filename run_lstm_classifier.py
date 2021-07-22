@@ -68,11 +68,7 @@ def train_titanic(configs,checkpoint_dir=None,train_dir=None,valid_dir=None,glov
     model.to(device)
 
 
-    if checkpoint_dir:
-        model_state, optimizer_state = torch.load(
-            os.path.join(checkpoint_dir, "checkpoint"))
-        model.load_state_dict(model_state)
-        optimizer.load_state_dict(optimizer_state)
+
     optimizer = optim.Adam(model.parameters(),lr=configs["lr"])
     criterion = nn.CrossEntropyLoss()
     criterion = criterion.to(device)
@@ -120,7 +116,7 @@ def main():
     configs = {
          "hidden_dim": tune.choice([256]),
          "lr" : tune.choice([1e-3]),
-         "batch_size": tune.choice([64,32])
+         "batch_size": tune.choice([32])
 
     }
     scheduler = ASHAScheduler(
