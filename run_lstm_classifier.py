@@ -111,7 +111,7 @@ def main():
     word2vec_dir = '/home/dongxx/projects/def-mercer/dongxx/project/word2vec/glove.6B.word2vec.100d.txt'
     checkpoint_dir = config.MODEL_PATH
     max_num_epochs = 15
-    num_samples = 3
+    num_samples = 1
     #
     configs = {
          "hidden_dim": tune.choice([256]),
