@@ -75,7 +75,7 @@ def train_titanic(configs,train_dir=None,valid_dir=None,glove_dir=None,word2vec_
 #     patience = 3
 #     early_stopping = EarlyStopping(patience, verbose=True)
 
-    lr_scheduler = torch.optim.lr_scheduler.StepLR(optimizer, step_size=8, gamma=0.1)
+    lr_scheduler = torch.optim.lr_scheduler.StepLR(optimizer, step_size=6, gamma=0.1)
     best_loss = float('inf')
 
     for epoch in range (config.BASELINE_EPOCHS):
