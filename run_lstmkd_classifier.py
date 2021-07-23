@@ -127,7 +127,7 @@ def main():
     valid_dir = '/home/dongxx/projects/def-mercer/dongxx/project/pythonProject/valid.csv'
     glove_dir = '/home/dongxx/projects/def-mercer/dongxx/project/word2vec/glove.6B.100d.txt'
     word2vec_dir = '/home/dongxx/projects/def-mercer/dongxx/project/word2vec/glove.6B.word2vec.100d.txt'
-    checkpoint_dir = config.MODEL_PATH
+
     max_num_epochs = 25
     num_samples = 1
     #
@@ -147,7 +147,7 @@ def main():
         parameter_columns=["hidden_dim", "lr", "batch_size"],
         metric_columns=["loss", "accuracy", "training_iteration"])
     result = tune.run(
-        partial(train_titanic, checkpoint_dir=checkpoint_dir, train_dir=train_dir, valid_dir=valid_dir,
+        partial(train_titanic, train_dir=train_dir, valid_dir=valid_dir,
                 glove_dir=glove_dir, word2vec_dir=word2vec_dir),
 
         resources_per_trial={"cpu": 4, "gpu": 4},
