@@ -87,6 +87,7 @@ def train_titanic(configs,checkpoint_dir=None,train_dir=None,valid_dir=None,glov
         print(f'\t Val. Loss: {valid_loss:.3f} |  Val. Acc: {valid_acc * 100:.2f}%')
         if valid_loss < best_loss:
             best_loss = valid_loss
+            print(best_loss)
             torch.save(model.state_dict(), 'baseline.pt')
 
 
@@ -110,7 +111,7 @@ def main():
     glove_dir = '/home/dongxx/projects/def-mercer/dongxx/project/word2vec/glove.6B.100d.txt'
     word2vec_dir = '/home/dongxx/projects/def-mercer/dongxx/project/word2vec/glove.6B.word2vec.100d.txt'
     checkpoint_dir = config.MODEL_PATH
-    max_num_epochs = 15
+    max_num_epochs = 1
     num_samples = 1
     #
     configs = {
