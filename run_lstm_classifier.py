@@ -29,7 +29,7 @@ def loadword2vec(glove_dir,word2vec_dir):
 
    
 
-def train_titanic(configs,checkpoint_dir=None,train_dir=None,valid_dir=None,glove_dir=None,word2vec_dir=None):
+def train_titanic(configs,train_dir=None,valid_dir=None,glove_dir=None,word2vec_dir=None):
     # loading data
     train_dataset = pd.read_csv(train_dir)
     valid_dataset = pd.read_csv(valid_dir)
@@ -88,7 +88,7 @@ def train_titanic(configs,checkpoint_dir=None,train_dir=None,valid_dir=None,glov
         if valid_loss < best_loss:
             best_loss = valid_loss
             print(best_loss)
-            torch.save(model.state_dict(), config.MODEL_PATH)
+            torch.save(model.state_dict(), config.MODEL_Base_PATH)
 
 
         # with tune.checkpoint_dir(epoch) as checkpoint_dir:
@@ -110,14 +110,13 @@ def main():
     valid_dir ='/home/dongxx/projects/def-mercer/dongxx/project/pythonProject/valid.csv'
     glove_dir = '/home/dongxx/projects/def-mercer/dongxx/project/word2vec/glove.6B.100d.txt'
     word2vec_dir = '/home/dongxx/projects/def-mercer/dongxx/project/word2vec/glove.6B.word2vec.100d.txt'
-    checkpoint_dir = config.MODEL_PATH
-    max_num_epochs = 1
+    max_num_epochs = 15
     num_samples = 1
     #
     configs = {
-         "hidden_dim": tune.choice([64]),
+         "hidden_dim": tune.choice([256]),
          "lr" : tune.choice([1e-3]),
-         "batch_size": tune.choice([128])
+         "batch_size": tune.choice([32])
 
     }
     scheduler = ASHAScheduler(
@@ -130,7 +129,7 @@ def main():
         parameter_columns=["hidden_dim", "lr", "batch_size"],
         metric_columns=["loss", "accuracy", "training_iteration"])
     result = tune.run(
-        partial(train_titanic, checkpoint_dir=checkpoint_dir, train_dir=train_dir, valid_dir= valid_dir,glove_dir = glove_dir,word2vec_dir =word2vec_dir),
+        partial(train_titanic, train_dir=train_dir, valid_dir= valid_dir,glove_dir = glove_dir,word2vec_dir =word2vec_dir),
 
         resources_per_trial={"cpu": 4,"gpu":4},
         config=configs,

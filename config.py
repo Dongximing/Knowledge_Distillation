@@ -21,7 +21,8 @@ N_LAYERS =2
 BIDIRECTIONAL = True
 HIDDEN_DIM = 256
 DROPOUT = 0.25
-EPOCHS = 1
+EPOCHS = 25
 
-MODEL_PATH ='/home/dongxx/projects/def-mercer/dongxx/project/LSTM-baseline/kd.pt'
-KD_MODEL_PATH ='/home/dongxx/projects/def-mercer/dongxx/project/pythonProject/bert.pt'
+MODEL_KD_PATH ='/home/dongxx/projects/def-mercer/dongxx/project/LSTM-baseline/kd.pt'
+MODEL_Base_PATH ='/home/dongxx/projects/def-mercer/dongxx/project/LSTM-baseline/baseline.pt'
+Teacher_MODEL_PATH ='/home/dongxx/projects/def-mercer/dongxx/project/pythonProject/bert.pt'

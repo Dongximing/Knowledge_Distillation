@@ -97,14 +97,14 @@ def train_titanic(configs, checkpoint_dir=None, train_dir=None, valid_dir=None, 
     best_loss = float('inf')
 
     for epoch in range(config.EPOCHS):
-        train_loss, train_acc = train.train_fc(train_data_loader, device,bert_model, model, optimizer, criterion, kd_critertion, lr_scheduler)
+        train_loss, train_acc = train.train_kd_fc(train_data_loader, device,bert_model, model, optimizer, criterion, kd_critertion, lr_scheduler)
 
         valid_loss, valid_acc = train.eval_fc(valid_data_loader, model, device, criterion)
         print(f'\tTrain Loss: {train_loss:.3f} | Train Acc: {train_acc * 100:.2f}%')
         print(f'\t Val. Loss: {valid_loss:.3f} |  Val. Acc: {valid_acc * 100:.2f}%')
         if valid_loss < best_loss:
             best_loss = valid_loss
-            torch.save(model.state_dict(), config.MODEL_PATH)
+            torch.save(model.state_dict(), config.MODEL_KD_PATH)
 
         # with tune.checkpoint_dir(epoch) as checkpoint_dir:
         #     path = os.path.join(checkpoint_dir, "checkpoint")
