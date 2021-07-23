@@ -17,7 +17,34 @@ def categorical_accuracy(preds, y):
     correct = top_pred.eq(y.view_as(top_pred)).sum()
     acc = correct.float() / y.shape[0]
     return acc
-def train_fc(data_loader, device, bert_model, model,optimizer, criterion,criterion_kd,scheduler):
+def train_fc(data_loader, device, model,optimizer, criterion,scheduler):
+    model.train()
+    a = 0.5
+    epoch_loss = 0
+    epoch_acc = 0
+    for bi,d in tqdm(enumerate(data_loader),total = len(data_loader)):
+
+        ids = d['text']
+        lengths = d['length']
+        targets = d['target']
+        ids = ids.to(device, dtype=torch.long)
+
+        lengths = lengths.to(device, dtype=torch.int)
+        targets = targets.to(device, dtype=torch.long)
+        optimizer.zero_grad()
+       
+        outputs = model(ids,lengths)
+
+        loss= criterion(outputs, targets)
+
+        acc = categorical_accuracy(outputs, targets)
+        loss.backward()
+        # torch.nn.utils.clip_grad_norm_(model.parameters(), 1.0)
+        optimizer.step()
+        epoch_loss += loss.item()
+        epoch_acc += acc.item()
+    scheduler.step()
+def train_kd_fc(data_loader, device, bert_model, model,optimizer, criterion,criterion_kd,scheduler):
     model.train()
     a = 0.5
     epoch_loss = 0
