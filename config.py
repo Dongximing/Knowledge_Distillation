@@ -23,5 +23,5 @@ HIDDEN_DIM = 256
 DROPOUT = 0.25
 EPOCHS = 1
 
-MODEL_PATH ='/home/dongxx/projects/def-mercer/dongxx/project/LSTM-baseline/LSTM-basline.pt'
+MODEL_PATH ='/home/dongxx/projects/def-mercer/dongxx/project/LSTM-baseline/kd.pt'
 KD_MODEL_PATH ='/home/dongxx/projects/def-mercer/dongxx/project/pythonProject/bert.pt'

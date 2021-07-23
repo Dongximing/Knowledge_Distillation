@@ -104,7 +104,7 @@ def train_titanic(configs, checkpoint_dir=None, train_dir=None, valid_dir=None, 
         print(f'\t Val. Loss: {valid_loss:.3f} |  Val. Acc: {valid_acc * 100:.2f}%')
         if valid_loss < best_loss:
             best_loss = valid_loss
-            torch.save(model.state_dict(), 'kd.pt')
+            torch.save(model.state_dict(), config.MODEL_PATH)
 
         # with tune.checkpoint_dir(epoch) as checkpoint_dir:
         #     path = os.path.join(checkpoint_dir, "checkpoint")
