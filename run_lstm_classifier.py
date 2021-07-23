@@ -36,7 +36,7 @@ def train_titanic(configs,train_dir=None,valid_dir=None,glove_dir=None,word2vec_
 
 
     count,dimensions = loadword2vec(glove_dir,word2vec_dir)
-#     print('count, dimensions', loadword2vec(glove_dir, word2vec_dir))
+
     wvmodel = gensim.models.KeyedVectors.load_word2vec_format('/home/dongxx/projects/def-mercer/dongxx/project/word2vec/glove.6B.word2vec.100d.txt',binary=False, encoding='utf-8')
     dimensions =100
     count = 400001

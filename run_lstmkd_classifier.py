@@ -13,7 +13,7 @@ import train
 import config
 import dataloader
 from lstm import LSTMBaseline
-from earlystopping import EarlyStopping
+# from earlystopping import EarlyStopping
 import os
 from transformers import BertTokenizer, BertModel
 config.seed_torch()
