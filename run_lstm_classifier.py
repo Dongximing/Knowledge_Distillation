@@ -78,7 +78,7 @@ def train_titanic(configs,train_dir=None,valid_dir=None,glove_dir=None,word2vec_
     lr_scheduler = torch.optim.lr_scheduler.StepLR(optimizer, step_size=8, gamma=0.1)
     best_loss = float('inf')
 
-    for epoch in range (config.EPOCHS):
+    for epoch in range (config.BASELINE_EPOCHS):
 
         train_loss, train_acc = train.train_fc(train_data_loader,device,model,optimizer,criterion,lr_scheduler)
 
