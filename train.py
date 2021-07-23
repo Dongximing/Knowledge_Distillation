@@ -43,7 +43,10 @@ def train_fc(data_loader, device, model,optimizer, criterion,scheduler):
         optimizer.step()
         epoch_loss += loss.item()
         epoch_acc += acc.item()
+
     scheduler.step()
+    return epoch_loss / len(data_loader), epoch_acc / len(data_loader)
+
 def train_kd_fc(data_loader, device, bert_model, model,optimizer, criterion,criterion_kd,scheduler):
     model.train()
     a = 0.5
