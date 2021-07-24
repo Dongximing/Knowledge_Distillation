@@ -84,7 +84,7 @@ def train_titanic(configs, checkpoint_dir=None, train_dir=None, valid_dir=None, 
                              config.N_LAYERS,
                              config.BIDIRECTIONAL,
                              config.DROPOUT)
-    bert_model.load_state_dict(torch.load(config.KD_MODEL_PATH))
+    bert_model.load_state_dict(torch.load(config.Teacher_MODEL_PATH))
     bert_model.to(device)
     bert_model.eval()
 
