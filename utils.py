@@ -1,6 +1,5 @@
 import torchtext
 import logging
-import r
 import torch
 from torchtext.data.utils import get_tokenizer
 from torchtext.data.utils import ngrams_iterator
