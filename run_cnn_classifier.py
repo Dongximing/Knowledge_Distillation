@@ -14,6 +14,8 @@ import logging
 import os
 import pickle
 import sys
+import config
+config.seed_torch()
 def weight_matrix(vocab, vectors, dim=100):
     weight_matrix = np.zeros([len(vocab.itos), dim])
     for i, token in enumerate(vocab.stoi):
