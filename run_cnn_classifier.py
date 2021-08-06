@@ -217,7 +217,7 @@ def main():
         print(f'\t Val. Loss: {valid_loss:.3f} |  Val. Acc: {valid_acc * 100:.2f}%')
         if valid_loss < best_loss:
             best_loss = valid_loss
-            torch.save(model.state_dict(), config.MODEL_CNN_PATH)
+            torch.save(cnn_model.state_dict(), config.MODEL_CNN_PATH)
 
 
 
