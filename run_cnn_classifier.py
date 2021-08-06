@@ -208,7 +208,7 @@ def main():
     #loading vocab
     glove = torchtext.vocab.GloVe(name='6B', dim=100,unk_init=torch.Tensor.normal_)
 
-    ret = glove.get_vecs_by_tokens(['<unk>','pad','beautiful','good'])
+    ret = glove.get_vecs_by_tokens(['<unk>','<pad>','beautiful','good'])
     print(ret)
     cnn_model.embedding_layer.weight.data.copy_(weight_matrix(vocab, glove)).to(device)
 
