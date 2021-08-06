@@ -201,7 +201,7 @@ def main():
     criterion = nn.CrossEntropyLoss()
 
     training = DataLoader(train_dataset,collate_fn = generate_batch, batch_size=args.batch_sz,shuffle=True)
-    validate = DataLoader(validation_dataset, collate_fn= generate_batch, batch_size=args.batch_sz, shuffle=False)
+    validation = DataLoader(validation_dataset, collate_fn= generate_batch, batch_size=args.batch_sz, shuffle=False)
     # testing = DataLoader(test_dataset, collate_fn= generate_batch, batch_size=args.batch_sz, shuffle=False)
     #loading vocab
     glove = torchtext.vocab.GloVe(name='6B', dim=100)
@@ -211,7 +211,7 @@ def main():
     for epoch in range(args.num_epochs):
         train_loss, train_acc = train(training,cnn_model,criterion,device,optimizer,lr_scheduler)
 
-        valid_loss, valid_acc = validate(validate,cnn_model,criterion,device)
+        valid_loss, valid_acc = validate(validation,cnn_model,criterion,device)
 
         print(f'\tTrain Loss: {train_loss:.3f} | Train Acc: {train_acc * 100:.2f}%')
         print(f'\t Val. Loss: {valid_loss:.3f} |  Val. Acc: {valid_acc * 100:.2f}%')
