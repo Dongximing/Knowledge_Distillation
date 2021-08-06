@@ -126,7 +126,7 @@ def train(train_dataset,model,criterion,device,optimizer,lr_scheduler):
         text = text.to(device)
 
         optimizer.zero_grad()
-        output = model(text,text_length)
+        output = model(text)
         loss = criterion(output,label)
         acc = categorical_accuracy(output, label)
         epoch_loss += loss.item()
@@ -145,7 +145,7 @@ def validate(validation_dataset, model, criterion, device):
         text = text.to(device)
         label = torch.tensor(label, dtype=torch.long, device=device)
         with torch.no_grad():
-            output = model(text, text_length)
+            output = model(text)
         loss = criterion(output,label)
         acc = categorical_accuracy(output, label)
         epoch_loss += loss.item()
