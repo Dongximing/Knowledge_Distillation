@@ -8,12 +8,12 @@ from torchtext.vocab import build_vocab_from_iterator
 from tqdm import tqdm
 from nltk.corpus import stopwords
 stop_words = set(stopwords.words('english'))
-def _text_iterator(text, labels=None, ngrams=1, yield_label=False,remove_stopwords =False):
+def _text_iterator(text, labels=None, ngrams=1, yield_label=False):
     tokenizer = get_tokenizer('basic_english')
     for i, text in enumerate(text):
         texts = tokenizer(text)
-        if remove_stopwords:
-            filtered_text = [word for word in texts if word not in stop_words]
+
+        filtered_text = [word for word in texts if word not in stop_words]
         if yield_label:
             label = labels[i]
             yield label, ngrams_iterator(filtered_text, ngrams)
