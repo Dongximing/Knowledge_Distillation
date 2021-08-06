@@ -82,8 +82,10 @@ def prepare_dateset(train_data_path, validation_data_path):
 
 
     vocab_size = len(vocab)
+    print('building vocab length',vocab_size)
+    logging.info('Build vocab')
 
-    return train_dataset,validation_dataset,test_dataset, vocab,vocab_size
+    return train_dataset,validation_dataset,vocab,vocab_size
 
 def generate_batch(batch):
     """
