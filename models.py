@@ -74,7 +74,7 @@ class CNN_Baseline(nn.Module):
         x_maxpool = [F.max_pool1d(x_conv,x_conv.size(2)).squeeze(2) for x_conv in x_convs ]
         flatten = torch.cat(x_maxpool, 1)
         x = self.dropout(flatten)
-        x = self.fc(x)
+        x = self.linear(x)
         return x
         
 # class Dilated_CNN(nn.Module):
