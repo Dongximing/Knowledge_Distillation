@@ -121,9 +121,10 @@ def train(train_dataset,model,criterion,device,optimizer,lr_scheduler):
 
     for i,(text, length,label) in enumerate(train_dataset):
         text_length = torch.Tensor(length)
+        label = torch.tensor(label,dtype=torch.long,device=device)
         text_length = text_length.to(device)
         text = text.to(device)
-        label = label.to(device,torch.long)
+
         optimizer.zero_grad()
         output = model(text,text_length)
         loss = criterion(output,label)
@@ -142,7 +143,8 @@ def validate(validation_dataset, model, criterion, device):
         text_length = torch.Tensor(length)
         text_length = text_length.to(device)
         text = text.to(device)
-        label = label.to(device,torch.long)
+        label = torch.tensor(label, dtype=torch.long, device=device)
+
         with torch.no_grad():
             output = model(text, text_length)
         loss = criterion(output,label)
