@@ -72,7 +72,7 @@ class IMDBDataset(torch.utils.data.Dataset):
 def _setup_datasets(train_text, train_labels, validation_text, validation_labels, ngrams=1, vocab=None, include_unk=False):
     if vocab is None:
         logging.info('Building Vocab based on {}'.format(train_text))
-        vocab = build_vocab_from_iterator(_text_iterator(train_text, train_labels, ngrams),specials=['<unk>'])
+        vocab = build_vocab_from_iterator(_text_iterator(train_text, train_labels, ngrams))
         print(vocab.itos[0])
         print(vocab.itos[1])
     else:
