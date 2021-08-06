@@ -14,7 +14,7 @@ import logging
 import os
 import pickle
 import sys
-def weight_matrix(vocab, vectors, dim=200):
+def weight_matrix(vocab, vectors, dim=100):
     weight_matrix = np.zeros([len(vocab.itos), dim])
     for i, token in enumerate(vocab.stoi):
         try:
