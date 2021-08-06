@@ -21,7 +21,6 @@ def _text_iterator(text, labels=None, ngrams=1, yield_label=False):
             yield ngrams_iterator(filtered_text, ngrams)
 def _create_data_from_iterator(vocab, iterator, include_unk, is_test=False):
     data = []
-    labels = []
     with tqdm(unit_scale=0, unit='lines') as t:
         if is_test:
             for text in iterator:
@@ -47,9 +46,9 @@ def _create_data_from_iterator(vocab, iterator, include_unk, is_test=False):
                 if len(tokens) == 0:
                     logging.info('Row contains no tokens.')
                 data.append((label, tokens))
-                labels.extend(label)
+
                 t.update(1)
-            return data, set(labels)
+            return data
 class IMDBDataset(torch.utils.data.Dataset):
     def __init__(self, vocab, data):
 
@@ -79,7 +78,7 @@ def _setup_datasets(train_text, train_labels, validation_text, validation_labels
             raise TypeError("Passed vocabulary is not of type Vocab")
     logging.info('Vocab has {} entries'.format(len(vocab)))
     logging.info('Creating training data')
-    train_data, train_labels = _create_data_from_iterator(
+    train_data = _create_data_from_iterator(
         vocab, _text_iterator(train_text, labels=train_labels, ngrams=ngrams, yield_label=True), include_unk,
         is_test=False)
     logging.info('Creating validation data')
