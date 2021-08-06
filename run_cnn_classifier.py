@@ -22,15 +22,15 @@ def weight_matrix(vocab, vectors, dim=200):
         except KeyError:
             weight_matrix[i] = np.random.normal(scale=0.5, size=(dim,))
     return torch.from_numpy(weight_matrix)
-def prepare_dateset(train_data_path, validation_data_path,test_data_path):
+def prepare_dateset(train_data_path, validation_data_path):
     # with open(train_data_path,'r') as csvfile:
     #     csvreader = csv.reader(csvf
     training_texts = []
     training_labels =[]
     validation_texts = []
     validation_labels = []
-    testing_texts = []
-    testing_labels = []
+    # testing_texts = []
+    # testing_labels = []
     # training #
     print('Start loading training data')
     logging.info("Start loading training data")
@@ -63,19 +63,19 @@ def prepare_dateset(train_data_path, validation_data_path,test_data_path):
     print('Start loading testing data')
     logging.info("Start loading testing data")
 
-    testing = pd.read_csv(test_data_path)
-    testing_review = testing.Review
-    testing_sentiment = testing.Sentiment
-    for text, label in zip(testing_review, testing_sentiment):
-        testing_texts.append(text)
-        testing_labels.append(label)
-    print("Finish loading testing data")
-    logging.info("Finish loading testing data")
+    # testing = pd.read_csv(test_data_path)
+    # testing_review = testing.Review
+    # testing_sentiment = testing.Sentiment
+    # for text, label in zip(testing_review, testing_sentiment):
+    #     testing_texts.append(text)
+    #     testing_labels.append(label)
+    # print("Finish loading testing data")
+    # logging.info("Finish loading testing data")
+    #
+    # print('prepare training and test sets')
+    # logging.info('Prepare training and test sets')
 
-    print('prepare training and test sets')
-    logging.info('Prepare training and test sets')
-
-    train_dataset, validation_dataset,test_dataset = IMDB_indexing(training_texts,training_labels,validation_texts,validation_labels, testing_texts,testing_labels)
+    train_dataset, validation_dataset = IMDB_indexing(training_texts,training_labels,validation_texts,validation_labels)
     print('building vocab')
     logging.info('Build vocab')
     vocab = train_dataset.get_vocab()
@@ -179,7 +179,8 @@ def main():
     # device = torch.device(args.device if torch.cuda.is_available() else "cpu")
     device = torch.device('cuda' if torch.cuda.is_available() else 'cpu')
     # dataset
-    train_dataset, validation_dataset, test_dataset, vocab, vocab_size = prepare_dateset(args.train_path,args.validation_path)
+    # train_dataset, validation_dataset, test_dataset, vocab, vocab_size = prepare_dateset(args.train_path,args.validation_path)
+    train_dataset, validation_dataset,vocab, vocab_size = prepare_dateset(args.train_path,args.validation_path)
     # model
     cnn_model =CNN_Baseline(vocab_size = vocab_size, nKernel = args.nKernel, ksz = args.ksz,number_class = args.number_class)
     cnn_model.to(device)
@@ -190,7 +191,7 @@ def main():
 
     training = DataLoader(train_dataset,collate_fn = generate_batch, batch_size=args.batch_sz,shuffle=True)
     validate = DataLoader(validation_dataset, collate_fn= generate_batch, batch_size=args.batch_sz, shuffle=False)
-    testing = DataLoader(test_dataset, collate_fn= generate_batch, batch_size=args.batch_sz, shuffle=False)
+    # testing = DataLoader(test_dataset, collate_fn= generate_batch, batch_size=args.batch_sz, shuffle=False)
     #loading vocab
     glove = torchtext.vocab.GloVe(name='6B', dim=100)
     CNN_Baseline.embedding_layer.weight.data.copy_(weight_matrix(vocab, glove)).to(device)
