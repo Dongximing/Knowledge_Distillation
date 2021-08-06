@@ -196,7 +196,7 @@ def main():
     # testing = DataLoader(test_dataset, collate_fn= generate_batch, batch_size=args.batch_sz, shuffle=False)
     #loading vocab
     glove = torchtext.vocab.GloVe(name='6B', dim=100)
-    CNN_Baseline.embedding_layer.weight.data.copy_(weight_matrix(vocab, glove)).to(device)
+    cnn_model.embedding_layer.weight.data.copy_(weight_matrix(vocab, glove)).to(device)
 
     best_loss = float('inf')
     for epoch in range(args.num_epochs):

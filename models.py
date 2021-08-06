@@ -58,6 +58,7 @@ class LSTMBaseline(nn.Module):
         return output
 class CNN_Baseline(nn.Module):
     def __init__(self, vocab_size,nKernel,ksz,number_class,embedding_dim =100):
+        super().__init__()
         self.vocab_size = vocab_size
         self.embedding_dim = embedding_dim
         self.nKernel = nKernel
