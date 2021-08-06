@@ -144,7 +144,6 @@ def validate(validation_dataset, model, criterion, device):
         text_length = text_length.to(device)
         text = text.to(device)
         label = torch.tensor(label, dtype=torch.long, device=device)
-
         with torch.no_grad():
             output = model(text, text_length)
         loss = criterion(output,label)
