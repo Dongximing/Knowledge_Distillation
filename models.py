@@ -3,7 +3,7 @@ import torch as t
 import torch.nn as nn
 from torch.autograd import Variable
 import config
-
+import torch.nn.functional as F
 config.seed_torch()
 class LSTMBaseline(nn.Module):
     def __init__(self,embedding_dim,hidden_dim,n_layers,dropout,number_class,bidirectional,embedding):
@@ -56,6 +56,28 @@ class LSTMBaseline(nn.Module):
 
 
         return output
+class CNN_Baseline(nn.Module):
+    def __init__(self, vocab_size,nKernel,ksz,number_class,embedding,embedding_dim =200):
+        self.vocab_size = vocab_size
+        self.embedding_dim = embedding_dim
+        self.nKernel = nKernel
+        self.ksz = ksz
+        self.embedding_layer = nn.Embedding.from_pretrained(embeddings=embedding)
+        self.convs = nn.ModuleList([nn.Conv2d(1,nKernel,(k,embedding_dim)) for k in ksz])
+        self.dropout = nn.Dropout(0.5)
+        self.linear = nn.Linear(len(self.ksz)*self.nKernel,number_class)
+    def forward(self,text):
+        embedding = self.embedding_layer(text)
+        embedding = embedding.unsqueeze(1)
+        x_convs = [F.relu(conv(embedding)).squeeze(3) for conv in self.convs]
+        x_maxpool = [F.max_pool1d(x_conv,x_conv.size(2)).squeeze(2) for x_conv in x_convs ]
+        flatten = torch.cat(x_maxpool, 1)
+        x = self.dropout(flatten)
+        x = self.fc(x)
+        return x
+        
+# class Dilated_CNN(nn.Module):
+#     def __init__(self,):
 
 
 

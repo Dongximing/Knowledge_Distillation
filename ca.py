@@ -22,6 +22,55 @@
 # with tqdm(total=100) as pbar:
 #     for i in range(10):
 #         pbar.update(10)
+import torch
+import torch.nn as nn
+x = torch.rand(2,4,2)
+print(x)
+x = x.permute(0,2,1)
+print(x)
+conv = nn.Conv1d(in_channels=2,out_channels=2,kernel_size=2,padding=1,dilation=1)
+conv1 = nn.Conv1d(in_channels=2,out_channels=2,kernel_size=2,padding=1,dilation=2)
+conv2 = nn.Conv1d(in_channels=2,out_channels=2,kernel_size=2,padding=1,dilation=3)
+# print(conv.weight)
+# print((conv.weight).shape)
+# print(conv(x))
+# print((conv(x)).shape)
+print(x.shape)
+
+x = conv(x)
+print(x.shape)
+x = conv1(x)
+print(x.shape)
+
+x = conv2(x)
+print(x.shape)
+import csv
+train_data_path = '/Users/ximing/Desktop/IMDB-Movie-Reviews-50k-main/LSTM-baseline/valid.csv'
+text = []
+fields = []
+# with open(train_data_path, 'r') as csvfile:
+#     csvreader = csv.reader(csvfile)
+#     fields = next(csvreader)
+#     for row in csvreader:
+#         text.append(row[2])
+# print(len(text))
+import pandas as pd
+df = pd.read_csv(train_data_path)
+# saved_column = df.Review
+# for line in saved_column:
+#     text.append(line)
+# print(text)
+texts = []
+labels = []
+df = pd.read_csv(train_data_path)
+review = df.Review
+sentiment = df.Sentiment
+for text, label in zip(review, sentiment):
+    texts.append(text)
+    labels.append(label)
+print(texts)
+print(labels)
+
 from torchtext.data.utils import get_tokenizer
 from torchtext.data.utils import ngrams_iterator
 from torchtext.vocab import Vocab
