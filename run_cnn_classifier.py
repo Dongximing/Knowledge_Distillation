@@ -176,7 +176,8 @@ def main():
     args = parser.parse_args()
 
     # device
-    device = torch.device(args.device if torch.cuda.is_available() else "cpu")
+    # device = torch.device(args.device if torch.cuda.is_available() else "cpu")
+    device = torch.device('cuda' if torch.cuda.is_available() else 'cpu')
     # dataset
     train_dataset, validation_dataset, test_dataset, vocab, vocab_size = prepare_dateset(args.train_path,args.validation_path,args.test_path)
     # model
