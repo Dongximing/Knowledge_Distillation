@@ -118,6 +118,10 @@ def categorical_accuracy(preds, y):
     return acc
 
 def train(train_dataset,model,criterion,device,optimizer,lr_scheduler):
+    model.train()
+    epoch_loss = 0
+    epoch_acc = 0
+
 
     for i,(text, length,label) in enumerate(train_dataset):
         text_length = torch.Tensor(length)
@@ -134,10 +138,14 @@ def train(train_dataset,model,criterion,device,optimizer,lr_scheduler):
         loss.backward()
         optimizer.step()
     lr_scheduler.step()
-    return epoch_loss / len(training), epoch_acc / len(training)
+    return epoch_loss / len(train_dataset), epoch_acc / len(train_dataset)
 
 
 def validate(validation_dataset, model, criterion, device):
+    model.eval()
+
+    epoch_loss = 0
+    epoch_acc = 0
 
     for i,(text, length,label) in enumerate(validation_dataset):
         text_length = torch.Tensor(length)
@@ -150,7 +158,7 @@ def validate(validation_dataset, model, criterion, device):
         acc = categorical_accuracy(output, label)
         epoch_loss += loss.item()
         epoch_acc += acc.item()
-    return epoch_loss / len(validate), epoch_acc / len(validate)
+    return epoch_loss / len(validation_dataset), epoch_acc / len(validation_dataset)
 
 
 
