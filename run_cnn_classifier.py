@@ -62,8 +62,8 @@ def prepare_dateset(train_data_path, validation_data_path):
     logging.info("Finish loading validation data")
     # testing #
 
-    print('Start loading testing data')
-    logging.info("Start loading testing data")
+    # print('Start loading testing data')
+    # logging.info("Start loading testing data")
 
     # testing = pd.read_csv(test_data_path)
     # testing_review = testing.Review
@@ -79,7 +79,7 @@ def prepare_dateset(train_data_path, validation_data_path):
 
     train_dataset, validation_dataset = IMDB_indexing(training_texts,training_labels,validation_texts,validation_labels)
     print('building vocab')
-    logging.info('Build vocab')
+
     vocab = train_dataset.get_vocab()
 
 
