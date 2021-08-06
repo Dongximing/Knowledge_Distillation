@@ -57,12 +57,12 @@ class LSTMBaseline(nn.Module):
 
         return output
 class CNN_Baseline(nn.Module):
-    def __init__(self, vocab_size,nKernel,ksz,number_class,embedding,embedding_dim =200):
+    def __init__(self, vocab_size,nKernel,ksz,number_class,embedding_dim =100):
         self.vocab_size = vocab_size
         self.embedding_dim = embedding_dim
         self.nKernel = nKernel
         self.ksz = ksz
-        self.embedding_layer = nn.Embedding.from_pretrained(embeddings=embedding)
+        self.embedding_layer = nn.Embedding(num_embeddings=vocab_size,embedding_dim=embedding_dim)
         self.convs = nn.ModuleList([nn.Conv2d(1,nKernel,(k,embedding_dim)) for k in ksz])
         self.dropout = nn.Dropout(0.5)
         self.linear = nn.Linear(len(self.ksz)*self.nKernel,number_class)
