@@ -70,7 +70,7 @@ class IMDBDataset(torch.utils.data.Dataset):
 
     def get_vocab(self):
         return self._vocab
-def _setup_datasets(train_text, train_labels, validation_text, validation_labels, test_text, test_labels, ngrams=1, vocab=None, include_unk=False):
+def _setup_datasets(train_text, train_labels, validation_text, validation_labels, ngrams=1, vocab=None, include_unk=False):
     if vocab is None:
         logging.info('Building Vocab based on {}'.format(train_text))
         vocab = build_vocab_from_iterator(_text_iterator(train_text, train_labels, ngrams))
@@ -88,18 +88,18 @@ def _setup_datasets(train_text, train_labels, validation_text, validation_labels
         is_test=False)
 
     logging.info('Creating testing data')
-    test_data, test_labels = _create_data_from_iterator(
-        vocab, _text_iterator(test_text, labels=test_labels, ngrams=ngrams, yield_label=True), include_unk,
-        is_test=False)
-    logging.info('Total number of labels in training set:'.format(len(train_labels)))
+    # test_data, test_labels = _create_data_from_iterator(
+    #     vocab, _text_iterator(test_text, labels=test_labels, ngrams=ngrams, yield_label=True), include_unk,
+    #     is_test=False)
+    # logging.info('Total number of labels in training set:'.format(len(train_labels)))
     return (IMDBDataset(vocab, train_data),
-            IMDBDataset(vocab,validation_data),
-            IMDBDataset(vocab, test_data))
+            IMDBDataset(vocab,validation_data)
+            )
 
-def IMDB_indexing(train_text, train_labels, validation_text, validation_labels,test_text, test_labels, ngrams=1, vocab=None, include_unk=False):
+def IMDB_indexing(train_text, train_labels, validation_text, validation_labels, ngrams=1, vocab=None, include_unk=False):
 
 
-    return _setup_datasets(train_text, train_labels, validation_text, validation_labels,test_text, test_labels, ngrams, vocab, include_unk)
+    return _setup_datasets(train_text, train_labels, validation_text, validation_labels, ngrams, vocab, include_unk)
 def pad_sequence(sequences, ksz, batch_first=False, padding_value=0.0):
     # type: (List[Tensor], bool, float) -> Tensor
     r"""Pad a list of variable length Tensors with ``padding_value``
