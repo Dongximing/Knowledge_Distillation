@@ -226,10 +226,10 @@ def main():
     validation = DataLoader(validation_dataset, collate_fn= generate_batch, batch_size=args.batch_sz, shuffle=False)
     # testing = DataLoader(test_dataset, collate_fn= generate_batch, batch_size=args.batch_sz, shuffle=False)
     #loading vocab
-    glove = torchtext.vocab.GloVe(name='6B', dim=100)
+    glove = torchtext.vocab.GloVe(name='6B', dim=100,unk_init=torch.Tensor.normal_)
 
-    # ret = glove.get_vecs_by_tokens(['<unk>','<pad>','beautiful','good'])
-    # print(ret)
+    ret = glove.get_vecs_by_tokens(['<unk>','<pad>'])
+    print(ret)
     LSTM_model.embedding_layer.weight.data.copy_(weight_matrix(vocab, glove)).to(device)
     LSTM_model.embedding_layer.weight.requires_grad = False
 
