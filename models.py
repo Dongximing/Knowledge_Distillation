@@ -6,7 +6,7 @@ import config
 import torch.nn.functional as F
 config.seed_torch()
 class LSTMBaseline(nn.Module):
-    def __init__(self,vocab_size,hidden_dim,n_layers,dropout,number_class,bidirectional,embedding_dim =10):
+    def __init__(self,vocab_size,hidden_dim,n_layers,dropout,number_class,bidirectional,embedding_dim =100):
         super().__init__()
         self.embedding_layer = nn.Embedding(num_embeddings =vocab_size,embedding_dim= embedding_dim,padding_idx=1)
         self.hidden_size = hidden_dim
