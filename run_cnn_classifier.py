@@ -183,7 +183,7 @@ def main():
 
     parser.add_argument('--weight_decay', type=float, default=0.5)
     parser.add_argument('--scheduler_step_sz', type=int, default=5)
-    parser.add_argument('--lr_gamma', type=float, default=0.98)
+    parser.add_argument('--lr_gamma', type=float, default=0.1)
     parser.add_argument('--number_class', type=int, default=2)
 
     args = parser.parse_args()
@@ -218,6 +218,7 @@ def main():
         train_loss, train_acc = train(training,cnn_model,criterion,device,optimizer,lr_scheduler)
 
         valid_loss, valid_acc = validate(validation,cnn_model,criterion,device)
+        print("epoch is ",epoch)
 
         print(f'\tTrain Loss: {train_loss:.3f} | Train Acc: {train_acc * 100:.2f}%')
         print(f'\t Val. Loss: {valid_loss:.3f} |  Val. Acc: {valid_acc * 100:.2f}%')
