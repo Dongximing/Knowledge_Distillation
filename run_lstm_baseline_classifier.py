@@ -16,6 +16,14 @@ import pickle
 import sys
 import config
 config.seed_torch()
+
+import time
+
+def epoch_time(start_time, end_time):
+    elapsed_time = end_time - start_time
+    elapsed_mins = int(elapsed_time / 60)
+    elapsed_secs = int(elapsed_time - (elapsed_mins * 60))
+    return elapsed_mins, elapsed_secs
 def weight_matrix(vocab, vectors, dim=100):
     weight_matrix = np.zeros([len(vocab.itos), dim])
     for i, token in enumerate(vocab.stoi):
@@ -184,7 +192,7 @@ def main():
 
     parser.add_argument('--weight_decay', type=float, default=0.5)
     parser.add_argument('--scheduler_step_sz', type=int, default=5)
-    parser.add_argument('--lr_gamma', type=float, default=0.98)
+    parser.add_argument('--lr_gamma', type=float, default=0.1)
     parser.add_argument('--number_class', type=int, default=2)
 
     args = parser.parse_args()
@@ -207,7 +215,7 @@ def main():
     validation = DataLoader(validation_dataset, collate_fn= generate_batch, batch_size=args.batch_sz, shuffle=False)
     # testing = DataLoader(test_dataset, collate_fn= generate_batch, batch_size=args.batch_sz, shuffle=False)
     #loading vocab
-    glove = torchtext.vocab.GloVe(name='6B', dim=100,unk_init=torch.Tensor.normal_)
+    glove = torchtext.vocab.GloVe(name='6B', dim=100)
 
     # ret = glove.get_vecs_by_tokens(['<unk>','<pad>','beautiful','good'])
     # print(ret)
@@ -216,10 +224,13 @@ def main():
 
     best_loss = float('inf')
     for epoch in range(args.num_epochs):
+
         train_loss, train_acc = train(training,cnn_model,criterion,device,optimizer,lr_scheduler)
-
+        start_time = time.time()
         valid_loss, valid_acc = validate(validation,cnn_model,criterion,device)
-
+        end_time = time.time()
+        epoch_mins, epoch_secs = epoch_time(start_time, end_time)
+        print(f'Epoch: {epoch + 1:02} | Epoch Time: {epoch_mins}m {epoch_secs}s')
         print(f'\tTrain Loss: {train_loss:.3f} | Train Acc: {train_acc * 100:.2f}%')
         print(f'\t Val. Loss: {valid_loss:.3f} |  Val. Acc: {valid_acc * 100:.2f}%')
         if valid_loss < best_loss:
