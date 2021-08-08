@@ -206,7 +206,7 @@ def main():
     LSTM_model =LSTMBaseline(vocab_size = vocab_size,hidden_dim = config.HIDDEN_DIM, n_layers =config.N_LAYERS, dropout = args.dropout, number_class = args.number_class, bidirectional = True, embedding_dim =100)
     LSTM_model.to(device)
     #opt scheduler criterion
-    optimizer = torch.optim.Adam(cnn_model.parameters(), lr=args.lr)
+    optimizer = torch.optim.Adam(LSTM_model.parameters(), lr=args.lr)
     lr_scheduler = torch.optim.lr_scheduler.StepLR(optimizer, gamma=args.lr_gamma, step_size=5)
     criterion = nn.CrossEntropyLoss()
 
@@ -224,9 +224,9 @@ def main():
     best_loss = float('inf')
     for epoch in range(args.num_epochs):
 
-        train_loss, train_acc = train(training,cnn_model,criterion,device,optimizer,lr_scheduler)
+        train_loss, train_acc = train(training,LSTM_model,criterion,device,optimizer,lr_scheduler)
         start_time = time.time()
-        valid_loss, valid_acc = validate(validation,cnn_model,criterion,device)
+        valid_loss, valid_acc = validate(validation,LSTM_model,criterion,device)
         end_time = time.time()
         epoch_mins, epoch_secs = epoch_time(start_time, end_time)
         print(f'Epoch: {epoch + 1:02} | Epoch Time: {epoch_mins}m {epoch_secs}s')
