@@ -141,13 +141,13 @@ def train(train_dataset,model,criterion,device,optimizer,lr_scheduler):
         text = torch.index_select(text, dim=0, index=indices)
 
         label = torch.index_select(label, dim=0, index=indices)
-        text_length = text_length.to(device)
+        lengths= lengths.to(device)
         text = text.to(device)
         label =label.to(device)
 
 
         optimizer.zero_grad()
-        output = model(text,text_length)
+        output = model(text,lengths)
         loss = criterion(output,label)
         acc = categorical_accuracy(output, label)
         epoch_loss += loss.item()
@@ -166,11 +166,18 @@ def validate(validation_dataset, model, criterion, device):
 
     for i,(text, length,label) in enumerate(validation_dataset):
         text_length = torch.Tensor(length)
-        text_length = text_length.to(device)
+        label = torch.tensor(label, dtype=torch.long)
+
+        lengths, indices = torch.sort(text_length, dim=0, descending=True)
+        text = torch.index_select(text, dim=0, index=indices)
+
+        label = torch.index_select(label, dim=0, index=indices)
+        lengths = lengths.to(device)
         text = text.to(device)
-        label = torch.tensor(label, dtype=torch.long, device=device)
+        label = label.to(device)
+
         with torch.no_grad():
-            output = model(text,text_length)
+            output = model(text,lengths)
         loss = criterion(output,label)
         acc = categorical_accuracy(output, label)
         epoch_loss += loss.item()
