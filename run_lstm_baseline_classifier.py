@@ -5,7 +5,7 @@ from torch.utils.data import DataLoader
 from torchtext.vocab import GloVe
 from tqdm import tqdm
 from utils import IMDB_indexing, pad_sequence
-from models import CNN_Baseline
+from models import CNN_Baseline,LSTMBaseline
 import torchtext.vocab
 import csv
 import pandas as pd
@@ -182,8 +182,7 @@ def main():
     parser.add_argument('--train_path',type=str,default='/home/dongxx/projects/def-mercer/dongxx/project/pythonProject/train.csv')
     parser.add_argument('--validation_path',type= str,default='/home/dongxx/projects/def-mercer/dongxx/project/pythonProject/valid.csv')
     # parser.add_argument('--test_path')
-    parser.add_argument('--nKernel', type=int, default=64)
-    parser.add_argument('--ksz', type=list, default=[3,4,5])
+
     parser.add_argument('--dropout', type=float, default=0.2)
     parser.add_argument('--embedding_dim', type=int, default=100)
     parser.add_argument('--num_epochs', type=int, default=20)
