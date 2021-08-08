@@ -223,9 +223,10 @@ def main():
 
     best_loss = float('inf')
     for epoch in range(args.num_epochs):
+        start_time = time.time()
 
         train_loss, train_acc = train(training,LSTM_model,criterion,device,optimizer,lr_scheduler)
-        start_time = time.time()
+
         valid_loss, valid_acc = validate(validation,LSTM_model,criterion,device)
         end_time = time.time()
         epoch_mins, epoch_secs = epoch_time(start_time, end_time)
@@ -234,7 +235,7 @@ def main():
         print(f'\t Val. Loss: {valid_loss:.3f} |  Val. Acc: {valid_acc * 100:.2f}%')
         if valid_loss < best_loss:
             best_loss = valid_loss
-            torch.save(cnn_model.state_dict(), config.MODEL_Base_PATH)
+            torch.save(LSTM_model.state_dict(), config.MODEL_Base_PATH)
 
 
 
