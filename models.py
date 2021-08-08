@@ -24,7 +24,7 @@ class LSTMBaseline(nn.Module):
         # a_lengths, idx = text_length.sort(0, descending=True)
         # _, un_idx = t.sort(idx, dim=0)
         # seq = text[idx]
-
+        print(text)
         seq = self.dropout(self.embedding_layer(text))
         print("emebedding")
         print(self.embedding_layer.weight[:2,:])
