@@ -63,7 +63,7 @@ class CNN_Baseline(nn.Module):
         self.embedding_dim = embedding_dim
         self.nKernel = nKernel
         self.ksz = ksz
-        self.embedding_layer = nn.Embedding(num_embeddings=vocab_size,embedding_dim=embedding_dim)
+        self.embedding_layer = nn.Embedding(num_embeddings=vocab_size,embedding_dim=embedding_dim,padding_idx=1)
         self.convs = nn.ModuleList([nn.Conv2d(1,nKernel,(k,embedding_dim)) for k in ksz])
         self.dropout = nn.Dropout(0.5)
         self.linear = nn.Linear(len(self.ksz)*self.nKernel,number_class)
