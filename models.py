@@ -8,7 +8,7 @@ config.seed_torch()
 class LSTMBaseline(nn.Module):
     def __init__(self,vocab_size,hidden_dim,n_layers,dropout,number_class,bidirectional,embedding_dim =10):
         super().__init__()
-        self.embedding = nn.Embedding(num_embeddings =vocab_size,embedding_dim= embedding_dim,padding_idx=1)
+        self.embedding_layer = nn.Embedding(num_embeddings =vocab_size,embedding_dim= embedding_dim,padding_idx=1)
         self.hidden_size = hidden_dim
         self.rnn = nn.LSTM(embedding_dim,hidden_dim,num_layers=n_layers,dropout=dropout, bidirectional=bidirectional,batch_first=True)
         # self.rnn = nn.GRU(embedding_dim,
