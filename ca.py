@@ -90,6 +90,15 @@ def _text_iterator(text, labels=None, ngrams=1, yield_label=False):
 vocab = build_vocab_from_iterator(_text_iterator(train_text, label,1))
 
 print(vocab.get_stoi())
+embedding = nn.Embedding(10, 3)
+input = torch.LongTensor([[1,2,4,5],[4,3,2,9]])
+print(embedding.weight)
+# embedding1 = nn.Embedding(10, 3)
+# embedding1.weight.data.copy_(embedding.weight)
+embedding1 = nn.Embedding.from_pretrained(embedding.weight,freeze=False)
+print(embedding1.weight)
+
+
 # def pad_sequence(sequences, ksz, batch_first=False, padding_value=0.0):
 #     # type: (List[Tensor], bool, float) -> Tensor
 #     r"""Pad a list of variable length Tensors with ``padding_value``

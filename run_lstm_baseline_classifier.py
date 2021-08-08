@@ -131,8 +131,9 @@ def train(train_dataset,model,criterion,device,optimizer,lr_scheduler):
         text_length = text_length.to(device)
         text = text.to(device)
 
+
         optimizer.zero_grad()
-        output = model(text)
+        output = model(text,text_length)
         loss = criterion(output,label)
         acc = categorical_accuracy(output, label)
         epoch_loss += loss.item()
@@ -155,7 +156,7 @@ def validate(validation_dataset, model, criterion, device):
         text = text.to(device)
         label = torch.tensor(label, dtype=torch.long, device=device)
         with torch.no_grad():
-            output = model(text)
+            output = model(text,text_length)
         loss = criterion(output,label)
         acc = categorical_accuracy(output, label)
         epoch_loss += loss.item()
@@ -194,9 +195,9 @@ def main():
     # dataset
     # train_dataset, validation_dataset, test_dataset, vocab, vocab_size = prepare_dateset(args.train_path,args.validation_path)
     train_dataset, validation_dataset,vocab, vocab_size = prepare_dateset(args.train_path,args.validation_path)
-    # model
-    cnn_model =CNN_Baseline(vocab_size = vocab_size, nKernel = args.nKernel, ksz = args.ksz,number_class = args.number_class)
-    cnn_model.to(device)
+    # modelvocab_size,hidden_dim,n_layers,dropout,number_class,bidirectional,embedding_dim =10
+    LSTM_model =LSTMBaseline(vocab_size = vocab_size,hidden_dim = config.HIDDEN_DIM, n_layer =config.N_LAYERS, number_class = args.number_class, bidirectional = True, embedding_dim =100)
+    LSTM_model.to(device)
     #opt scheduler criterion
     optimizer = torch.optim.Adam(cnn_model.parameters(), lr=args.lr)
     lr_scheduler = torch.optim.lr_scheduler.StepLR(optimizer, gamma=args.lr_gamma, step_size=5)
@@ -208,10 +209,10 @@ def main():
     #loading vocab
     glove = torchtext.vocab.GloVe(name='6B', dim=100,unk_init=torch.Tensor.normal_)
 
-    ret = glove.get_vecs_by_tokens(['<unk>','<pad>','beautiful','good'])
-    print(ret)
-    cnn_model.embedding_layer.weight.data.copy_(weight_matrix(vocab, glove)).to(device)
-    cnn_model.embedding_layer.weight.requires_grad = False
+    # ret = glove.get_vecs_by_tokens(['<unk>','<pad>','beautiful','good'])
+    # print(ret)
+    LSTM_model.embedding_layer.weight.data.copy_(weight_matrix(vocab, glove)).to(device)
+    LSTM_model.embedding_layer.weight.requires_grad = False
 
     best_loss = float('inf')
     for epoch in range(args.num_epochs):
@@ -223,7 +224,7 @@ def main():
         print(f'\t Val. Loss: {valid_loss:.3f} |  Val. Acc: {valid_acc * 100:.2f}%')
         if valid_loss < best_loss:
             best_loss = valid_loss
-            torch.save(cnn_model.state_dict(), config.MODEL_CNN_PATH)
+            torch.save(cnn_model.state_dict(), config.MODEL_Base_PATH)
 
 
 
