@@ -170,7 +170,6 @@ def validate(validation_dataset, model, criterion, device):
 
         lengths, indices = torch.sort(text_length, dim=0, descending=True)
         text = torch.index_select(text, dim=0, index=indices)
-
         label = torch.index_select(label, dim=0, index=indices)
         lengths = lengths.to(device)
         text = text.to(device)
@@ -198,7 +197,7 @@ def main():
 
     parser.add_argument('--dropout', type=float, default=0.2)
     parser.add_argument('--embedding_dim', type=int, default=100)
-    parser.add_argument('--num_epochs', type=int, default=20)
+    parser.add_argument('--num_epochs', type=int, default=15)
     parser.add_argument('--batch_sz', type=int, default=32)
     parser.add_argument('--lr', type=float, default=1e-3)
 
