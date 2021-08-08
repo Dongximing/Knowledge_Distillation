@@ -25,7 +25,7 @@ class LSTMBaseline(nn.Module):
         # _, un_idx = t.sort(idx, dim=0)
         # seq = text[idx]
         print(text)
-        seq = self.dropout(self.embedding_layer(text))
+        seq = self.embedding_layer(text)
         print("emebedding")
         print(seq)
 
