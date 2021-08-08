@@ -136,8 +136,14 @@ def train(train_dataset,model,criterion,device,optimizer,lr_scheduler):
     for i,(text, length,label) in enumerate(train_dataset):
         text_length = torch.Tensor(length)
         label = torch.tensor(label,dtype=torch.long,device=device)
+
+        lengths, indices = torch.sort(text_length, dim=0, descending=True)
+        text = torch.index_select(text, dim=0, index=indices)
+
+        label = torch.index_select(label, dim=0, index=indices)
         text_length = text_length.to(device)
         text = text.to(device)
+        label =label.to(device)
 
 
         optimizer.zero_grad()
