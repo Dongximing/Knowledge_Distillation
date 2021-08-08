@@ -206,7 +206,7 @@ def main():
     validation = DataLoader(validation_dataset, collate_fn= generate_batch, batch_size=args.batch_sz, shuffle=False)
     # testing = DataLoader(test_dataset, collate_fn= generate_batch, batch_size=args.batch_sz, shuffle=False)
     #loading vocab
-    glove = torchtext.vocab.GloVe(name='6B', dim=100,unk_init=torch.Tensor.normal_)
+    glove = torchtext.vocab.GloVe(name='6B', dim=100)
 
     ret = glove.get_vecs_by_tokens(['<unk>','<pad>','beautiful','good'])
     print(ret)
