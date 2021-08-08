@@ -26,6 +26,7 @@ class LSTMBaseline(nn.Module):
         # seq = text[idx]
 
         seq = self.dropout(self.embedding_layer(text))
+        print("emebedding")
         print(self.embedding_layer.weight[:2,:])
 
         a_packed_input = t.nn.utils.rnn.pack_padded_sequence(input=seq, lengths=text_length.to('cpu'), batch_first=True)
