@@ -142,7 +142,7 @@ def train(train_dataset,model,criterion,device,optimizer,lr_scheduler):
 
         label = torch.index_select(label, dim=0, index=indices)
         lengths= lengths.to(device)
-        text = text.to(device)
+        text = text.to(device,dtype = torch.long)
         label =label.to(device)
 
 
@@ -172,7 +172,7 @@ def validate(validation_dataset, model, criterion, device):
         text = torch.index_select(text, dim=0, index=indices)
         label = torch.index_select(label, dim=0, index=indices)
         lengths = lengths.to(device)
-        text = text.to(device)
+        text = text.to(device,dtype = torch.long)
         label = label.to(device)
 
         with torch.no_grad():
