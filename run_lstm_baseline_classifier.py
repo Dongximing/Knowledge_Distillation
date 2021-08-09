@@ -45,8 +45,8 @@ def prepare_dateset(train_data_path, validation_data_path):
     print('Start loading training data')
     logging.info("Start loading training data")
     training = pd.read_csv(train_data_path)
-    training_review = training.Reviews[:4]
-    training_sentiment = training.Sentiment[:4]
+    training_review = training.Reviews[:2]
+    training_sentiment = training.Sentiment[:2]
 
     for text,label in zip(training_review,training_sentiment):
         training_texts.append(text)
@@ -59,8 +59,8 @@ def prepare_dateset(train_data_path, validation_data_path):
     logging.info("Start loading validation data")
 
     validation = pd.read_csv(validation_data_path)
-    validation_review = validation.Reviews[:4]
-    validation_sentiment = validation.Sentiment[:4]
+    validation_review = validation.Reviews[:2]
+    validation_sentiment = validation.Sentiment[:2]
 
 
     for text,label in zip(validation_review,validation_sentiment):
