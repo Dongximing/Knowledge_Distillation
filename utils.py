@@ -78,6 +78,8 @@ def _setup_datasets(train_text, train_labels, validation_text, validation_labels
         print(vocab.itos[0])
         print(vocab.itos[1])
         print(vocab.itos[2])
+        print(vocab.itos[3])
+        print(vocab.itos[4])
     else:
         if not isinstance(vocab, Vocab):
             raise TypeError("Passed vocabulary is not of type Vocab")
