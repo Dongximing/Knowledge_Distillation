@@ -75,7 +75,7 @@ def _setup_datasets(train_text, train_labels, validation_text, validation_labels
 
         vocab = build_vocab_from_iterator(_text_iterator(train_text, train_labels, ngrams))
 
-        vocab.min_freq = 2
+        vocab.__init__(min_freq=2)
 
         print(vocab.stoi['<unk>'])
         print(vocab.itos[0])
