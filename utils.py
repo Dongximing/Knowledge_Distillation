@@ -69,7 +69,7 @@ class IMDBDataset(torch.utils.data.Dataset):
 
     def get_vocab(self):
         return self._vocab
-def _setup_datasets(train_text, train_labels, validation_text, validation_labels, ngrams=1, vocab=None, include_unk=False):
+def _setup_datasets(train_text, train_labels, validation_text, validation_labels, ngrams=1, vocab=None, include_unk=True):
     if vocab is None:
         logging.info('Building Vocab based on {}'.format(train_text))
         vocab = build_vocab_from_iterator(_text_iterator(train_text, train_labels, ngrams))
