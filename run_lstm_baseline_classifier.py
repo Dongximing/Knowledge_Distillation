@@ -45,8 +45,8 @@ def prepare_dateset(train_data_path, validation_data_path):
     print('Start loading training data')
     logging.info("Start loading training data")
     training = pd.read_csv(train_data_path)
-    training_review = training.Reviews[:5]
-    training_sentiment = training.Sentiment[:5]
+    training_review = training.Reviews[:4]
+    training_sentiment = training.Sentiment[:4]
 
     for text,label in zip(training_review,training_sentiment):
         training_texts.append(text)
@@ -59,8 +59,8 @@ def prepare_dateset(train_data_path, validation_data_path):
     logging.info("Start loading validation data")
 
     validation = pd.read_csv(validation_data_path)
-    validation_review = validation.Reviews
-    validation_sentiment = validation.Sentiment
+    validation_review = validation.Reviews[:4]
+    validation_sentiment = validation.Sentiment[:4]
 
 
     for text,label in zip(validation_review,validation_sentiment):
@@ -236,11 +236,11 @@ def main():
     print(ret)
 
     best_loss = float('inf')
-    for epoch in range(args.num_epochs):
+    for epoch in range(5):
         start_time = time.time()
-
+        print("training emebedding")
         train_loss, train_acc = train(training,LSTM_model,criterion,device,optimizer,lr_scheduler)
-
+        print("testing emebedding")
         valid_loss, valid_acc = validate(validation,LSTM_model,criterion,device)
         end_time = time.time()
         epoch_mins, epoch_secs = epoch_time(start_time, end_time)
