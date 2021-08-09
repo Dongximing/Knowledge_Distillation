@@ -45,7 +45,8 @@ def prepare_dateset(train_data_path, validation_data_path):
     print('Start loading training data')
     logging.info("Start loading training data")
     training = pd.read_csv(train_data_path)
-    training_review = training.Reviews[:2]
+
+    training_review = ['I want to wtkdas','kda want to me']
     training_sentiment = training.Sentiment[:2]
 
     for text,label in zip(training_review,training_sentiment):
