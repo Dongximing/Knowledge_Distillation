@@ -72,15 +72,14 @@ class IMDBDataset(torch.utils.data.Dataset):
 def _setup_datasets(train_text, train_labels, validation_text, validation_labels, ngrams=1, vocab=None, include_unk=True):
     if vocab is None:
         logging.info('Building Vocab based on {}'.format(train_text))
-        vocab.min_freq = 2
-        vocab = build_vocab_from_iterator(_text_iterator(train_text, train_labels, ngrams))
+
+        vocab = build_vocab_from_iterator(_text_iterator(train_text, train_labels, ngrams)).min_freq=2
 
         print(vocab.stoi['<unk>'])
         print(vocab.itos[0])
         print(vocab.itos[1])
         print(vocab.itos[2])
-        print(vocab.itos[3])
-        print(vocab.itos[4])
+
     else:
         if not isinstance(vocab, Vocab):
             raise TypeError("Passed vocabulary is not of type Vocab")
