@@ -46,8 +46,8 @@ def prepare_dateset(train_data_path, validation_data_path):
     logging.info("Start loading training data")
     training = pd.read_csv(train_data_path)
 
-    training_review = ['I want to wtkdas me ','kda want to  me']
-    training_sentiment = training.Sentiment[:2]
+    training_review = training.Review
+    training_sentiment = training.Sentiment
 
     for text,label in zip(training_review,training_sentiment):
         training_texts.append(text)
@@ -60,8 +60,8 @@ def prepare_dateset(train_data_path, validation_data_path):
     logging.info("Start loading validation data")
 
     validation = pd.read_csv(validation_data_path)
-    validation_review = validation.Reviews[:2]
-    validation_sentiment = validation.Sentiment[:2]
+    validation_review = validation.Review
+    validation_sentiment = validation.Sentiment
 
 
     for text,label in zip(validation_review,validation_sentiment):
@@ -192,8 +192,8 @@ def validate(validation_dataset, model, criterion, device):
 
 def main():
     parser = argparse.ArgumentParser()
-    parser.add_argument('--train_path',type=str,default='/home/dongxx/projects/def-mercer/dongxx/project/pythonProject/train.csv')
-    parser.add_argument('--validation_path',type= str,default='/home/dongxx/projects/def-mercer/dongxx/project/pythonProject/valid.csv')
+    parser.add_argument('--train_path',type=str,default='/home/dongxx/projects/def-mercer/dongxx/project/data/train.csv')
+    parser.add_argument('--validation_path',type= str,default='/home/dongxx/projects/def-mercer/dongxx/project/data/valid.csv')
     # parser.add_argument('--test_path')
 
     parser.add_argument('--dropout', type=float, default=0.2)
@@ -235,15 +235,15 @@ def main():
     LSTM_model.embedding_layer.weight.data[0] = torch.ones(100)
 
     # LSTM_model.embedding_layer.weight.requires_grad = False
-    ret = glove.get_vecs_by_tokens(['<unk>'])
-    print(ret)
+    # ret = glove.get_vecs_by_tokens(['<unk>'])
+    # print(ret)
 
     best_loss = float('inf')
-    for epoch in range(10):
+    for epoch in range(15):
         start_time = time.time()
-        print("training emebedding")
+        # print("training emebedding")
         train_loss, train_acc = train(training,LSTM_model,criterion,device,optimizer,lr_scheduler)
-        print("testing emebedding")
+        # print("testing emebedding")
         valid_loss, valid_acc = validate(validation,LSTM_model,criterion,device)
         end_time = time.time()
         epoch_mins, epoch_secs = epoch_time(start_time, end_time)
@@ -253,6 +253,7 @@ def main():
         if valid_loss < best_loss:
             best_loss = valid_loss
             torch.save(LSTM_model.state_dict(), config.MODEL_Base_PATH)
+
 
 
 
