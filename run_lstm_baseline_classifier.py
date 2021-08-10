@@ -134,7 +134,7 @@ def train(train_dataset,model,criterion,device,optimizer,lr_scheduler):
     epoch_acc = 0
 
 
-    for i,(text, length,label) in enumerate(train_dataset):
+    for i,(text, length,label) in tqdm(enumerate(train_dataset),total = len(train_dataset)):
         text_length = torch.Tensor(length)
         label = torch.tensor(label,dtype=torch.long)
 
@@ -239,6 +239,7 @@ def main():
     # print(ret)
 
     best_loss = float('inf')
+    print("training")
     for epoch in range(1):
         start_time = time.time()
         # print("training emebedding")
@@ -253,11 +254,14 @@ def main():
         if valid_loss < best_loss:
             best_loss = valid_loss
             torch.save(LSTM_model.state_dict(), config.MODEL_Base_PATH)
+    print("training done")
 
+    print("testing")
     LSTM_model.load_state_dict(torch.load(config.MODEL_Base_PATH))
     test_loss, test_acc = validate(testing,LSTM_model,criterion,device)
 
     print(f'Test Loss: {test_loss:.3f} | Test Acc: {test_acc * 100:.2f}%')
+    print("testing done")
 
 
 
