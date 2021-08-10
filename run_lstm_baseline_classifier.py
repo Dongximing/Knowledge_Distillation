@@ -32,15 +32,15 @@ def weight_matrix(vocab, vectors, dim=100):
         except KeyError:
             weight_matrix[i] = np.random.normal(scale=0.5, size=(dim,))
     return torch.from_numpy(weight_matrix)
-def prepare_dateset(train_data_path, validation_data_path):
+def prepare_dateset(train_data_path, validation_data_path,test_data_path):
     # with open(train_data_path,'r') as csvfile:
     #     csvreader = csv.reader(csvf
     training_texts = []
     training_labels =[]
     validation_texts = []
     validation_labels = []
-    # testing_texts = []
-    # testing_labels = []
+    testing_texts = []
+    testing_labels = []
     # training #
     print('Start loading training data')
     logging.info("Start loading training data")
@@ -71,22 +71,22 @@ def prepare_dateset(train_data_path, validation_data_path):
     logging.info("Finish loading validation data")
     # testing #
 
-    # print('Start loading testing data')
-    # logging.info("Start loading testing data")
+    print('Start loading testing data')
+    logging.info("Start loading testing data")
 
-    # testing = pd.read_csv(test_data_path)
-    # testing_review = testing.Review
-    # testing_sentiment = testing.Sentiment
-    # for text, label in zip(testing_review, testing_sentiment):
-    #     testing_texts.append(text)
-    #     testing_labels.append(label)
-    # print("Finish loading testing data")
-    # logging.info("Finish loading testing data")
-    #
-    # print('prepare training and test sets')
-    # logging.info('Prepare training and test sets')
+    testing = pd.read_csv(test_data_path)
+    testing_review = testing.Review
+    testing_sentiment = testing.Sentiment
+    for text, label in zip(testing_review, testing_sentiment):
+        testing_texts.append(text)
+        testing_labels.append(label)
+    print("Finish loading testing data")
+    logging.info("Finish loading testing data")
 
-    train_dataset, validation_dataset = IMDB_indexing(training_texts,training_labels,validation_texts,validation_labels)
+    print('prepare training and test sets')
+    logging.info('Prepare training and test sets')
+
+    train_dataset, validation_dataset,testing_dataset = IMDB_indexing(training_texts,training_labels,validation_texts,validation_labels,testing_texts,testing_labels)
     print('building vocab')
 
     vocab = train_dataset.get_vocab()
@@ -96,7 +96,7 @@ def prepare_dateset(train_data_path, validation_data_path):
     print('building vocab length',vocab_size)
     logging.info('Build vocab')
 
-    return train_dataset,validation_dataset,vocab,vocab_size
+    return train_dataset,validation_dataset,testing_dataset, vocab,vocab_size
 
 def generate_batch(batch):
     """
@@ -194,7 +194,7 @@ def main():
     parser = argparse.ArgumentParser()
     parser.add_argument('--train_path',type=str,default='/home/dongxx/projects/def-mercer/dongxx/project/data/train.csv')
     parser.add_argument('--validation_path',type= str,default='/home/dongxx/projects/def-mercer/dongxx/project/data/valid.csv')
-    # parser.add_argument('--test_path')
+    parser.add_argument('--test_path',type= str,default='/home/dongxx/projects/def-mercer/dongxx/project/data/test.csv')
 
     parser.add_argument('--dropout', type=float, default=0.2)
     parser.add_argument('--embedding_dim', type=int, default=100)
@@ -214,7 +214,7 @@ def main():
     device = torch.device('cuda' if torch.cuda.is_available() else 'cpu')
     # dataset
     # train_dataset, validation_dataset, test_dataset, vocab, vocab_size = prepare_dateset(args.train_path,args.validation_path)
-    train_dataset, validation_dataset,vocab, vocab_size = prepare_dateset(args.train_path,args.validation_path)
+    train_dataset, validation_dataset,testing_dataset, vocab, vocab_size = prepare_dateset(args.train_path,args.validation_path,args.test_path)
     # modelvocab_size,hidden_dim,n_layers,dropout,number_class,bidirectional,embedding_dim =10
     LSTM_model =LSTMBaseline(vocab_size = vocab_size,hidden_dim = config.HIDDEN_DIM, n_layers =config.N_LAYERS, dropout = args.dropout, number_class = args.number_class, bidirectional = True, embedding_dim =100)
     LSTM_model.to(device)
@@ -225,21 +225,21 @@ def main():
 
     training = DataLoader(train_dataset,collate_fn = generate_batch, batch_size=args.batch_sz,shuffle=True)
     validation = DataLoader(validation_dataset, collate_fn= generate_batch, batch_size=args.batch_sz, shuffle=False)
-    # testing = DataLoader(test_dataset, collate_fn= generate_batch, batch_size=args.batch_sz, shuffle=False)
+    testing = DataLoader(test_dataset, collate_fn= generate_batch, batch_size=args.batch_sz, shuffle=False)
     #loading vocab
     glove = torchtext.vocab.GloVe(name='6B', dim=100,unk_init=torch.Tensor.normal_)
 
 
     LSTM_model.embedding_layer.weight.data.copy_(weight_matrix(vocab, glove)).to(device)
     LSTM_model.embedding_layer.weight.data[1] = torch.zeros(100)
-    LSTM_model.embedding_layer.weight.data[0] = torch.ones(100)
 
-    # LSTM_model.embedding_layer.weight.requires_grad = False
+
+    LSTM_model.embedding_layer.weight.requires_grad = False
     # ret = glove.get_vecs_by_tokens(['<unk>'])
     # print(ret)
 
     best_loss = float('inf')
-    for epoch in range(15):
+    for epoch in range(1):
         start_time = time.time()
         # print("training emebedding")
         train_loss, train_acc = train(training,LSTM_model,criterion,device,optimizer,lr_scheduler)
@@ -253,6 +253,11 @@ def main():
         if valid_loss < best_loss:
             best_loss = valid_loss
             torch.save(LSTM_model.state_dict(), config.MODEL_Base_PATH)
+
+    LSTM_model.load_state_dict(torch.load(config.MODEL_Base_PATH))
+    test_loss, test_acc = validate(testing,LSTM_model,criterion,device)
+
+    print(f'Test Loss: {test_loss:.3f} | Test Acc: {test_acc * 100:.2f}%')
 
 
 
