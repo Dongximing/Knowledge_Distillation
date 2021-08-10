@@ -3,12 +3,12 @@ import torch
 import numpy as np
 import matplotlib
 import matplotlib.pyplot as plt
-import seaborn as sns
+# import seaborn as sns
 ####from textblob import TextBlob
 ####from nltk.corpus import stopwords
 from sklearn import model_selection
 # import  nltk
-plt.switch_backend('agg')
+# plt.switch_backend('agg')
 # nltk.download('stopwords')
 train_data = pd.read_excel('/home/dongxx/projects/def-mercer/dongxx/project/data/train_data_complete.xlsx')
 testing_data = pd.read_excel('/home/dongxx/projects/def-mercer/dongxx/project/data/test_data_complete.xlsx')
