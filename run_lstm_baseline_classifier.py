@@ -241,7 +241,7 @@ def main():
 
     best_loss = float('inf')
     print("training")
-    for epoch in range(1):
+    for epoch in range(args.num_epochs):
         start_time = time.time()
         # print("training emebedding")
         train_loss, train_acc = train(training,LSTM_model,criterion,device,optimizer,lr_scheduler)
