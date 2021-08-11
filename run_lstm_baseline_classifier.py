@@ -192,13 +192,13 @@ def validate(validation_dataset, model, criterion, device):
 
 def main():
     parser = argparse.ArgumentParser()
-    parser.add_argument('--train_path',type=str,default='/home/dongxx/projects/def-mercer/dongxx/project/data/train.csv')
-    parser.add_argument('--validation_path',type= str,default='/home/dongxx/projects/def-mercer/dongxx/project/data/valid.csv')
+    parser.add_argument('--train_path',type=str,default='/home/dongxx/projects/def-mercer/dongxx/project/pythonProject/train.csv')
+    parser.add_argument('--validation_path',type= str,default='/home/dongxx/projects/def-mercer/dongxx/project/pythonProject/valid.csv')
     parser.add_argument('--test_path',type= str,default='/home/dongxx/projects/def-mercer/dongxx/project/data/test.csv')
 
     parser.add_argument('--dropout', type=float, default=0.2)
     parser.add_argument('--embedding_dim', type=int, default=100)
-    parser.add_argument('--num_epochs', type=int, default=16)
+    parser.add_argument('--num_epochs', type=int, default=12)
     parser.add_argument('--batch_sz', type=int, default=32)
     parser.add_argument('--lr', type=float, default=1e-3)
 
@@ -233,10 +233,10 @@ def main():
 
     LSTM_model.embedding_layer.weight.data.copy_(weight_matrix(vocab, glove)).to(device)
     LSTM_model.embedding_layer.weight.data[1] = torch.zeros(100)
-    LSTM_model.embedding_layer.weight.data[0] = torch.zeros(100)
+    # LSTM_model.embedding_layer.weight.data[0] = torch.zeros(100)
 
 
-    # LSTM_model.embedding_layer.weight.requires_grad = False
+    LSTM_model.embedding_layer.weight.requires_grad = False
     # ret = glove.get_vecs_by_tokens(['<unk>'])
     # print(ret)
 
