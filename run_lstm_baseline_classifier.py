@@ -46,7 +46,7 @@ def prepare_dateset(train_data_path, validation_data_path,test_data_path):
     logging.info("Start loading training data")
     training = pd.read_csv(train_data_path)
 
-    training_review = training.Reviews
+    training_review = training.Review
     training_sentiment = training.Sentiment
 
     for text,label in zip(training_review,training_sentiment):
@@ -60,7 +60,7 @@ def prepare_dateset(train_data_path, validation_data_path,test_data_path):
     logging.info("Start loading validation data")
 
     validation = pd.read_csv(validation_data_path)
-    validation_review = validation.Reviews
+    validation_review = validation.Review
     validation_sentiment = validation.Sentiment
 
 
@@ -138,17 +138,17 @@ def train(train_dataset,model,criterion,device,optimizer,lr_scheduler):
         text_length = torch.Tensor(length)
         label = torch.tensor(label,dtype=torch.long)
 
-        lengths, indices = torch.sort(text_length, dim=0, descending=True)
-        text = torch.index_select(text, dim=0, index=indices)
-
-        label = torch.index_select(label, dim=0, index=indices)
-        lengths= lengths.to(device)
+        # lengths, indices = torch.sort(text_length, dim=0, descending=True)
+        # text = torch.index_select(text, dim=0, index=indices)
+        #
+        # label = torch.index_select(label, dim=0, index=indices)
+        text_length= text_length.to(device)
         text = text.to(device,dtype = torch.long)
         label =label.to(device)
 
 
         optimizer.zero_grad()
-        output = model(text,lengths)
+        output = model(text,text_length)
         loss = criterion(output,label)
         acc = categorical_accuracy(output, label)
         epoch_loss += loss.item()
@@ -169,15 +169,15 @@ def validate(validation_dataset, model, criterion, device):
         text_length = torch.Tensor(length)
         label = torch.tensor(label, dtype=torch.long)
 
-        lengths, indices = torch.sort(text_length, dim=0, descending=True)
-        text = torch.index_select(text, dim=0, index=indices)
-        label = torch.index_select(label, dim=0, index=indices)
-        lengths = lengths.to(device)
+        # lengths, indices = torch.sort(text_length, dim=0, descending=True)
+        # text = torch.index_select(text, dim=0, index=indices)
+        # label = torch.index_select(label, dim=0, index=indices)
+        text_length = text_length.to(device)
         text = text.to(device,dtype = torch.long)
         label = label.to(device)
 
         with torch.no_grad():
-            output = model(text,lengths)
+            output = model(text,text_length)
         loss = criterion(output,label)
         acc = categorical_accuracy(output, label)
         epoch_loss += loss.item()
@@ -233,7 +233,7 @@ def main():
 
     LSTM_model.embedding_layer.weight.data.copy_(weight_matrix(vocab, glove)).to(device)
     LSTM_model.embedding_layer.weight.data[1] = torch.zeros(100)
-    # LSTM_model.embedding_layer.weight.data[0] = torch.zeros(100)
+    LSTM_model.embedding_layer.weight.data[0] = torch.zeros(100)
 
 
     LSTM_model.embedding_layer.weight.requires_grad = False

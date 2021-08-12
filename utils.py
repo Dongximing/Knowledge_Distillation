@@ -106,7 +106,7 @@ def _setup_datasets(train_text, train_labels, validation_text, validation_labels
 
             )
 
-def IMDB_indexing(train_text, train_labels, validation_text, validation_labels, test_text,test_labels,ngrams=1, vocab=None, include_unk=False):
+def IMDB_indexing(train_text, train_labels, validation_text, validation_labels, test_text,test_labels,ngrams=1, vocab=None, include_unk=True):
 
 
     return _setup_datasets(train_text, train_labels, validation_text, validation_labels, test_text,test_labels,ngrams, vocab, include_unk)

@@ -21,20 +21,20 @@ class LSTMBaseline(nn.Module):
         self.dropout = nn.Dropout(dropout)
     def forward(self,text,text_length):
 
-        # a_lengths, idx = text_length.sort(0, descending=True)
-        # _, un_idx = t.sort(idx, dim=0)
-        # seq = text[idx]
+        a_lengths, idx = text_length.sort(0, descending=True)
+        _, un_idx = t.sort(idx, dim=0)
+        seq = text[idx]
         # print(text)
-        seq = self.dropout(self.embedding_layer(text))
+        seq = self.dropout(self.embedding_layer(seq))
 
         # print(seq)
 
-        a_packed_input = t.nn.utils.rnn.pack_padded_sequence(input=seq, lengths=text_length.to('cpu'), batch_first=True)
+        a_packed_input = t.nn.utils.rnn.pack_padded_sequence(input=seq, lengths=a_lengths.to('cpu'), batch_first=True)
         packed_output, (hidden, cell) = self.rnn(a_packed_input)
         out, _ = t.nn.utils.rnn.pad_packed_sequence(packed_output, batch_first=True)
         hidden = self.dropout(t.cat((hidden[-2, :, :], hidden[-1, :, :]), dim=1))
-        # out = t.index_select(out, 0, un_idx)
-        # hidden = t.index_select(hidden, 0, un_idx)
+        out = t.index_select(out, 0, un_idx)
+        hidden = t.index_select(hidden, 0, un_idx)
         # last_timesteps =text_length.unsqueeze(1)
         # last_timesteps = last_timesteps-1
         # last_timesteps =torch.tensor(last_timesteps, dtype=torch.int64).to(device = 'cuda')
