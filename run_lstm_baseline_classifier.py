@@ -216,13 +216,13 @@ def main():
     device = torch.device('cuda' if torch.cuda.is_available() else 'cpu')
     # dataset
     glove = torchtext.vocab.GloVe(name='6B', dim=100, unk_init=torch.Tensor.normal_)
-    print(glove.stoi)
+    print(glove.stoi['<unk>'])
     vocab = Vocab(glove.stoi,specials =[])
     print(vocab.itos[0])
     print(vocab.itos[1])
     print(vocab.itos[2])
     # train_dataset, validation_dataset, test_dataset, vocab, vocab_size = prepare_dateset(args.train_path,args.validation_path)
-    train_dataset, validation_dataset,test_dataset, vocab_size = prepare_dateset(args.train_path,args.validation_path,args.test_path,vocab=vocab)
+    train_dataset, validation_dataset,test_dataset, vocab_size = prepare_dateset(args.train_path, args.validation_path, args.test_path,vocab)
     # modelvocab_size,hidden_dim,n_layers,dropout,number_class,bidirectional,embedding_dim =10
     LSTM_model =LSTMBaseline(vocab_size = vocab_size,hidden_dim = config.HIDDEN_DIM, n_layers =config.N_LAYERS, dropout = args.dropout, number_class = args.number_class, bidirectional = True, embedding_dim =100)
     LSTM_model.to(device)
