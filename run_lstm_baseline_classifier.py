@@ -128,10 +128,12 @@ def categorical_accuracy(preds, y):
     acc = correct.float() / y.shape[0]
     return acc
 
-def train(train_dataset,model,criterion,device,optimizer,lr_scheduler):
+def train(train_dataset,model,criterion,device,optimizer,lr_scheduler,epoche):
     model.train()
     epoch_loss = 0
     epoch_acc = 0
+    if epoche>4:
+        model.embedding_layer.weight.requires_grad = False
 
 
     for i,(text, length,label) in tqdm(enumerate(train_dataset),total = len(train_dataset)):
@@ -246,7 +248,9 @@ def main():
     for epoch in range(args.num_epochs):
         start_time = time.time()
         # print("training emebedding")
-        train_loss, train_acc = train(training,LSTM_model,criterion,device,optimizer,lr_scheduler)
+
+
+        train_loss, train_acc = train(training,LSTM_model,criterion,device,optimizer,lr_scheduler,epoch)
         # print("testing emebedding")
         valid_loss, valid_acc = validate(validation,LSTM_model,criterion,device)
         end_time = time.time()
