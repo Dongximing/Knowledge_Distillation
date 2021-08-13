@@ -46,8 +46,8 @@ def prepare_dateset(train_data_path, validation_data_path,test_data_path,vocab):
     logging.info("Start loading training data")
     training = pd.read_csv(train_data_path)
 
-    training_review = training.Review
-    training_sentiment = training.Sentiment
+    training_review = training.Review[:5]
+    training_sentiment = training.Sentiment[:5]
 
     for text,label in zip(training_review,training_sentiment):
         training_texts.append(text)
@@ -201,7 +201,7 @@ def main():
     parser.add_argument('--dropout', type=float, default=0.2)
     parser.add_argument('--embedding_dim', type=int, default=100)
     parser.add_argument('--num_epochs', type=int, default=16)
-    parser.add_argument('--batch_sz', type=int, default=32)
+    parser.add_argument('--batch_sz', type=int, default=4)
     parser.add_argument('--lr', type=float, default=1e-3)
 
     parser.add_argument('--weight_decay', type=float, default=0.5)
