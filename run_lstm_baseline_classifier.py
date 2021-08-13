@@ -132,7 +132,7 @@ def train(train_dataset,model,criterion,device,optimizer,lr_scheduler,epoche):
     model.train()
     epoch_loss = 0
     epoch_acc = 0
-    if epoche>4:
+    if epoche>1:
         model.embedding_layer.weight.requires_grad = False
 
 
@@ -222,7 +222,7 @@ def main():
     LSTM_model.to(device)
     #opt scheduler criterion
     optimizer = torch.optim.Adam(LSTM_model.parameters(), lr=args.lr)
-    lr_scheduler = torch.optim.lr_scheduler.StepLR(optimizer, gamma=args.lr_gamma, step_size=5)
+    lr_scheduler = torch.optim.lr_scheduler.StepLR(optimizer, gamma=args.lr_gamma, step_size=2)
     criterion = nn.CrossEntropyLoss()
     criterion.to(device)
 
@@ -245,7 +245,7 @@ def main():
 
     best_loss = float('inf')
     print("training")
-    for epoch in range(args.num_epochs):
+    for epoch in range(5):
         start_time = time.time()
         # print("training emebedding")
 
