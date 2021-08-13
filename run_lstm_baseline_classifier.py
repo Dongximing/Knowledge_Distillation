@@ -236,7 +236,7 @@ def main():
 
 
 
-    LSTM_model.embedding_layer.weight.data.copy_(vectors.vectors).to(device)
+    LSTM_model.embedding_layer.weight.data.copy_(glove.vectors).to(device)
     LSTM_model.embedding_layer.weight.data[1] = torch.zeros(100)
     LSTM_model.embedding_layer.weight.data[0] = torch.zeros(100)
 
