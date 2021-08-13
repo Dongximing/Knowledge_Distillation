@@ -46,7 +46,7 @@ def prepare_dateset(train_data_path, validation_data_path,test_data_path):
     logging.info("Start loading training data")
     training = pd.read_csv(train_data_path)
 
-    training_review = training.Review
+    training_review = training.Reviews
     training_sentiment = training.Sentiment
 
     for text,label in zip(training_review,training_sentiment):
@@ -60,7 +60,7 @@ def prepare_dateset(train_data_path, validation_data_path,test_data_path):
     logging.info("Start loading validation data")
 
     validation = pd.read_csv(validation_data_path)
-    validation_review = validation.Review
+    validation_review = validation.Reviews
     validation_sentiment = validation.Sentiment
 
 
@@ -192,8 +192,8 @@ def validate(validation_dataset, model, criterion, device):
 
 def main():
     parser = argparse.ArgumentParser()
-    parser.add_argument('--train_path',type=str,default='/home/dongxx/projects/def-mercer/dongxx/project/data/train.csv')
-    parser.add_argument('--validation_path',type= str,default='/home/dongxx/projects/def-mercer/dongxx/project/data/valid.csv')
+    parser.add_argument('--train_path',type=str,default='/home/dongxx/projects/def-mercer/dongxx/project/pythonProject/train.csv')
+    parser.add_argument('--validation_path',type= str,default='/home/dongxx/projects/def-mercer/dongxx/project/pythonProject/valid.csv')
     parser.add_argument('--test_path',type= str,default='/home/dongxx/projects/def-mercer/dongxx/project/data/test.csv')
 
     parser.add_argument('--dropout', type=float, default=0.2)
