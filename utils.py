@@ -75,7 +75,7 @@ def _setup_datasets(train_text, train_labels, validation_text, validation_labels
 
         # vocab = build_vocab_from_iterator(_text_iterator(train_text, train_labels, ngrams))
         vocab = torchtext.vocab.GloVe(name='6B', dim=100, unk_init=torch.Tensor.normal_)
-        print(vocab.freqs())
+        print(vocab.freqs)
         # vocab = Vocab
         # vocab = Vocab.load_vectors(vectors = 'glove.6B.100d')
 
