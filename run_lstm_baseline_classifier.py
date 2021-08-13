@@ -2,7 +2,7 @@ import torch
 import torch.nn as nn
 import numpy as np
 from torch.utils.data import DataLoader
-from torchtext.vocab import GloVe
+from torchtext.vocab import GloVe,Vocab
 from tqdm import tqdm
 from utils import IMDB_indexing, pad_sequence
 from models import CNN_Baseline,LSTMBaseline
@@ -32,7 +32,7 @@ def weight_matrix(vocab, vectors, dim=100):
         except KeyError:
             weight_matrix[i] = np.random.normal(scale=0.5, size=(dim,))
     return torch.from_numpy(weight_matrix)
-def prepare_dateset(train_data_path, validation_data_path,test_data_path):
+def prepare_dateset(train_data_path, validation_data_path,test_data_path,vocab):
     # with open(train_data_path,'r') as csvfile:
     #     csvreader = csv.reader(csvf
     training_texts = []
@@ -86,17 +86,17 @@ def prepare_dateset(train_data_path, validation_data_path,test_data_path):
     print('prepare training and test sets')
     logging.info('Prepare training and test sets')
 
-    train_dataset, validation_dataset,testing_dataset = IMDB_indexing(training_texts,training_labels,validation_texts,validation_labels,testing_texts,testing_labels)
+    train_dataset, validation_dataset,testing_dataset = IMDB_indexing(training_texts,training_labels,validation_texts,validation_labels,testing_texts,testing_labels,vocab= vocab)
     print('building vocab')
 
-    vocab = train_dataset.get_vocab()
+    # vocab = train_dataset.get_vocab()
 
 
-    vocab_size = len(vocab)
-    print('building vocab length',vocab_size)
-    logging.info('Build vocab')
+    # vocab_size = len(vocab)
+    # print('building vocab length',vocab_size)
+    # logging.info('Build vocab')
 
-    return train_dataset,validation_dataset,testing_dataset, vocab,vocab_size
+    return train_dataset,validation_dataset,testing_dataset
 
 def generate_batch(batch):
     """
@@ -132,8 +132,8 @@ def train(train_dataset,model,criterion,device,optimizer,lr_scheduler,epoche):
     model.train()
     epoch_loss = 0
     epoch_acc = 0
-    if epoche>1:
-        model.embedding_layer.weight.requires_grad = False
+    # if epoche>1:
+    #     model.embedding_layer.weight.requires_grad = False
 
 
     for i,(text, length,label) in tqdm(enumerate(train_dataset),total = len(train_dataset)):
@@ -215,14 +215,16 @@ def main():
     # device = torch.device(args.device if torch.cuda.is_available() else "cpu")
     device = torch.device('cuda' if torch.cuda.is_available() else 'cpu')
     # dataset
+    glove = torchtext.vocab.GloVe(name='6B', dim=100, unk_init=torch.Tensor.normal_)
+    vocab = Vocab(glove.stoi)
     # train_dataset, validation_dataset, test_dataset, vocab, vocab_size = prepare_dateset(args.train_path,args.validation_path)
-    train_dataset, validation_dataset,test_dataset, vocab, vocab_size = prepare_dateset(args.train_path,args.validation_path,args.test_path)
+    train_dataset, validation_dataset,test_dataset, vocab_size = prepare_dateset(args.train_path,args.validation_path,args.test_path,vocab=vocab)
     # modelvocab_size,hidden_dim,n_layers,dropout,number_class,bidirectional,embedding_dim =10
     LSTM_model =LSTMBaseline(vocab_size = vocab_size,hidden_dim = config.HIDDEN_DIM, n_layers =config.N_LAYERS, dropout = args.dropout, number_class = args.number_class, bidirectional = True, embedding_dim =100)
     LSTM_model.to(device)
     #opt scheduler criterion
     optimizer = torch.optim.Adam(LSTM_model.parameters(), lr=args.lr)
-    lr_scheduler = torch.optim.lr_scheduler.StepLR(optimizer, gamma=args.lr_gamma, step_size=2)
+    lr_scheduler = torch.optim.lr_scheduler.StepLR(optimizer, gamma=args.lr_gamma, step_size=5)
     criterion = nn.CrossEntropyLoss()
     criterion.to(device)
 
@@ -230,22 +232,22 @@ def main():
     validation = DataLoader(validation_dataset, collate_fn= generate_batch, batch_size=args.batch_sz, shuffle=False)
     testing = DataLoader(test_dataset, collate_fn= generate_batch, batch_size=args.batch_sz, shuffle=False)
     #loading vocab
-    glove = torchtext.vocab.GloVe(name='6B', dim=100,unk_init=torch.Tensor.normal_)
 
 
 
-    LSTM_model.embedding_layer.weight.data.copy_(weight_matrix(vocab,glove)).to(device)
+
+    LSTM_model.embedding_layer.weight.data.copy_(vectors.vectors).to(device)
     LSTM_model.embedding_layer.weight.data[1] = torch.zeros(100)
     LSTM_model.embedding_layer.weight.data[0] = torch.zeros(100)
 
 
-    # LSTM_model.embedding_layer.weight.requires_grad = False
+    LSTM_model.embedding_layer.weight.requires_grad = False
     # ret = glove.get_vecs_by_tokens(['<unk>'])
     # print(ret)
 
     best_loss = float('inf')
     print("training")
-    for epoch in range(5):
+    for epoch in range(15):
         start_time = time.time()
         # print("training emebedding")
 
