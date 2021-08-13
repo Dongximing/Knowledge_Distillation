@@ -25,9 +25,9 @@ def _create_data_from_iterator(vocab, iterator, include_unk, is_test=False):
         if is_test:
             for text in iterator:
                 if include_unk:
-                    tokens = torch.tensor([vocab[token] for token in text])
+                    tokens = torch.tensor([vocab.stoi[token] for token in text])
                 else:
-                    token_ids = list(filter(lambda x: x is not Vocab.UNK, [vocab[token]
+                    token_ids = list(filter(lambda x: x is not Vocab.UNK, [vocab.stoi[token]
                                                                            for token in text]))
                     tokens = torch.tensor(token_ids)
                 if len(tokens) == 0:
@@ -38,9 +38,9 @@ def _create_data_from_iterator(vocab, iterator, include_unk, is_test=False):
         else:
             for label, text in iterator:
                 if include_unk:
-                    tokens = torch.tensor([vocab[token] for token in text])
+                    tokens = torch.tensor([vocab.stoi[token] for token in text])
                 else:
-                    token_ids = list(filter(lambda x: x is not Vocab.UNK, [vocab[token]
+                    token_ids = list(filter(lambda x: x is not Vocab.UNK, [vocab.stoi[token]
                                                                            for token in text]))
                     tokens = torch.tensor(token_ids)
                 if len(tokens) == 0:
@@ -70,12 +70,12 @@ class IMDBDataset(torch.utils.data.Dataset):
     def get_vocab(self):
         return self._vocab
 def _setup_datasets(train_text, train_labels, validation_text, validation_labels, test_text,test_labels, ngrams=1, vocab=None, include_unk=False):
-    if vocab is None:
-        logging.info('Building Vocab based on {}'.format(train_text))
+    # if vocab is None:
+    #     logging.info('Building Vocab based on {}'.format(train_text))
 
         # vocab = build_vocab_from_iterator(_text_iterator(train_text, train_labels, ngrams))
-        vocab = torchtext.vocab.GloVe(name='6B', dim=100, unk_init=torch.Tensor.normal_)
-        print(vocab.freqs)
+    vocab = torchtext.vocab.GloVe(name='6B', dim=100, unk_init=torch.Tensor.normal_)
+        # vocab.__len__()
         # vocab = Vocab
         # vocab = Vocab.load_vectors(vectors = 'glove.6B.100d')
 
@@ -86,11 +86,11 @@ def _setup_datasets(train_text, train_labels, validation_text, validation_labels
         # print(vocab.itos[1])
         # print(vocab.itos[2])
 
-    else:
-        if not isinstance(vocab, Vocab):
-            raise TypeError("Passed vocabulary is not of type Vocab")
-    logging.info('Vocab has {} entries'.format(len(vocab)))
-    logging.info('Creating training data')
+    # else:
+    #     if not isinstance(vocab, Vocab):
+    #         raise TypeError("Passed vocabulary is not of type Vocab")
+    # logging.info('Vocab has {} entries'.format(len(vocab)))
+    # logging.info('Creating training data')
     train_data = _create_data_from_iterator(
         vocab, _text_iterator(train_text, labels=train_labels, ngrams=ngrams, yield_label=True), include_unk,
         is_test=False)
