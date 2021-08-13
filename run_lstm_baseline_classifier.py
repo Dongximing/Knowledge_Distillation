@@ -216,7 +216,7 @@ def main():
     device = torch.device('cuda' if torch.cuda.is_available() else 'cpu')
     # dataset
     glove = torchtext.vocab.GloVe(name='6B', dim=100, unk_init=torch.Tensor.normal_)
-    vocab = Vocab(glove.stoi,specials=None)
+    vocab = Vocab(glove.stoi,specials =[])
     # train_dataset, validation_dataset, test_dataset, vocab, vocab_size = prepare_dateset(args.train_path,args.validation_path)
     train_dataset, validation_dataset,test_dataset, vocab_size = prepare_dateset(args.train_path,args.validation_path,args.test_path,vocab=vocab)
     # modelvocab_size,hidden_dim,n_layers,dropout,number_class,bidirectional,embedding_dim =10
