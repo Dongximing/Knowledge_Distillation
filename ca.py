@@ -98,6 +98,83 @@ print(embedding.weight)
 embedding1 = nn.Embedding.from_pretrained(embedding.weight,freeze=False)
 print(embedding1.weight)
 
+def pad_sequence(sequences, ksz, batch_first=False, padding_value=1):
+    # type: (List[Tensor], bool, float) -> Tensor
+    r"""Pad a list of variable length Tensors with ``padding_value``
+    ``pad_sequence`` stacks a list of Tensors along a new dimension,
+    and pads them to equal length. For example, if the input is list of
+    sequences with size ``L x *`` and if batch_first is False, and ``T x B x *``
+    otherwise.
+    `B` is batch size. It is equal to the number of elements in ``sequences``.
+    `T` is length of the longest sequence.
+    `L` is length of the sequence.
+    `*` is any number of trailing dimensions, including none.
+    Example:
+        >>> from torch.nn.utils.rnn import pad_sequence
+        >>> a = torch.ones(25, 300)
+        >>> b = torch.ones(22, 300)
+        >>> c = torch.ones(15, 300)
+        >>> pad_sequence([a, b, c]).size()
+        torch.Size([25, 3, 300])
+    Note:
+        This function returns a Tensor of size ``T x B x *`` or ``B x T x *``
+        where `T` is the length of the longest sequence. This function assumes
+        trailing dimensions and type of all the Tensors in sequences are same.
+    Arguments:
+        sequences (list[Tensor]): list of variable length sequences.
+        batch_first (bool, optional): output will be in ``B x T x *`` if True, or in
+            ``T x B x *`` otherwise
+        padding_value (float, optional): value for padded elements. Default: 0.
+    Returns:
+        Tensor of size ``T x B x *`` if :attr:`batch_first` is ``False``.
+        Tensor of size ``B x T x *`` otherwise
+    """
+
+    # assuming trailing dimensions and type of all the Tensors
+    # in sequences are same and fetching those from sequences[0]
+    max_size = sequences[0].size()
+
+    trailing_dims = max_size[1:]
+    max_len = max([s.size(0) for s in sequences])
+    print(max_len)
+    if max_len > ksz:
+        max_len = ksz
+    if batch_first:
+        out_dims = (len(sequences), max_len) + trailing_dims
+
+
+
+    out_tensor = sequences[0].new_full(out_dims, padding_value)
+
+    true =[]
+    for i, tensor in enumerate(sequences):
+        length = tensor.size(0)
+        print(length)
+        if length > max_len:
+            length = max_len
+            out_tensor[i, :length, ...] = tensor[:length]
+            true.append(length)
+        else:
+            out_tensor[i, :length, ...] = tensor[:length]
+            true.append(length)
+
+
+    return out_tensor, true
+import numpy as np
+list = []
+a = np.array([1,2,3,4])
+b =np.array([1,2,3,4,5,6])
+a = torch.from_numpy(a)
+
+b = torch.from_numpy(b)
+list.append(b)
+list.append(a)
+
+
+c, d = pad_sequence(list, 5, batch_first=True, padding_value=10)
+print(c)
+print(d)
+
 
 # def pad_sequence(sequences, ksz, batch_first=False, padding_value=0.0):
 #     # type: (List[Tensor], bool, float) -> Tensor
