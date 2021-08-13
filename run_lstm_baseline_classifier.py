@@ -229,6 +229,7 @@ def main():
     testing = DataLoader(test_dataset, collate_fn= generate_batch, batch_size=args.batch_sz, shuffle=False)
     #loading vocab
     glove = torchtext.vocab.GloVe(name='6B', dim=100,unk_init=torch.Tensor.normal_)
+    
 
 
     LSTM_model.embedding_layer.weight.data.copy_(weight_matrix(vocab, glove)).to(device)
@@ -236,7 +237,7 @@ def main():
     LSTM_model.embedding_layer.weight.data[0] = torch.zeros(100)
 
 
-    LSTM_model.embedding_layer.weight.requires_grad = False
+    # LSTM_model.embedding_layer.weight.requires_grad = False
     # ret = glove.get_vecs_by_tokens(['<unk>'])
     # print(ret)
 
