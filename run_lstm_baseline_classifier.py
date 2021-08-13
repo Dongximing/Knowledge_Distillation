@@ -46,7 +46,7 @@ def prepare_dateset(train_data_path, validation_data_path,test_data_path):
     logging.info("Start loading training data")
     training = pd.read_csv(train_data_path)
 
-    training_review = training.Reviews
+    training_review = training.Review
     training_sentiment = training.Sentiment
 
     for text,label in zip(training_review,training_sentiment):
@@ -60,7 +60,7 @@ def prepare_dateset(train_data_path, validation_data_path,test_data_path):
     logging.info("Start loading validation data")
 
     validation = pd.read_csv(validation_data_path)
-    validation_review = validation.Reviews
+    validation_review = validation.Review
     validation_sentiment = validation.Sentiment
 
 
@@ -234,7 +234,7 @@ def main():
 
 
 
-    LSTM_model.embedding_layer.weight.data.copy_(glove).to(device)
+    LSTM_model.embedding_layer.weight.data.copy_(weight_matrix(vocab,glove)).to(device)
     LSTM_model.embedding_layer.weight.data[1] = torch.zeros(100)
     LSTM_model.embedding_layer.weight.data[0] = torch.zeros(100)
 
