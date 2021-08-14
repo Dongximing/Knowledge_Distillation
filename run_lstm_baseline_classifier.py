@@ -46,8 +46,8 @@ def prepare_dateset(train_data_path, validation_data_path,test_data_path,vocab):
     logging.info("Start loading training data")
     training = pd.read_csv(train_data_path)
 
-    training_review = training.Review[:5]
-    training_sentiment = training.Sentiment[:5]
+    training_review = training.Review
+    training_sentiment = training.Sentiment
 
     for text,label in zip(training_review,training_sentiment):
         training_texts.append(text)
