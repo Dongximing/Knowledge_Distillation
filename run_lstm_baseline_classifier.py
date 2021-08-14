@@ -198,7 +198,7 @@ def main():
     parser.add_argument('--validation_path',type= str,default='/home/dongxx/projects/def-mercer/dongxx/project/pythonProject/valid.csv')
     parser.add_argument('--test_path',type= str,default='/home/dongxx/projects/def-mercer/dongxx/project/data/test.csv')
 
-    parser.add_argument('--dropout', type=float, default=0.2)
+    parser.add_argument('--dropout', type=float, default=0.25)
     parser.add_argument('--embedding_dim', type=int, default=100)
     parser.add_argument('--num_epochs', type=int, default=16)
     parser.add_argument('--batch_sz', type=int, default=32)
