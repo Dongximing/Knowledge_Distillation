@@ -201,7 +201,7 @@ def main():
     parser.add_argument('--dropout', type=float, default=0.2)
     parser.add_argument('--embedding_dim', type=int, default=100)
     parser.add_argument('--num_epochs', type=int, default=16)
-    parser.add_argument('--batch_sz', type=int, default=4)
+    parser.add_argument('--batch_sz', type=int, default=32)
     parser.add_argument('--lr', type=float, default=1e-3)
 
     parser.add_argument('--weight_decay', type=float, default=0.5)
@@ -223,6 +223,7 @@ def main():
 
     vocab = Vocab(counter1)
     vocab_size=vocab.__len__()
+    print("vocab_size:",vocab_size)
     # print(vocab.itos[0])
     # print(vocab.itos[1])
     # print(vocab.itos[2])
