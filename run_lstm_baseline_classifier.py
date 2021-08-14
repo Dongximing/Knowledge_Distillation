@@ -217,6 +217,7 @@ def main():
     # dataset
     glove = torchtext.vocab.GloVe(name='6B', dim=100, unk_init=torch.Tensor.normal_)
     # print(glove.stoi['<unk>'])
+    print(Vocab.UNK)
     ret = glove.get_vecs_by_tokens(['<unk>'])
     print(ret)
     vocab = Vocab(glove.stoi)
