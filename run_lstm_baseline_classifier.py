@@ -205,7 +205,7 @@ def main():
     parser.add_argument('--lr', type=float, default=1e-3)
 
     parser.add_argument('--weight_decay', type=float, default=0.5)
-    parser.add_argument('--scheduler_step_sz', type=int, default=5)
+    parser.add_argument('--scheduler_step_sz', type=int, default=6)
     parser.add_argument('--lr_gamma', type=float, default=0.1)
     parser.add_argument('--number_class', type=int, default=2)
 
