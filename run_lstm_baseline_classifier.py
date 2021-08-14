@@ -215,7 +215,7 @@ def main():
     # device = torch.device(args.device if torch.cuda.is_available() else "cpu")
     device = torch.device('cuda' if torch.cuda.is_available() else 'cpu')
     # dataset
-    glove = torchtext.vocab.GloVe(name='6B', dim=100, unk_init=torch.Tensor.normal_)
+    glove = torchtext.vocab.GloVe(name='6B', dim=100)
     # print(glove.stoi['<unk>'])
     print(Vocab.UNK)
     ret = glove.get_vecs_by_tokens(['<unk>'])
