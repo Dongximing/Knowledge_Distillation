@@ -174,6 +174,11 @@ list.append(a)
 c, d = pad_sequence(list, 5, batch_first=True, padding_value=10)
 print(c)
 print(d)
+from collections import Counter
+counter1 =  Counter({'x': 5, 'y': 12, 'z': -2, 'x1':0})
+counter2 = Counter({'x': 2, 'k':5})
+counter1.update(counter2)
+print(counter1)
 
 
 # def pad_sequence(sequences, ksz, batch_first=False, padding_value=0.0):

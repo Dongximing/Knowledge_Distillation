@@ -16,7 +16,7 @@ import pickle
 import sys
 import config
 config.seed_torch()
-
+from collections import Counter
 import time
 
 def epoch_time(start_time, end_time):
@@ -217,10 +217,11 @@ def main():
     # dataset
     glove = torchtext.vocab.GloVe(name='6B', dim=100)
     # print(glove.stoi['<unk>'])
-    print(Vocab.UNK)
-    ret = glove.get_vecs_by_tokens(['<unk>'])
-    print(ret)
-    vocab = Vocab(glove.stoi)
+    counter2 = Counter({'<unk>': 0, '<pad>': 0})
+    counter1 = glove.stoi
+    counter1.update(counter2)
+
+    vocab = Vocab(counter1)
     print(vocab.itos[0])
     print(vocab.itos[1])
     print(vocab.itos[2])
