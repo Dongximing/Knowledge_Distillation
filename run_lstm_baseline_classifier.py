@@ -19,6 +19,11 @@ config.seed_torch()
 from collections import Counter
 import time
 
+def count_parameters(model):
+    return sum(p.numel() for p in model.parameters() if p.requires_grad)
+
+print(f'The model has {count_parameters(model):,} trainable parameters')
+
 def epoch_time(start_time, end_time):
     elapsed_time = end_time - start_time
     elapsed_mins = int(elapsed_time / 60)
@@ -46,8 +51,8 @@ def prepare_dateset(train_data_path, validation_data_path,test_data_path,vocab):
     logging.info("Start loading training data")
     training = pd.read_csv(train_data_path)
 
-    training_review = training.Reviews
-    training_sentiment = training.Sentiment
+    training_review = training.Reviews[:2]
+    training_sentiment = training.Sentiment[:2]
 
     for text,label in zip(training_review,training_sentiment):
         training_texts.append(text)
@@ -60,8 +65,8 @@ def prepare_dateset(train_data_path, validation_data_path,test_data_path,vocab):
     logging.info("Start loading validation data")
 
     validation = pd.read_csv(validation_data_path)
-    validation_review = validation.Reviews
-    validation_sentiment = validation.Sentiment
+    validation_review = validation.Reviews[:2]
+    validation_sentiment = validation.Sentiment[:2]
 
 
     for text,label in zip(validation_review,validation_sentiment):
@@ -75,8 +80,8 @@ def prepare_dateset(train_data_path, validation_data_path,test_data_path,vocab):
     logging.info("Start loading testing data")
 
     testing = pd.read_csv(test_data_path)
-    testing_review = testing.Review
-    testing_sentiment = testing.Sentiment
+    testing_review = testing.Review[:2]
+    testing_sentiment = testing.Sentiment[:2]
     for text, label in zip(testing_review, testing_sentiment):
         testing_texts.append(text)
         testing_labels.append(label)
@@ -194,14 +199,14 @@ def validate(validation_dataset, model, criterion, device):
 
 def main():
     parser = argparse.ArgumentParser()
-    parser.add_argument('--train_path',type=str,default='/home/dongxx/projects/def-mercer/dongxx/project/pythonProject/train.csv')
-    parser.add_argument('--validation_path',type= str,default='/home/dongxx/projects/def-mercer/dongxx/project/pythonProject/valid.csv')
+    parser.add_argument('--train_path',type=str,default='/home/dongxx/projects/def-mercer/dongxx/project/data/train.csv')
+    parser.add_argument('--validation_path',type= str,default='/home/dongxx/projects/def-mercer/dongxx/project/data/valid.csv')
     parser.add_argument('--test_path',type= str,default='/home/dongxx/projects/def-mercer/dongxx/project/data/test.csv')
 
     parser.add_argument('--dropout', type=float, default=0.25)
     parser.add_argument('--embedding_dim', type=int, default=100)
     parser.add_argument('--num_epochs', type=int, default=16)
-    parser.add_argument('--batch_sz', type=int, default=32)
+    parser.add_argument('--batch_sz', type=int, default=2)
     parser.add_argument('--lr', type=float, default=1e-3)
 
     parser.add_argument('--weight_decay', type=float, default=0.5)
@@ -252,12 +257,13 @@ def main():
 
 
     LSTM_model.embedding_layer.weight.requires_grad = False
+    print(count_parameters(LSTM_model))
     # ret = glove.get_vecs_by_tokens(['<unk>'])
     # print(ret)
 
     best_loss = float('inf')
     print("training")
-    for epoch in range(15):
+    for epoch in range(2):
         start_time = time.time()
         # print("training emebedding")
 

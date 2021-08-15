@@ -13,7 +13,7 @@ def _text_iterator(text, labels=None, ngrams=1, yield_label=False):
     for i, text in enumerate(text):
         texts = tokenizer(text)
 
-        filtered_text = [word for word in texts ]
+        filtered_text = [word for word in texts if word not in stop_words ]
         if yield_label:
             label = labels[i]
             yield label, ngrams_iterator(filtered_text, ngrams)
@@ -43,6 +43,7 @@ def _create_data_from_iterator(vocab, iterator, include_unk, is_test=False):
                     token_ids = list(filter(lambda x: x is not Vocab.UNK, [vocab[token]
                                                                            for token in text]))
                     tokens = torch.tensor(token_ids)
+                    print("tokens",tokens)
                 if len(tokens) == 0:
                     logging.info('Row contains no tokens.')
                 data.append((label, tokens))
@@ -106,7 +107,7 @@ def _setup_datasets(train_text, train_labels, validation_text, validation_labels
 
             )
 
-def IMDB_indexing(train_text, train_labels, validation_text, validation_labels, test_text,test_labels,vocab,ngrams=1, include_unk=False):
+def IMDB_indexing(train_text, train_labels, validation_text, validation_labels, test_text,test_labels,vocab,ngrams=1, include_unk=True):
 
 
     return _setup_datasets(train_text, train_labels, validation_text, validation_labels, test_text,test_labels,vocab,ngrams, include_unk)
