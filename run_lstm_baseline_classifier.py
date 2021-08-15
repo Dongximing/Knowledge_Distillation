@@ -222,16 +222,16 @@ def main():
     # dataset
     glove = torchtext.vocab.GloVe(name='6B', dim=100)
     # print(glove.stoi['<unk>'])
-    counter2 = Counter({'<unk>': 0, '<pad>': 0})
+    counter2 = Counter({'<unk>': 400000, '<pad>': 400001})
     counter1 = glove.stoi
 
     counter1.update(counter2)
-    print(counter1)
+    # print(counter1)
 
     vocab = Vocab(counter1)
     vocab_size=vocab.__len__()
     print("vocab_size:",vocab_size)
-    # print(vocab.stoi)
+    print(vocab.stoi)
     #
     # print(vocab.itos[2])
     # train_dataset, validation_dataset, test_dataset, vocab, vocab_size = prepare_dateset(args.train_path,args.validation_path)
