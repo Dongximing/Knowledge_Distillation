@@ -221,9 +221,9 @@ def main():
     # device = torch.device(args.device if torch.cuda.is_available() else "cpu")
     device = torch.device('cuda' if torch.cuda.is_available() else 'cpu')
     # dataset
-    glove = torchtext.vocab.GloVe(name='6B', dim=100)
+    glove = torchtext.vocab.GloVe(name='6B', dim=100,)
     # print(glove.stoi['<unk>'])
-    counter2 = Counter({'<unk>': 400000, '<pad>': 400001,'the':1})
+    counter2 = Counter({'<unk>': 0, '<pad>': 0,'the':1})
     counter1 = glove.stoi
 
     counter1.update(counter2)
