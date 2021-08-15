@@ -39,6 +39,7 @@ def _create_data_from_iterator(vocab, iterator, include_unk, is_test=False):
             for label, text in iterator:
                 if include_unk:
                     tokens = torch.tensor([vocab[token] for token in text])
+                    print("tokens", tokens)
                 else:
                     token_ids = list(filter(lambda x: x is not Vocab.UNK, [vocab[token]
                                                                            for token in text]))
@@ -70,7 +71,7 @@ class IMDBDataset(torch.utils.data.Dataset):
 
     def get_vocab(self):
         return self._vocab
-def _setup_datasets(train_text, train_labels, validation_text, validation_labels, test_text,test_labels, vocab,ngrams=1, include_unk=False):
+def _setup_datasets(train_text, train_labels, validation_text, validation_labels, test_text,test_labels, vocab,ngrams=1, include_unk=True):
     if vocab is None:
         logging.info('Building Vocab based on {}'.format(train_text))
 
