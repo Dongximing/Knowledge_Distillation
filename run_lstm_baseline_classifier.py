@@ -228,7 +228,7 @@ def main():
     counter1.update(counter2)
     print(counter1)
 
-    vocab = Vocab(counter1)
+    vocab = Vocab(counter1,min_freq=0)
     vocab_size=vocab.__len__()
     print("vocab_size:",vocab_size)
     # print(vocab.stoi)
