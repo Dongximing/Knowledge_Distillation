@@ -22,7 +22,7 @@ import time
 def count_parameters(model):
     return sum(p.numel() for p in model.parameters() if p.requires_grad)
 
-print(f'The model has {count_parameters(model):,} trainable parameters')
+
 
 def epoch_time(start_time, end_time):
     elapsed_time = end_time - start_time
@@ -117,12 +117,12 @@ def generate_batch(batch):
         # padding according to the maximum sequence length in batch
         text = [entry[1] for entry in batch]
         # text_length = [len(seq) for seq in text]
-        text,text_length= pad_sequence(text, ksz = 256, batch_first=True)
+        text,text_length= pad_sequence(text, ksz = 10, batch_first=True)
         return text, text_length, label
     else:
         text = [entry for entry in batch]
         # text_length = [len(seq) for seq in text]
-        text ,text_length= pad_sequence(text, ksz=256, batch_first=True)
+        text ,text_length= pad_sequence(text, ksz=1O, batch_first=True)
         return text, text_length
 def categorical_accuracy(preds, y):
     """
@@ -257,7 +257,7 @@ def main():
 
 
     LSTM_model.embedding_layer.weight.requires_grad = False
-    print(count_parameters(LSTM_model))
+    print(f'The model has {count_parameters(LSTM_model):,} trainable parameters')
     # ret = glove.get_vecs_by_tokens(['<unk>'])
     # print(ret)
 
