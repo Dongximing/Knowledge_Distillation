@@ -25,10 +25,10 @@ class LSTMBaseline(nn.Module):
         _, un_idx = t.sort(idx, dim=0)
         seq = text[idx]
         # print(text)
-        # seq = self.dropout(self.embedding_layer(seq))
-        seq = self.embedding_layer(seq)
+        seq = self.dropout(self.embedding_layer(seq))
+        # seq = self.embedding_layer(seq)
 
-        print(seq)
+        # print(seq)
 
         a_packed_input = t.nn.utils.rnn.pack_padded_sequence(input=seq, lengths=a_lengths.to('cpu'), batch_first=True)
         packed_output, (hidden, cell) = self.rnn(a_packed_input)

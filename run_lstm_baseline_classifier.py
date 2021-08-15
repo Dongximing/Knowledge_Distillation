@@ -221,7 +221,7 @@ def main():
     device = torch.device('cuda' if torch.cuda.is_available() else 'cpu')
     # dataset
     glove = torchtext.vocab.GloVe(name='6B', dim=100,)
-    print(glove.get_vecs_by_tokens(['picture']))
+    # print(glove.get_vecs_by_tokens(['picture']))
     counter2 = Counter({'<unk>': 0, '<pad>': 0,'the':1})
     counter1 = glove.stoi
 
@@ -231,7 +231,7 @@ def main():
     vocab = Vocab(counter1)
     vocab_size=vocab.__len__()
     print("vocab_size:",vocab_size)
-    print(vocab.stoi)
+    # print(vocab.stoi)
     #
     # print(vocab.itos[2])
     # train_dataset, validation_dataset, test_dataset, vocab, vocab_size = prepare_dateset(args.train_path,args.validation_path)
