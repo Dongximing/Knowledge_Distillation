@@ -32,6 +32,7 @@ def epoch_time(start_time, end_time):
 def weight_matrix(vocab, vectors, dim=100):
     weight_matrix = np.zeros([len(vocab.itos), dim])
     for i, token in enumerate(vocab.stoi):
+        print(token)
         try:
             weight_matrix[i] = vectors.__getitem__(token)
         except KeyError:
@@ -228,10 +229,10 @@ def main():
     counter1.update(counter2)
     # print(counter1)
 
-    vocab = Vocab(counter1,min_freq=0)
+    vocab = Vocab(counter1)
     vocab_size=vocab.__len__()
     print("vocab_size:",vocab_size)
-    print(vocab.stoi)
+    # print(vocab.stoi)
     #
     # print(vocab.itos[2])
     # train_dataset, validation_dataset, test_dataset, vocab, vocab_size = prepare_dateset(args.train_path,args.validation_path)
