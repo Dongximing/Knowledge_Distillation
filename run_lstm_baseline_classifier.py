@@ -18,7 +18,7 @@ import config
 config.seed_torch()
 from collections import Counter
 import time
-
+import copy
 def count_parameters(model):
     return sum(p.numel() for p in model.parameters() if p.requires_grad)
 
@@ -225,7 +225,7 @@ def main():
     glove = torchtext.vocab.GloVe(name='6B', dim=100,)
     # print(glove.get_vecs_by_tokens(['picture']))
     counter2 = Counter({'<unk>': 400000, '<pad>': 0,'the':1})
-    counter1 = Counter((glove.stoi).values())
+    counter1 =  copy.deepcopy(glove.stoi)
 
     counter1.update(counter2)
     print(counter1)
