@@ -14,6 +14,7 @@ def _text_iterator(text, labels=None, ngrams=1, yield_label=False):
         texts = tokenizer(text)
 
         filtered_text = [word for word in texts if word not in stop_words ]
+        print(filtered_text)
         if yield_label:
             label = labels[i]
             yield label, ngrams_iterator(filtered_text, ngrams)
@@ -38,9 +39,11 @@ def _create_data_from_iterator(vocab, iterator, include_unk, is_test=False):
         else:
             for label, text in iterator:
                 if include_unk:
+                    print(text)
                     tokens = torch.tensor([vocab[token] for token in text])
                     print("tokens", tokens)
                 else:
+                    print(text)
                     token_ids = list(filter(lambda x: x is not Vocab.UNK, [vocab[token]
                                                                            for token in text]))
                     tokens = torch.tensor(token_ids)
