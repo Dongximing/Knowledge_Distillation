@@ -224,7 +224,7 @@ def main():
     # dataset
     glove = torchtext.vocab.GloVe(name='6B', dim=100,)
     # print(glove.get_vecs_by_tokens(['picture']))
-    counter2 = Counter({'<unk>': 400000, '<pad>': 40001,'the':1})
+    counter2 = Counter({'<unk>': 400000, '<pad>': 400001,'the':1})
     counter1 =  copy.deepcopy(glove.stoi)
 
     counter1.update(counter2)
