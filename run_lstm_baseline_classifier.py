@@ -228,7 +228,7 @@ def main():
     counter1 = Counter((glove.stoi).values())
 
     counter1.update(counter2)
-    # print(counter1)
+    print(counter1)
 
     vocab = Vocab(counter1)
     vocab_size=vocab.__len__()
