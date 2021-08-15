@@ -221,7 +221,7 @@ def main():
     device = torch.device('cuda' if torch.cuda.is_available() else 'cpu')
     # dataset
     glove = torchtext.vocab.GloVe(name='6B', dim=100,)
-    # print(glove.stoi['<unk>'])
+    print(glove.get_vecs_by_tokens['picture'])
     counter2 = Counter({'<unk>': 0, '<pad>': 0,'the':1})
     counter1 = glove.stoi
 
