@@ -222,7 +222,7 @@ def main():
     # dataset
     glove = torchtext.vocab.GloVe(name='6B', dim=100)
     # print(glove.stoi['<unk>'])
-    counter2 = Counter({'<unk>': 0, '<pad>': 0})
+    counter2 = Counter({'<unk>': 400005, '<pad>': 500000})
     counter1 = glove.stoi
     print(counter1)
     counter1.update(counter2)
