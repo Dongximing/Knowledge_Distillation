@@ -179,6 +179,8 @@ counter1 =  Counter({'x': 5, 'y': 12, 'z': -2, 'x1':0})
 counter2 = Counter({'x': 2, 'k':5})
 counter1.update(counter2)
 print(counter1)
+ls = [1,2,3]
+print(len(ls))
 
 
 # def pad_sequence(sequences, ksz, batch_first=False, padding_value=0.0):

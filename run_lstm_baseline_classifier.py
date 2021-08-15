@@ -229,8 +229,8 @@ def main():
     vocab = Vocab(counter1)
     vocab_size=vocab.__len__()
     print("vocab_size:",vocab_size)
-    print(vocab.itos[0])
-    print(vocab.itos[1])
+    print(vocab.itos)
+    #
     # print(vocab.itos[2])
     # train_dataset, validation_dataset, test_dataset, vocab, vocab_size = prepare_dateset(args.train_path,args.validation_path)
     train_dataset, validation_dataset,test_dataset = prepare_dateset(args.train_path, args.validation_path, args.test_path, vocab)
@@ -256,7 +256,7 @@ def main():
     LSTM_model.embedding_layer.weight.data[0] = torch.zeros(100)
 
 
-    # LSTM_model.embedding_layer.weight.requires_grad = False
+    LSTM_model.embedding_layer.weight.requires_grad = False
     print(f'The model has {count_parameters(LSTM_model):,} trainable parameters')
     # ret = glove.get_vecs_by_tokens(['<unk>'])
     # print(ret)
