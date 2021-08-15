@@ -32,8 +32,8 @@ def epoch_time(start_time, end_time):
 def weight_matrix(vocab, vectors, dim=100):
     weight_matrix = np.zeros([len(vocab.itos), dim])
     for i, token in enumerate(vocab.stoi):
-        print(token)
-        print(i)
+        # print(token)
+        # print(i)
         try:
             weight_matrix[i] = vectors.__getitem__(token)
         except KeyError:
