@@ -42,13 +42,13 @@ def _create_data_from_iterator(vocab, iterator, include_unk, is_test=False):
                 if include_unk:
                     print(text)
                     tokens = torch.tensor([vocab[token] for token in text])
-                    # print("tokens", tokens)
+                    print("tokens", tokens)
                 else:
                     print(text)
                     token_ids = list(filter(lambda x: x is not Vocab.UNK, [vocab[token]
                                                                            for token in text]))
                     tokens = torch.tensor(token_ids)
-                    # print("tokens",tokens)
+                    print("tokens",tokens)
                 if len(tokens) == 0:
                     logging.info('Row contains no tokens.')
                 data.append((label, tokens))
