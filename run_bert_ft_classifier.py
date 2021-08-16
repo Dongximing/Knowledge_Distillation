@@ -37,7 +37,8 @@ def generate_batch(batch):
     input_ids = pad_sequence(input_ids, batch_first=True)
     attention_mask = [torch.tensor(entry['attention_mask']) for entry in batch]
     attention_mask = pad_sequence(attention_mask, batch_first=True)
-    label = [torch.tensor(entry['label']) for entry in batch]
+    label = [entry['label'] for entry in batch]
+    
     return input_ids, attention_mask, label
 def prepare_dateset(train_data_path, validation_data_path,test_data_path):
     # with open(train_data_path,'r') as csvfile:
@@ -116,8 +117,9 @@ def train(train_dataset,model,criterion,device,optimizer,lr_scheduler):
 
     for i,data in tqdm(enumerate(train_dataset),total = len(train_dataset)):
         input_ids, attention_mask, label = data
-        input_ids, attention_mask, label = input_ids.cuda(), attention_mask.cuda(), label.cuda()
- 
+        input_ids, attention_mask, label = input_ids.to(device), attention_mask.to(device), torch.LongTensor(label)
+        label =label.to(device)
+
         optimizer.zero_grad()
         output = model(ids= input_ids, mask= attention_mask)
         loss = criterion(output,label)
