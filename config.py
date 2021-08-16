@@ -28,3 +28,5 @@ MODEL_KD_PATH ='/home/dongxx/projects/def-mercer/dongxx/project/LSTM-baseline/kd
 MODEL_Base_PATH ='/home/dongxx/projects/def-mercer/dongxx/project/LSTM-baseline/baseline.pt'
 Teacher_MODEL_PATH ='/home/dongxx/projects/def-mercer/dongxx/project/pythonProject/bert.pt'
 MODEL_CNN_PATH = '/home/dongxx/projects/def-mercer/dongxx/project/pythonProject/cnn.pt'
+BERT = 'home/dongxx/projects/def-mercer/dongxx/project/pythonProject/bert_C.pt'
+

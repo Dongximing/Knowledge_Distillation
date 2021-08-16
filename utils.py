@@ -44,15 +44,36 @@ def _create_data_from_iterator(vocab, iterator, include_unk, is_test=False):
                     # print(text)
                     tokens = torch.tensor([vocab[token] for token in text])
                     # print("tokens", tokens)
+                    encoding = tokenizer.encode_plus(
+                        text,
+                        add_special_tokens=True,
+                        max_length=512,
+                        return_token_type_ids=False,
+                        pad_to_max_length=False,
+                        return_attention_mask=True
+                    )
+                    bert_ids = encoding['input_ids']
+                    attention_mask = encoding['attention_mask']
                 else:
                     # print(text)
+
                     token_ids = list(filter(lambda x: x is not Vocab.UNK, [vocab[token]
                                                                            for token in text]))
                     tokens = torch.tensor(token_ids)
+                    encoding = tokenizer.encode_plus(
+                        text,
+                        add_special_tokens=True,
+                        max_length=512,
+                        return_token_type_ids=False,
+                        pad_to_max_length=False,
+                        return_attention_mask=True
+                    )
+                    bert_ids = encoding['input_ids']
+                    attention_mask = encoding['attention_mask']
                     # print("tokens",tokens)
                 if len(tokens) == 0:
                     logging.info('Row contains no tokens.')
-                data.append((label, tokens))
+                data.append((label, tokens,bert_ids,attention_mask))
 
                 t.update(1)
             return data
@@ -82,12 +103,6 @@ def _setup_datasets(train_text, train_labels, validation_text, validation_labels
 
         vocab = build_vocab_from_iterator(_text_iterator(train_text, train_labels, ngrams))
 
-        # vocab.__init__(vocab.freqs,min_freq=2)
-        #
-        # print(vocab.stoi['<unk>'])
-        # print(vocab.itos[0])
-        # print(vocab.itos[1])
-        # print(vocab.itos[2])
 
     else:
         if not isinstance(vocab, Vocab):
@@ -112,6 +127,33 @@ def _setup_datasets(train_text, train_labels, validation_text, validation_labels
             IMDBDataset(vocab, test_data)
 
             )
+def _setup_kd_datasets(train_text, train_labels, validation_text, validation_labels, test_text,test_labels, tokenize,vocab,ngrams=1, include_unk=False):
+
+
+    logging.info('Creating training data')
+    train_data = _create_data_from_iterator(
+        vocab, _text_iterator(train_text, labels=train_labels, ngrams=ngrams, yield_label=True), include_unk,
+        is_test=False)
+    logging.info('Creating validation data')
+    validation_data =_create_data_from_iterator(
+        vocab, _text_iterator(validation_text, labels=validation_labels, ngrams=ngrams, yield_label=True), include_unk,
+        is_test=False)
+
+    logging.info('Creating testing data')
+    test_data= _create_data_from_iterator(
+        vocab, _text_iterator(test_text, labels=test_labels, ngrams=ngrams, yield_label=True), include_unk,
+        is_test=False)
+    # logging.info('Total number of labels in training set:'.format(len(train_labels)))
+    return (IMDBDataset(vocab, train_data),
+            IMDBDataset(vocab,validation_data),
+            IMDBDataset(vocab, test_data)
+
+            )
+
+
+def IMDB_kd_indexing(train_text, train_labels, validation_text, validation_labels, test_text,test_labels,tokenize,vocab,ngrams=1, include_unk=False):
+
+    return _setup_kd_datasets(train_text, train_labels, validation_text, validation_labels, test_text, test_labels, tokenize,vocab,ngrams, include_unk)
 
 def IMDB_indexing(train_text, train_labels, validation_text, validation_labels, test_text,test_labels,vocab,ngrams=1, include_unk=False):
 
@@ -233,3 +275,34 @@ def pad_sequence(sequences, ksz, batch_first=False, padding_value=1):
             out_tensor[:length, i, ...] = tensor
 
     return out_tensor
+class bert_IMDBDataset(torch.utils.data.Dataset):
+    def __init__(self, text, labels, tokenizer, max_len):
+        super(bert_IMDBDataset, self).__init__()
+        self.text = text
+        self.labels = labels
+        self.tokenizer = tokenizer
+        self.max_len = max_len
+
+    def __len__(self):
+        return len(self.text)
+
+    def __getitem__(self, item):
+        encoding = self.tokenizer.encode_plus(
+            self.text[item],
+            add_special_tokens=True,
+            max_length=self.max_len,
+            return_token_type_ids=False,
+            pad_to_max_length=False,
+            return_attention_mask=True
+        )
+        # lengths = (encoding['input_ids'] != self.tokenizer.pad_token_id).sum(dim=-1)
+        # masks = encoding['input_ids'] != self.tokenizer.pad_token_id
+        return {'input_ids': encoding['input_ids'], 'attention_mask': encoding['attention_mask'],
+                'label': self.labels[item]}
+
+
+def bert_IMDB(training_texts,training_labels,validation_texts,validation_labels,testing_texts,testing_labels, tokenizer, max_len):
+    return (bert_IMDBDataset( training_texts,training_labels,tokenizer, max_len),
+            bert_IMDBDataset(validation_texts,validation_labels, tokenizer, max_len),
+            bert_IMDBDataset( testing_texts,testing_labels,tokenizer, max_len)
+            )

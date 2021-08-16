@@ -181,7 +181,8 @@ counter1.update(counter2)
 print(counter1)
 ls = [1,2,3]
 print(len(ls))
-
+lr = 1e-03
+print(lr)
 
 # def pad_sequence(sequences, ksz, batch_first=False, padding_value=0.0):
 #     # type: (List[Tensor], bool, float) -> Tensor
