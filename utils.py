@@ -11,12 +11,12 @@ stop_words = set(stopwords.words('english'))
 def _text_iterator(text, labels=None, ngrams=1, yield_label=False):
     tokenizer = get_tokenizer('basic_english')
     for i, text in enumerate(text):
-        print(text)
+        # print(text)
         texts = tokenizer(text)
-        filtered_text = [word for word in texts ]
+        # filtered_text = [word for word in texts ]
 
-        # filtered_text = [word for word in texts if word not in stop_words ]
-        print(filtered_text)
+        filtered_text = [word for word in texts if word not in stop_words ]
+        # print(filtered_text)
         if yield_label:
             label = labels[i]
             yield label, ngrams_iterator(filtered_text, ngrams)
@@ -76,7 +76,7 @@ class IMDBDataset(torch.utils.data.Dataset):
 
     def get_vocab(self):
         return self._vocab
-def _setup_datasets(train_text, train_labels, validation_text, validation_labels, test_text,test_labels, vocab,ngrams=1, include_unk=True):
+def _setup_datasets(train_text, train_labels, validation_text, validation_labels, test_text,test_labels, vocab,ngrams=1, include_unk=False):
     if vocab is None:
         logging.info('Building Vocab based on {}'.format(train_text))
 
@@ -113,7 +113,7 @@ def _setup_datasets(train_text, train_labels, validation_text, validation_labels
 
             )
 
-def IMDB_indexing(train_text, train_labels, validation_text, validation_labels, test_text,test_labels,vocab,ngrams=1, include_unk=True):
+def IMDB_indexing(train_text, train_labels, validation_text, validation_labels, test_text,test_labels,vocab,ngrams=1, include_unk=False):
 
 
     return _setup_datasets(train_text, train_labels, validation_text, validation_labels, test_text,test_labels,vocab,ngrams, include_unk)
