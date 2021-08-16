@@ -200,15 +200,15 @@ def main():
 
         train_loss, train_acc = train(training,BertGRU_model,criterion,device,optimizer,lr_scheduler)
         # print("testing emebedding")
-        valid_loss, valid_acc = validate(validation,BertGRU_model,criterion,device)
+        # valid_loss, valid_acc = validate(validation,BertGRU_model,criterion,device)
         end_time = time.time()
         epoch_mins, epoch_secs = epoch_time(start_time, end_time)
         print(f'Epoch: {epoch + 1:02} | Epoch Time: {epoch_mins}m {epoch_secs}s')
         print(f'\tTrain Loss: {train_loss:.3f} | Train Acc: {train_acc * 100:.2f}%')
-        print(f'\t Val. Loss: {valid_loss:.3f} |  Val. Acc: {valid_acc * 100:.2f}%')
-        if valid_loss < best_loss:
-            best_loss = valid_loss
-            torch.save(BertGRU_model.state_dict(), config.BERT)
+        # print(f'\t Val. Loss: {valid_loss:.3f} |  Val. Acc: {valid_acc * 100:.2f}%')
+        # if valid_loss < best_loss:
+        #     best_loss = valid_loss
+        #     torch.save(BertGRU_model.state_dict(), config.BERT)
     print("training done")
 
     print("testing")
