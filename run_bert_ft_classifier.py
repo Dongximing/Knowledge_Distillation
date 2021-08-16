@@ -37,7 +37,7 @@ def generate_batch(batch):
     input_ids = pad_sequence(input_ids, batch_first=True)
     attention_mask = [torch.tensor(entry['attention_mask']) for entry in batch]
     attention_mask = pad_sequence(attention_mask, batch_first=True)
-    label = [torch.tensor(entry['label'] for entry in batch)]
+    label = [torch.tensor(entry['label']) for entry in batch]
     return input_ids, attention_mask, label
 def prepare_dateset(train_data_path, validation_data_path,test_data_path):
     # with open(train_data_path,'r') as csvfile:
