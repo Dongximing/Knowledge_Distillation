@@ -143,7 +143,7 @@ def validate(validation_dataset, model, criterion, device):
         input_ids, attention_mask, label = input_ids.to(device), attention_mask.to(device), torch.LongTensor(label)
         label = label.to(device)
         with torch.no_grad():
-            output = model(ids = input_ids,attention_mask =attention_mask)
+            output = model(ids = input_ids,mask =attention_mask)
         loss = criterion(output,label)
         acc = categorical_accuracy(output, label)
         epoch_loss += loss.item()
