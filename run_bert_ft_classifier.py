@@ -166,11 +166,11 @@ def main():
     device = torch.device('cuda' if torch.cuda.is_available() else 'cpu')
     bert = BertModel.from_pretrained('bert-base-uncased')
     BertGRU_model = BERTGRUSentiment(bert,
-                             config["hidden_dim"],
-                             configs.OUTPUT_DIM,
-                             configs.N_LAYERS,
-                             configs.BIDIRECTIONAL,
-                             configs.DROPOUT)
+                             config.HIDDEN_DIM,
+                             config.OUTPUT_DIM,
+                             config.N_LAYERS,
+                             config.BIDIRECTIONAL,
+                             config.DROPOUT)
     BertGRU_model.to(device)
 
     for name, param in BertGRU_model.named_parameters():
