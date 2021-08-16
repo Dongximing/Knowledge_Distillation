@@ -11,6 +11,7 @@ stop_words = set(stopwords.words('english'))
 def _text_iterator(text, labels=None, ngrams=1, yield_label=False):
     tokenizer = get_tokenizer('basic_english')
     for i, text in enumerate(text):
+        print(text)
         texts = tokenizer(text)
         filtered_text = [word for word in texts ]
 
