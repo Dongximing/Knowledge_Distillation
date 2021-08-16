@@ -116,7 +116,8 @@ def train(train_dataset,model,criterion,device,optimizer,lr_scheduler):
 
     for i,data in tqdm(enumerate(train_dataset),total = len(train_dataset)):
         input_ids, attention_mask, label = data
-        input_ids, attention_mask, label = input_ids.to(device), attention_mask.to(device), label.to(device, dtype=torch.long)
+        input_ids, attention_mask, label = input_ids.cuda(), attention_mask.cuda(), label.cuda()
+ 
         optimizer.zero_grad()
         output = model(ids= input_ids, mask= attention_mask)
         loss = criterion(output,label)
