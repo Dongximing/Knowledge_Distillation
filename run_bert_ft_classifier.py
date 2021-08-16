@@ -3,7 +3,7 @@ import torch.nn as nn
 import numpy as np
 from torch.utils.data import DataLoader
 from tqdm import tqdm
-from utils import IMDB_indexing, pad_sequence
+from utils import IMDB_indexing, pad_sequence,bert_IMDB
 from models import BERTGRUSentiment
 import csv
 import pandas as pd
