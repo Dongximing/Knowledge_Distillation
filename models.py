@@ -110,7 +110,7 @@ class BERTGRUSentiment(nn.Module):
             embedded = self.dropout(self.bert(ids, attention_mask=mask)[0])
 
         # embedded = [batch size, sent len, emb dim]
-        output,hidden = self.GRU(embedded)
+        output,hidden = self.rnn(embedded)
         #_, hidden = self.rnn(embedded)
         # print(hidden.shape)
 
