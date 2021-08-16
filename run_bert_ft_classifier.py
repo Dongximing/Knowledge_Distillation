@@ -140,7 +140,8 @@ def validate(validation_dataset, model, criterion, device):
 
     for i,data in enumerate(validation_dataset):
         input_ids, attention_mask, label = data
-        input_ids, attention_mask, label = input_ids.to(device), attention_mask.to(device), label.to(device)
+        input_ids, attention_mask, label = input_ids.to(device), attention_mask.to(device), torch.LongTensor(label)
+        label = label.to(device)
         with torch.no_grad():
             output = model(ids = input_ids,attention_mask =attention_mask)
         loss = criterion(output,label)
