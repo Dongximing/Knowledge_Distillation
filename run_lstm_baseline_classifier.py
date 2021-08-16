@@ -267,7 +267,7 @@ def main():
 
     best_loss = float('inf')
     print("training")
-    for epoch in range(16):
+    for epoch in range(args.num_epochs):
         start_time = time.time()
         # print("training emebedding")
 
