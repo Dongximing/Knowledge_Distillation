@@ -209,11 +209,11 @@ def main():
         print(f'\t Val. Loss: {valid_loss:.3f} |  Val. Acc: {valid_acc * 100:.2f}%')
         if valid_loss < best_loss:
             best_loss = valid_loss
-            torch.save(BertGRU_model.state_dict(), config.BERT)
+            torch.save(BertGRU_model.state_dict(), config.BERT_PATH)
     print("training done")
 
     print("testing")
-    BertGRU_model.load_state_dict(torch.load(config.BERT))
+    BertGRU_model.load_state_dict(torch.load(config.BERT_PATH))
     test_loss, test_acc = validate(testing,BertGRU_model,criterion,device)
 
     print(f'Test Loss: {test_loss:.3f} | Test Acc: {test_acc * 100:.2f}%')
