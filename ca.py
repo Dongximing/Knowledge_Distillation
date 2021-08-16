@@ -75,7 +75,7 @@ from torchtext.data.utils import get_tokenizer
 from torchtext.data.utils import ngrams_iterator
 from torchtext.vocab import Vocab
 from torchtext.vocab import build_vocab_from_iterator
-train_text = ["I fuck you", "I love you"]
+train_text = ["I fuck you !", "I love you"]
 label =["D1","D2"]
 
 def _text_iterator(text, labels=None, ngrams=1, yield_label=False):
