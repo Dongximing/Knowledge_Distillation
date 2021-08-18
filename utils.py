@@ -75,6 +75,7 @@ def _create_data_from_iterator(vocab,tokenizer, iterator, include_unk, is_test=F
                     token_ids = list(filter(lambda x: x is not Vocab.UNK, [vocab[token]
                                                                            for token in text]))
                     tokens = torch.tensor(token_ids)
+                    print(tokens)
                     encoding = tokenizer.encode_plus(
                         bert_text,
 
