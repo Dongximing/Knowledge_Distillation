@@ -69,8 +69,7 @@ def _create_data_from_iterator(vocab,tokenizer, iterator, include_unk, is_test=F
                     bert_ids = encoding['input_ids']
                     attention_mask = encoding['attention_mask']
                 else:
-                    print(list(text))
-                    print(bert_text)
+             
 
                     token_ids = list(filter(lambda x: x is not Vocab.UNK, [vocab[token]
                                                                            for token in text]))
