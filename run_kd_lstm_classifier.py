@@ -116,14 +116,21 @@ def generate_batch(batch):
         cls: a tensor saving the labels of individual text entries.
     """
     # check if the dataset if train or test
-    if len(batch[0]) == 2:
+    if len(batch[0]) == 4:
         label = [entry[0] for entry in batch]
 
         # padding according to the maximum sequence length in batch
         text = [entry[1] for entry in batch]
         text_length = [len(seq) for seq in text]
         text= pad_sequence(text, ksz = 10, batch_first=True)
-        return text, text_length, label
+
+
+        bert_id = [torch.tensor(entry[2]) for entry in batch]
+        bert_id = pad_sequence(bert_id, batch_first=True)
+        attention_mask = [torch.tensor(entry[3]) for entry in batch]
+        attention_mask = pad_sequence(attention_mask, batch_first=True)
+
+        return text, text_length, label,bert_id,attention_mask
     else:
         text = [entry for entry in batch]
         text_length = [len(seq) for seq in text]
@@ -144,11 +151,11 @@ def train_kd_fc(data_loader, device, bert_model, model,optimizer, criterion,crit
     epoch_loss = 0
     epoch_acc = 0
     for bi,d in tqdm(enumerate(data_loader),total = len(data_loader)):
-        bert_id = d['ids']
-        bert_mask = d['mask']
+        bert_id = d['bert_id']
+        bert_mask = d['attention_mask']
         ids = d['text']
-        lengths = d['length']
-        targets = d['target']
+        lengths = d['text_length']
+        targets = d['label']
         ids = ids.to(device, dtype=torch.long)
         bert_id = bert_id.to(device, dtype=torch.long)
         bert_mask = bert_mask.to(device, dtype=torch.long)
