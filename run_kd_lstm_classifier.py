@@ -190,15 +190,14 @@ def validate(validation_dataset, model, criterion, device):
     epoch_loss = 0
     epoch_acc = 0
 
-    for i,(text, length,label) in enumerate(validation_dataset):
-        text_length = torch.Tensor(length)
+    for i,data in enumerate(validation_dataset):
+        text, text_length, label, _, _ = data
+        text_length = torch.Tensor(text_length)
         label = torch.tensor(label, dtype=torch.long)
+        text = text.to(device, dtype=torch.long)
 
-        # lengths, indices = torch.sort(text_length, dim=0, descending=True)
-        # text = torch.index_select(text, dim=0, index=indices)
-        # label = torch.index_select(label, dim=0, index=indices)
-        text_length = text_length.to(device)
-        text = text.to(device,dtype = torch.long)
+        text_length = text_length.to(device,dtype=torch.int)
+
         label = label.to(device)
 
         with torch.no_grad():
