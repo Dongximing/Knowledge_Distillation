@@ -89,7 +89,7 @@ def _create_data_from_iterator(vocab,tokenizer, iterator, include_unk, is_test=F
                     # print("tokens",tokens)
                 if len(tokens) == 0:
                     logging.info('Row contains no tokens.')
-                data.append((label, tokens,bert_ids,attention_mask))
+                data.append((label,tokens,bert_ids,attention_mask))
 
                 t.update(1)
             return data
