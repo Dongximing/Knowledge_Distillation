@@ -152,18 +152,14 @@ def train_kd_fc(data_loader, device, bert_model, model,optimizer, criterion,crit
     a = 0.5
     epoch_loss = 0
     epoch_acc = 0
-    for bi,d in tqdm(enumerate(data_loader),total = len(data_loader)):
-        bert_id = d['bert_id']
-        bert_mask = d['attention_mask']
-        ids = d['text']
-        lengths = d['text_length']
-        targets = d['label']
+    for bi,data in tqdm(enumerate(data_loader),total = len(data_loader)):
+        text, text_length, label, bert_id, attention_mask = data
         ids = ids.to(device, dtype=torch.long)
         bert_id = bert_id.to(device, dtype=torch.long)
-        bert_mask = bert_mask.to(device, dtype=torch.long)
+        bert_mask = attention_mask.to(device, dtype=torch.long)
 
-        lengths = lengths.to(device, dtype=torch.int)
-        targets = targets.to(device, dtype=torch.long)
+        lengths = text_length.to(device, dtype=torch.int)
+        targets = label.to(device, dtype=torch.long)
         optimizer.zero_grad()
         with torch.no_grad():
             bert_output = bert_model(bert_id,bert_mask)
