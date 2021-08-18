@@ -6,6 +6,7 @@ from torchtext.vocab import GloVe,Vocab
 from tqdm import tqdm
 from utils import IMDB_kd_indexing, pad_sequence
 from models import CNN_Baseline,LSTMBaseline
+from model import  BERTGRUSentiment
 import torchtext.vocab
 import csv
 import pandas as pd
