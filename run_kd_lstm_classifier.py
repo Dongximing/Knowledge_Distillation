@@ -293,7 +293,7 @@ def main():
 
     best_loss = float('inf')
     print("training")
-    for epoch in range(1):
+    for epoch in range(12):
         start_time = time.time()
 
 
