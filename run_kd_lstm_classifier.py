@@ -124,6 +124,7 @@ def generate_batch(batch):
         # padding according to the maximum sequence length in batch
         text = [entry[1] for entry in batch]
         text_length = [len(seq) for seq in text]
+        print(text_length)
         text= pad_sequencing(text, ksz = 10, batch_first=True)
 
 
@@ -161,6 +162,7 @@ def train_kd_fc(data_loader, device, bert_model, model,optimizer, criterion,crit
         bert_mask = attention_mask.to(device, dtype=torch.long)
 
         lengths = text_length.to(device, dtype=torch.int)
+
         targets = label.to(device, dtype=torch.long)
         optimizer.zero_grad()
         with torch.no_grad():
