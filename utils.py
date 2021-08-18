@@ -23,7 +23,7 @@ def _text_iterator(text, labels=None, ngrams=1, yield_label=False):
             yield label, ngrams_iterator(filtered_text, ngrams)
         else:
             yield ngrams_iterator(filtered_text, ngrams)
-def _create_data_from_iterator(vocab, iterator, include_unk, is_test=False):
+def _create_data_from_iterator(vocab,tokenize, iterator, include_unk, is_test=False):
     data = []
     with tqdm(unit_scale=0, unit='lines') as t:
         if is_test:
@@ -133,16 +133,16 @@ def _setup_kd_datasets(train_text, train_labels, validation_text, validation_lab
 
     logging.info('Creating training data')
     train_data = _create_data_from_iterator(
-        vocab, _text_iterator(train_text, labels=train_labels, ngrams=ngrams, yield_label=True), include_unk,
+        vocab, _text_iterator(train_text, tokenize,labels=train_labels, ngrams=ngrams, yield_label=True), include_unk,
         is_test=False)
     logging.info('Creating validation data')
     validation_data =_create_data_from_iterator(
-        vocab, _text_iterator(validation_text, labels=validation_labels, ngrams=ngrams, yield_label=True), include_unk,
+        vocab, _text_iterator(validation_text,tokenize, labels=validation_labels, ngrams=ngrams, yield_label=True), include_unk,
         is_test=False)
 
     logging.info('Creating testing data')
     test_data= _create_data_from_iterator(
-        vocab, _text_iterator(test_text, labels=test_labels, ngrams=ngrams, yield_label=True), include_unk,
+        vocab, _text_iterator(test_text, tokenize,labels=test_labels, ngrams=ngrams, yield_label=True), include_unk,
         is_test=False)
     # logging.info('Total number of labels in training set:'.format(len(train_labels)))
     return (IMDBDataset(vocab, train_data),
