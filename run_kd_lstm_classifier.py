@@ -21,6 +21,8 @@ from collections import Counter
 import time
 import copy
 from transformers import BertTokenizer, BertModel
+from torch.nn.utils.rnn import pad_sequence
+
 def count_parameters(model):
     return sum(p.numel() for p in model.parameters() if p.requires_grad)
 
