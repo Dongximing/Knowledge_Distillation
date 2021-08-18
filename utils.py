@@ -9,18 +9,31 @@ from torchtext.vocab import build_vocab_from_iterator
 from tqdm import tqdm
 from nltk.corpus import stopwords
 stop_words = set(stopwords.words('english'))
+
+
+def listToString(s):
+    # initialize an empty string
+    str1 = " "
+
+    # return string
+    return (str1.join(s))
+
+
+
+
+
 def _text_iterator(text, labels=None, ngrams=1, yield_label=False):
     tokenizer = get_tokenizer('basic_english')
-    for i, text in enumerate(text):
+    for i, bert_text in enumerate(text):
         # print(text)
-        texts = tokenizer(text)
+        texts = tokenizer(bert_text)
         # filtered_text = [word for word in texts ]
 
         filtered_text = [word for word in texts if word not in stop_words ]
         # print(filtered_text)
         if yield_label:
             label = labels[i]
-            yield label, ngrams_iterator(filtered_text, ngrams)
+            yield label, bert_text, ngrams_iterator(filtered_text, ngrams)
         else:
             yield ngrams_iterator(filtered_text, ngrams)
 def _create_data_from_iterator(vocab,tokenizer, iterator, include_unk, is_test=False):
@@ -40,13 +53,13 @@ def _create_data_from_iterator(vocab,tokenizer, iterator, include_unk, is_test=F
                 t.update(1)
             return data
         else:
-            for label, text in iterator:
+            for label,bert_text, text in iterator:
                 if include_unk:
                     # print(text)
                     tokens = torch.tensor([vocab[token] for token in text])
                     # print("tokens", tokens)
                     encoding = tokenizer.encode_plus(
-                        text,
+                        bert_text,
                         add_special_tokens=True,
                         max_length=512,
                         return_token_type_ids=False,
@@ -62,7 +75,7 @@ def _create_data_from_iterator(vocab,tokenizer, iterator, include_unk, is_test=F
                                                                            for token in text]))
                     tokens = torch.tensor(token_ids)
                     encoding = tokenizer.encode_plus(
-                        list(text),
+
                         add_special_tokens=True,
                         max_length=512,
                         return_token_type_ids=False,
