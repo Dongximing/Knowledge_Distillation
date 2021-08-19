@@ -79,8 +79,7 @@ class CNN_Baseline(nn.Module):
         x = self.dropout(flatten)
         x = self.linear(x)
         return x
-import torch
-import torch.nn as nn
+
 
 
 class BERTGRUSentiment(nn.Module):

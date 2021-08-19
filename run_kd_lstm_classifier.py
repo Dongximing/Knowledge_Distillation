@@ -57,8 +57,8 @@ def prepare_dateset(train_data_path, validation_data_path,test_data_path,vocab):
     logging.info("Start loading training data")
     training = pd.read_csv(train_data_path)
 
-    training_review = training.Review
-    training_sentiment = training.Sentiment
+    training_review = training.Review[:100]
+    training_sentiment = training.Sentiment[:100]
 
     for text,label in zip(training_review,training_sentiment):
         training_texts.append(text)
@@ -71,8 +71,8 @@ def prepare_dateset(train_data_path, validation_data_path,test_data_path,vocab):
     logging.info("Start loading validation data")
 
     validation = pd.read_csv(validation_data_path)
-    validation_review = validation.Review
-    validation_sentiment = validation.Sentiment
+    validation_review = validation.Review[:100]
+    validation_sentiment = validation.Sentiment[:100]
 
 
     for text,label in zip(validation_review,validation_sentiment):
@@ -178,10 +178,12 @@ def train_kd_fc(data_loader, device, bert_model, model,optimizer, criterion,crit
         loss.backward()
         # torch.nn.utils.clip_grad_norm_(model.parameters(), 1.0)
         optimizer.step()
+        hard_loss += loss_soft.item()
+        soft_loss += loss_hard.item()
         epoch_loss += loss.item()
         epoch_acc += acc.item()
     scheduler.step()
-    return epoch_loss / len(data_loader), epoch_acc / len(data_loader)
+    return epoch_loss / len(data_loader), epoch_acc / len(data_loader) ,hard_loss / len(data_loader), soft_acc / len(data_loader)
 
 
 def validate(validation_dataset, model, criterion, device):
@@ -258,7 +260,7 @@ def main():
     LSTM_model.to(device)
     #opt scheduler criterion
     optimizer = torch.optim.Adam(LSTM_model.parameters(), lr=args.lr)
-    lr_scheduler = torch.optim.lr_scheduler.StepLR(optimizer, gamma=args.lr_gamma, step_size=5)
+    lr_scheduler = torch.optim.lr_scheduler.StepLR(optimizer, gamma=args.lr_gamma, step_size=8)
     criterion = nn.CrossEntropyLoss()
     kd_critertion = nn.MSELoss()
     kd_critertion = kd_critertion.to(device)
@@ -293,19 +295,22 @@ def main():
 
     best_loss = float('inf')
     print("training")
-    for epoch in range(20):
+    for epoch in range(10):
         start_time = time.time()
 
 
 
-        train_loss, train_acc = train_kd_fc(training, device, bert_model,LSTM_model,optimizer, criterion,kd_critertion,lr_scheduler)
+        train_loss, train_acc,hard, soft  = train_kd_fc(training, device, bert_model,LSTM_model,optimizer, criterion,kd_critertion,lr_scheduler)
 
         valid_loss, valid_acc = validate(validation,LSTM_model,criterion,device)
         end_time = time.time()
         epoch_mins, epoch_secs = epoch_time(start_time, end_time)
         print(f'Epoch: {epoch + 1:02} | Epoch Time: {epoch_mins}m {epoch_secs}s')
         print(f'\tTrain Loss: {train_loss:.3f} | Train Acc: {train_acc * 100:.2f}%')
+        print("hard",hard)
+        print("soft",soft)
         print(f'\t Val. Loss: {valid_loss:.3f} |  Val. Acc: {valid_acc * 100:.2f}%')
+
         if valid_loss < best_loss:
             best_loss = valid_loss
             torch.save(LSTM_model.state_dict(), config.MODEL_KD_PATH)
