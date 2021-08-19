@@ -57,8 +57,8 @@ def prepare_dateset(train_data_path, validation_data_path,test_data_path,vocab):
     logging.info("Start loading training data")
     training = pd.read_csv(train_data_path)
 
-    training_review = training.Review[:100]
-    training_sentiment = training.Sentiment[:100]
+    training_review = training.Review[:10000]
+    training_sentiment = training.Sentiment[:10000]
 
     for text,label in zip(training_review,training_sentiment):
         training_texts.append(text)
@@ -86,8 +86,8 @@ def prepare_dateset(train_data_path, validation_data_path,test_data_path,vocab):
     logging.info("Start loading testing data")
 
     testing = pd.read_csv(test_data_path)
-    testing_review = testing.Review
-    testing_sentiment = testing.Sentiment
+    testing_review = testing.Review[:100]
+    testing_sentiment = testing.Sentiment[:100]
     for text, label in zip(testing_review, testing_sentiment):
         testing_texts.append(text)
         testing_labels.append(label)
@@ -155,6 +155,9 @@ def train_kd_fc(data_loader, device, bert_model, model,optimizer, criterion,crit
     a = 0.5
     epoch_loss = 0
     epoch_acc = 0
+    hard_loss = 0
+    soft_loss = 0
+
     for bi,data in tqdm(enumerate(data_loader),total = len(data_loader)):
         text, text_length, label, bert_id, attention_mask = data
         text_length = torch.Tensor(text_length)
