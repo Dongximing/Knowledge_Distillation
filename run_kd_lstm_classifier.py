@@ -123,14 +123,14 @@ def generate_batch(batch):
 
         # padding according to the maximum sequence length in batch
         text = [entry[1] for entry in batch]
-        print(text)
+        # print(text)
         text_length = [len(seq) for seq in text]
-        print(text_length)
+        # print(text_length)
         text= pad_sequencing(text, ksz = 10, batch_first=True)
 
 
         bert_id = [torch.tensor(entry[2]) for entry in batch]
-        print(bert_id)
+        # print(bert_id)
         bert_id = pad_sequence(bert_id, batch_first=True)
         attention_mask = [torch.tensor(entry[3]) for entry in batch]
         attention_mask = pad_sequence(attention_mask, batch_first=True)
