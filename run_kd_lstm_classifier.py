@@ -5,8 +5,8 @@ from torch.utils.data import DataLoader
 from torchtext.vocab import GloVe,Vocab
 from tqdm import tqdm
 from utils import IMDB_kd_indexing, pad_sequencing
-from models import CNN_Baseline,LSTMBaseline
-from model import  BERTGRUSentiment
+from models import CNN_Baseline,LSTMBaseline,BERTGRUSentiment
+
 import torchtext.vocab
 import csv
 import pandas as pd
