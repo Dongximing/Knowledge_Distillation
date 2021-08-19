@@ -270,7 +270,7 @@ def main():
                                   config.N_LAYERS,
                                   config.BIDIRECTIONAL,
                                   config.DROPOUT)
-    bert_model.load_state_dict(torch.load(config.Teacher_MODEL_PATH))
+    bert_model.load_state_dict(torch.load(config.BERT_PATH))
     bert_model.to(device)
     bert_model.eval()
 
