@@ -186,7 +186,7 @@ def train_kd_fc(data_loader, device, bert_model, model,optimizer, criterion,crit
         epoch_loss += loss.item()
         epoch_acc += acc.item()
     scheduler.step()
-    return epoch_loss / len(data_loader), epoch_acc / len(data_loader) ,hard_loss / len(data_loader), soft_acc / len(data_loader)
+    return epoch_loss / len(data_loader), epoch_acc / len(data_loader) ,hard_loss / len(data_loader), soft_loss/ len(data_loader)
 
 
 def validate(validation_dataset, model, criterion, device):
