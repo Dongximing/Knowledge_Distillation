@@ -181,8 +181,8 @@ def train_kd_fc(data_loader, device, bert_model, model,optimizer, criterion,crit
         loss.backward()
         # torch.nn.utils.clip_grad_norm_(model.parameters(), 1.0)
         optimizer.step()
-        hard_loss += loss_soft.item()
-        soft_loss += loss_hard.item()
+        soft_loss += loss_soft.item()
+        hard_loss += loss_hard.item()
         epoch_loss += loss.item()
         epoch_acc += acc.item()
     scheduler.step()
@@ -310,8 +310,8 @@ def main():
         epoch_mins, epoch_secs = epoch_time(start_time, end_time)
         print(f'Epoch: {epoch + 1:02} | Epoch Time: {epoch_mins}m {epoch_secs}s')
         print(f'\tTrain Loss: {train_loss:.3f} | Train Acc: {train_acc * 100:.2f}%')
-        # print("hard",hard)
-        # print("soft",soft)
+        print("hard",hard)
+        print("soft",soft)
         print(f'\t Val. Loss: {valid_loss:.3f} |  Val. Acc: {valid_acc * 100:.2f}%')
 
         if valid_loss < best_loss:
