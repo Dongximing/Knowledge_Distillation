@@ -298,7 +298,7 @@ def main():
 
     best_loss = float('inf')
     print("training")
-    for epoch in range(10):
+    for epoch in range(25):
         start_time = time.time()
 
 
@@ -310,8 +310,8 @@ def main():
         epoch_mins, epoch_secs = epoch_time(start_time, end_time)
         print(f'Epoch: {epoch + 1:02} | Epoch Time: {epoch_mins}m {epoch_secs}s')
         print(f'\tTrain Loss: {train_loss:.3f} | Train Acc: {train_acc * 100:.2f}%')
-        print("hard",hard)
-        print("soft",soft)
+        # print("hard",hard)
+        # print("soft",soft)
         print(f'\t Val. Loss: {valid_loss:.3f} |  Val. Acc: {valid_acc * 100:.2f}%')
 
         if valid_loss < best_loss:
