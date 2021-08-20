@@ -179,7 +179,7 @@ def train_kd_fc(data_loader, device, bert_model, model,optimizer, criterion,crit
         loss = loss_hard*a + (1-a)*loss_soft
         acc = categorical_accuracy(outputs, targets)
         loss.backward()
-        # torch.nn.utils.clip_grad_norm_(model.parameters(), 1.0)
+        #   torch.nn.utils.clip_grad_norm_(model.parameters(), 1.0)
         optimizer.step()
         soft_loss += loss_soft.item()
         hard_loss += loss_hard.item()
