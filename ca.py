@@ -163,7 +163,7 @@ def pad_sequence(sequences, ksz, batch_first=False, padding_value=1):
 import numpy as np
 list = []
 a = np.array([1,2,3,4])
-b =np.array([1,2,3,4,5,6])
+b =np.array([1,2,3,4])
 a = torch.from_numpy(a)
 
 b = torch.from_numpy(b)
@@ -174,6 +174,7 @@ list.append(a)
 c, d = pad_sequence(list, 5, batch_first=True, padding_value=10)
 print(c)
 print(d)
+
 from collections import Counter
 counter1 =  Counter({'x': 5, 'y': 12, 'z': -2, 'x1':0})
 counter2 = Counter({'x': 2, 'k':5})

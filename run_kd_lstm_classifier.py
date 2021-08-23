@@ -124,9 +124,9 @@ def generate_batch(batch):
         # padding according to the maximum sequence length in batch
         text = [entry[1] for entry in batch]
         # print(text)
-        text_length = [len(seq) for seq in text]
+        # text_length = [len(seq) for seq in text]
         # print(text_length)
-        text= pad_sequencing(text, ksz = 10, batch_first=True)
+        text, text_length= pad_sequencing(text, ksz = 512, batch_first=True)
 
 
         bert_id = [torch.tensor(entry[2]) for entry in batch]
@@ -310,17 +310,17 @@ def main():
         epoch_mins, epoch_secs = epoch_time(start_time, end_time)
         print(f'Epoch: {epoch + 1:02} | Epoch Time: {epoch_mins}m {epoch_secs}s')
         print(f'\tTrain Loss: {train_loss:.3f} | Train Acc: {train_acc * 100:.2f}%')
-        print("hard",hard)
-        print("soft",soft)
         print(f'\t Val. Loss: {valid_loss:.3f} |  Val. Acc: {valid_acc * 100:.2f}%')
+        print("hard", hard)
+        print("soft", soft)
 
         if valid_loss < best_loss:
             best_loss = valid_loss
-            torch.save(LSTM_model.state_dict(), config.MODEL_KD_PATH)
+            torch.save(LSTM_model.state_dict(), '/home/dongxx/projects/def-mercer/dongxx/project/LSTM-baseline/kd_test.pt')
     print("training done")
 
     print("testing")
-    LSTM_model.load_state_dict(torch.load(config.MODEL_KD_PATH))
+    LSTM_model.load_state_dict(torch.load('/home/dongxx/projects/def-mercer/dongxx/project/LSTM-baseline/kd_test.pt'))
     test_loss, test_acc = validate(testing,LSTM_model,criterion,device)
 
     print(f'Test Loss: {test_loss:.3f} | Test Acc: {test_acc * 100:.2f}%')
