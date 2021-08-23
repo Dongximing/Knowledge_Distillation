@@ -292,7 +292,7 @@ def IMDB_indexing(train_text, train_labels, validation_text, validation_labels, 
 #             out_tensor[:length, i, ...] = tensor
 #
 #     return out_tensor
-def pad_sequence(sequences, ksz, batch_first=False, padding_value=1):
+def pad_sequencing(sequences, ksz, batch_first=False, padding_value=1):
     # type: (List[Tensor], bool, float) -> Tensor
     r"""Pad a list of variable length Tensors with ``padding_value``
     ``pad_sequence`` stacks a list of Tensors along a new dimension,
