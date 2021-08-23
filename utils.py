@@ -343,7 +343,7 @@ def pad_sequencing(sequences, ksz, batch_first=False, padding_value=1):
     true =[]
     for i, tensor in enumerate(sequences):
         length = tensor.size(0)
-        print(length)
+        # print(length)
         if length > max_len:
             length = max_len
             out_tensor[i, :length, ...] = tensor[:length]
