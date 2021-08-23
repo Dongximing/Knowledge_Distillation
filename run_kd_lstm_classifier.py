@@ -228,12 +228,12 @@ def main():
     parser.add_argument('--dropout', type=float, default=0.25)
     parser.add_argument('--embedding_dim', type=int, default=100)
     parser.add_argument('--num_epochs', type=int, default=10)
-    parser.add_argument('--batch_sz', type=int, default=8)
+    parser.add_argument('--batch_sz', type=int, default=16)
     parser.add_argument('--lr', type=float, default=5e-3)
 
     parser.add_argument('--weight_decay', type=float, default=0.5)
     parser.add_argument('--scheduler_step_sz', type=int, default=6)
-    parser.add_argument('--lr_gamma', type=float, default=0.01)
+    parser.add_argument('--lr_gamma', type=float, default=0.5)
     parser.add_argument('--number_class', type=int, default=2)
 
     args = parser.parse_args()
@@ -263,7 +263,7 @@ def main():
     LSTM_model.to(device)
     #opt scheduler criterion
     optimizer = torch.optim.Adam(LSTM_model.parameters(), lr=args.lr)
-    lr_scheduler = torch.optim.lr_scheduler.StepLR(optimizer, gamma=args.lr_gamma, step_size=7)
+    lr_scheduler = torch.optim.lr_scheduler.StepLR(optimizer, gamma=args.lr_gamma, step_size=5)
     criterion = nn.CrossEntropyLoss()
     kd_critertion = nn.MSELoss()
     kd_critertion = kd_critertion.to(device)
@@ -298,7 +298,7 @@ def main():
 
     best_loss = float('inf')
     print("training")
-    for epoch in range(15):
+    for epoch in range(16):
         start_time = time.time()
 
 
