@@ -311,8 +311,8 @@ def main():
         print(f'Epoch: {epoch + 1:02} | Epoch Time: {epoch_mins}m {epoch_secs}s')
         print(f'\tTrain Loss: {train_loss:.3f} | Train Acc: {train_acc * 100:.2f}%')
         print(f'\t Val. Loss: {valid_loss:.3f} |  Val. Acc: {valid_acc * 100:.2f}%')
-        print("hard", hard)
-        print("soft", soft)
+        # print("hard", hard)
+        # print("soft", soft)
 
         if valid_loss < best_loss:
             best_loss = valid_loss

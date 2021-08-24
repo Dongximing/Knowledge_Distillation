@@ -330,7 +330,7 @@ def pad_sequencing(sequences, ksz, batch_first=False, padding_value=1):
 
     trailing_dims = max_size[1:]
     max_len = max([s.size(0) for s in sequences])
-    print(max_len)
+    # print(max_len)
     if max_len > ksz:
         max_len = ksz
     if batch_first:
