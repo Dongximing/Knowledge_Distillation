@@ -106,7 +106,7 @@ def prepare_dateset(train_data_path, validation_data_path,test_data_path,vocab):
 
     # vocab_size = len(vocab)
     # print('building vocab length',vocab_size)
-    # logging.info('Build vocab')
+    # logging.info(' Build vocab')
 
     return train_dataset,validation_dataset,testing_dataset
 
