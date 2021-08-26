@@ -137,7 +137,7 @@ class LSTM_atten(nn.Module):
         self.fc = nn.Linear(hidden_dim * 2, number_class)
         self.dropout = nn.Dropout(dropout)
     def atten(self,output,finial_state):
-        attent_weight = torch.bmm(output,finial_state).unsqueeze(2)
+        attent_weight = torch.bmm(output,finial_state).squeeze(2)
         soft_max_weights = F.softmax(attent_weight,1)
         context = torch.bmm(output.transpose(1,2),soft_max_weights.unsqueeze(2)).squeeze(2)
         return context
@@ -150,9 +150,10 @@ class LSTM_atten(nn.Module):
         seq = self.dropout(self.embedding_layer(seq))
         a_packed_input = t.nn.utils.rnn.pack_padded_sequence(input=seq, lengths=a_lengths.to('cpu'), batch_first=True)
         packed_output, (hidden, cell) = self.rnn(a_packed_input)
+
+        hidden = self.dropout(t.cat((hidden[-2, :, :], hidden[-1, :, :]), dim=1)).unsqueeze(2)
+        context = self.atten(packed_output,hidden)
         out, _ = t.nn.utils.rnn.pad_packed_sequence(packed_output, batch_first=True)
-        hidden = self.dropout(t.cat((hidden[-2, :, :], hidden[-1, :, :]), dim=1))
-        context = self.atten(out,hidden)
         out = t.index_select(out, 0, un_idx)
         context = t.index_select(context, 0, un_idx)
         return self.fc(context)
