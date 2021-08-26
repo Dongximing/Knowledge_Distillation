@@ -150,11 +150,11 @@ class LSTM_atten(nn.Module):
         seq = self.dropout(self.embedding_layer(seq))
         a_packed_input = t.nn.utils.rnn.pack_padded_sequence(input=seq, lengths=a_lengths.to('cpu'), batch_first=True)
         packed_output, (hidden, cell) = self.rnn(a_packed_input)
-
+        out, _ = t.nn.utils.rnn.pad_packed_sequence(packed_output, batch_first=True)
         hidden = self.dropout(t.cat((hidden[-2, :, :], hidden[-1, :, :]), dim=1))
         print(hidden.size())
-        context = self.atten(packed_output,hidden)
-        out, _ = t.nn.utils.rnn.pad_packed_sequence(packed_output, batch_first=True)
+        context = self.atten(out,hidden)
+
         out = t.index_select(out, 0, un_idx)
         context = t.index_select(context, 0, un_idx)
         return self.fc(context)
