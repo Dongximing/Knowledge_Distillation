@@ -152,7 +152,7 @@ class LSTM_atten(nn.Module):
         packed_output, (hidden, cell) = self.rnn(a_packed_input)
         out, _ = t.nn.utils.rnn.pad_packed_sequence(packed_output, batch_first=True)
         hidden = self.dropout(t.cat((hidden[-2, :, :], hidden[-1, :, :]), dim=1)).unsqueeze(2)
-        print(hidden.size())
+        # print(hidden.size())
         context = self.atten(out,hidden)
 
         out = t.index_select(out, 0, un_idx)
