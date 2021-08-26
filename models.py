@@ -126,6 +126,36 @@ class BERTGRUSentiment(nn.Module):
 
 
         return output
+
+class LSTM_atten(nn.Module):
+    def __init__(self,vocab_size,hidden_dim,n_layers,dropout,number_class,bidirectional,embedding_dim =100):
+        super.__init__()
+        self.embedding_layer = nn.Embedding(num_embeddings=vocab_size, embedding_dim=embedding_dim, padding_idx=1)
+        self.hidden_size = hidden_dim
+        self.rnn = nn.LSTM(embedding_dim, hidden_dim, num_layers=n_layers, dropout=dropout, bidirectional=bidirectional,
+                           batch_first=True)
+        self.fc = nn.Linear(hidden_dim * 2, number_class)
+        self.dropout = nn.Dropout(dropout)
+    def atten(self,output,finial_state):
+        attent_weight = torch.bmm(output,finial_state).unsqueeze(2)
+        soft_max_weights = F.softmax(attent_weight,1)
+        context = torch.bmm(output.transpose(1,2),soft_max_weights.unsqueeze(2)).squeeze(2)
+        return context
+    def forward(self,text,text_length):
+
+        a_lengths, idx = text_length.sort(0, descending=True)
+        _, un_idx = t.sort(idx, dim=0)
+        seq = text[idx]
+
+        seq = self.dropout(self.embedding_layer(seq))
+        a_packed_input = t.nn.utils.rnn.pack_padded_sequence(input=seq, lengths=a_lengths.to('cpu'), batch_first=True)
+        packed_output, (hidden, cell) = self.rnn(a_packed_input)
+        out, _ = t.nn.utils.rnn.pad_packed_sequence(packed_output, batch_first=True)
+        hidden = self.dropout(t.cat((hidden[-2, :, :], hidden[-1, :, :]), dim=1))
+        context = self.atten(out,hidden)
+        out = t.index_select(out, 0, un_idx)
+        context = t.index_select(context, 0, un_idx)
+        return self.fc(context)
 # class BERTGRUSentiment(nn.Module):
 #     def __init__(self,bert,hidden_dim,output_dim,n_layers,bidirectional,dropout):
 
