@@ -10,8 +10,10 @@ from tqdm import tqdm
 
 # import nltk
 # nltk.download('stopwords')
-from nltk.corpus import stopwords
-stop_words = set(stopwords.words('english'))
+# from nltk.corpus import stopwords
+# stop_words = set(stopwords.words('english'))
+import nltk
+stop_words = nltk.corpus.stopwords.words('english')
 #123
 
 # def listToString(s):
