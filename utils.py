@@ -8,7 +8,7 @@ from torchtext.vocab import Vocab
 from torchtext.vocab import build_vocab_from_iterator
 from tqdm import tqdm
 from nltk.corpus import stopwords
-stop_words = set(nltk.corpus.stopwords.words('english'))
+stop_words = set(stopwords.words('english'))
 #123
 
 def listToString(s):
