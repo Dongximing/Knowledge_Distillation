@@ -12,7 +12,7 @@ from tqdm import tqdm
 import nltk
 nltk.download('stopwords')
 from nltk.corpus import stopwords
-stop_words = set(stopwords.words('english'))
+stop_words = set(nltk.download('stopwords'))
 #123
 
 def listToString(s):
