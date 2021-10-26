@@ -231,16 +231,16 @@ def main():
 
 
     #jjjj print(counter1)
-print(type(counter1))
+# print(type(counter1))
     for x, y in counter1.items():
         counter1[x] = 400000-int(y)
 
-    print(counter1)
+    # print(counter1)
     counter1.update(counter2)
     vocab = Vocab(counter1)
     vocab_size=vocab.__len__()
     print("vocab_size:",vocab_size)
-    # print(vocab.stoi)
+    print(vocab.stoi)
     #
     # print(vocab.itos[2])
     # train_dataset, validation_dataset, test_dataset, vocab, vocab_size = prepare_dateset(args.train_path,args.validation_path)
