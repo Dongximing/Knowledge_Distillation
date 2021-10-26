@@ -230,7 +230,7 @@ def main():
     counter1 =  copy.deepcopy(glove.stoi)
 
 
-    #jjjj print(counter1)
+    #jjjjewrwerewr print(counter1)
 # print(type(counter1))
     for x, y in counter1.items():
         counter1[x] = 400000-int(y)
