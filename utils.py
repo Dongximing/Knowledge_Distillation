@@ -7,8 +7,9 @@ from torchtext.data.utils import ngrams_iterator
 from torchtext.vocab import Vocab
 from torchtext.vocab import build_vocab_from_iterator
 from tqdm import tqdm
+
 import nltk
-nltk.download()
+nltk.download('stopwords')
 from nltk.corpus import stopwords
 stop_words = set(stopwords.words('english'))
 #123
