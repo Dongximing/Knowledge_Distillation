@@ -242,7 +242,7 @@ def main():
     print("vocab_size:",vocab_size)
     print(vocab.stoi)
     #
-    # print(vocab.itos[2])
+    print(vocab.itos[2])
     # train_dataset, validation_dataset, test_dataset, vocab, vocab_size = prepare_dateset(args.train_path,args.validation_path)
     train_dataset, validation_dataset,test_dataset = prepare_dateset(args.train_path, args.validation_path, args.test_path, vocab)
     # modelvocab_size,hidden_dim,n_layers,dropout,number_class,bidirectional,embedding_dim =10
