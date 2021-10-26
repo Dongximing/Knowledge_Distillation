@@ -1,6 +1,5 @@
 import torchtext
 import logging
-
 import torch
 #11111
 from torchtext.data.utils import get_tokenizer
@@ -9,18 +8,18 @@ from torchtext.vocab import Vocab
 from torchtext.vocab import build_vocab_from_iterator
 from tqdm import tqdm
 
-import nltk
-nltk.download('stopwords')
+# import nltk
+# nltk.download('stopwords')
 from nltk.corpus import stopwords
-stop_words = set(nltk.download('stopwords'))
+stop_words = set(stopwords.words('english'))
 #123
 
-def listToString(s):
-    # initialize an empty streinwqeqweqwg
-    str1 = " "
-
-    # return string
-    return (str1.join(s))
+# def listToString(s):
+#     # initialize an empty streinwqeqweqwg
+#     str1 = " "
+#
+#     # return string
+#     return (str1.join(s))
 
 
 
