@@ -233,7 +233,7 @@ def main():
     # print(counter1)
     print(type(counter1))
     for x, y in counter1.items():
-        counter1[x] = 400001-int(counter1[y])
+        counter1[x] = 400001-int(y)
 
     print(counter1)
     vocab = Vocab(counter1)
