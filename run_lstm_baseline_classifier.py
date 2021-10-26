@@ -226,16 +226,17 @@ def main():
     # dataset
     glove = torchtext.vocab.GloVe(name='6B', dim=100,)
     # print(glove.get_vecs_by_tokens(['picture']))
-    counter2 = Counter({'<unk>': 400000, '<pad>': 400001})
+    counter2 = Counter({'<unk>': 400001, '<pad>': 400002})
     counter1 =  copy.deepcopy(glove.stoi)
 
 
-    print(counter1)
-
-    # for x, y in counter1.items():
-    #     counter1[x] = 400001-int(y)
-    #
     # print(counter1)
+    # print(type(counter1))
+    for x, y in counter1.items():
+        counter1[x] = 400000-int(y)
+
+    print(counter1)
+    counter1.update(counter2)
     vocab = Vocab(counter1)
     vocab_size=vocab.__len__()
     print("vocab_size:",vocab_size)
