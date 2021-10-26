@@ -1,7 +1,8 @@
 import torchtext
 import logging
 import torch
-
+import nltk
+nltk.download('stopwords')
 from torchtext.data.utils import get_tokenizer
 from torchtext.data.utils import ngrams_iterator
 from torchtext.vocab import Vocab

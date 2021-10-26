@@ -19,6 +19,8 @@ config.seed_torch()
 from collections import Counter
 import time
 import copy
+import nltk
+nltk.download('stopwords')
 
 def count_parameters(model):
     return sum(p.numel() for p in model.parameters() if p.requires_grad)
