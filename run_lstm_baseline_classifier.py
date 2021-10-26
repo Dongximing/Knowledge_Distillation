@@ -220,7 +220,7 @@ def main():
 
     args = parser.parse_args()
 
-    # device
+    # dddddddevice
     # device = torch.device(args.device if torch.cuda.is_available() else "cpu")
     device = torch.device('cuda' if torch.cuda.is_available() else 'cpu')
     # dataset
@@ -235,7 +235,7 @@ def main():
     for x, y in counter1.items():
         counter1[x] = 400000-int(y)
 
-    # print(counter1)
+    # print(counter1)cat ~/.gitconfig
     counter1.update(counter2)
     vocab = Vocab(counter1)
     vocab_size=vocab.__len__()
