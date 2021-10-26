@@ -209,11 +209,11 @@ def main():
     parser.add_argument('--dropout', type=float, default=0.25)
     parser.add_argument('--embedding_dim', type=int, default=100)
     parser.add_argument('--num_epochs', type=int, default=16)
-    parser.add_argument('--batch_sz', type=int, default=16)
+    parser.add_argument('--batch_sz', type=int, default=64)
     parser.add_argument('--lr', type=float, default=1e-3)
 
     parser.add_argument('--weight_decay', type=float, default=0.5)
-    parser.add_argument('--scheduler_step_sz', type=int, default=6)
+    parser.add_argument('--scheduler_step_sz', type=int, default=5)
     parser.add_argument('--lr_gamma', type=float, default=0.1)
     parser.add_argument('--number_class', type=int, default=2)
 
@@ -229,7 +229,7 @@ def main():
     counter1 =  copy.deepcopy(glove.stoi)
 
     counter1.update(counter2)
-    # print(counter1)
+    print(counter1)
 
     vocab = Vocab(counter1)
     vocab_size=vocab.__len__()
