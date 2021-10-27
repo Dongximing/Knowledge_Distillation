@@ -29,4 +29,4 @@ MODEL_Base_PATH ='/home/dongxx/projects/def-mercer/dongxx/project/Model_paramete
 #    Teachedr_MODEL_PATH ='/home/dongxx/projects/def-mercer/dongxx/project/pythonProject/bert.pt'
 MODEL_CNN_PATH = '/home/dongxx/projects/def-mercer/dongxx/project/pythonProject/cnn.pt'
 BERT_PATH = '/home/dongxx/projects/def-mercer/dongxx/project/Model_parameter/new_bert.pt'
-
+MODEL_Base_PATH_bu = '/home/dongxx/projects/def-mercer/dongxx/Model_parameter/baseline.pt'

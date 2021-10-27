@@ -258,7 +258,7 @@ def main():
     vocab = Vocab(counter1)
     vocab_size=vocab.__len__()
     print("vocab_size:",vocab_size)
-    # print(vocab.stoi)
+    print(vocab.stoi)
     #
     # print(vocab.itos[2])
     # train_dataset, validation_dataset, test_dataset, vocab, vocab_size = prepare_dateset(args.train_path,args.validation_path)
@@ -307,11 +307,11 @@ def main():
         print(f'\t Val. Loss: {valid_loss:.3f} |  Val. Acc: {valid_acc * 100:.2f}%')
         if valid_loss < best_loss:
             best_loss = valid_loss
-            torch.save(LSTM_model.state_dict(), config.MODEL_Base_PATH)
+            torch.save(LSTM_model.state_dict(), config.MODEL_Base_PATH_bu)
     print("training done")
 
     print("testing")
-    LSTM_model.load_state_dict(torch.load(config.MODEL_Base_PATH))
+    LSTM_model.load_state_dict(torch.load(config.MODEL_Base_PATH_bu))
     test_loss, test_acc = validate(testing,LSTM_model,criterion,device)
 
     print(f'Test Loss: {test_loss:.3f} | Test Acc: {test_acc * 100:.2f}%')
