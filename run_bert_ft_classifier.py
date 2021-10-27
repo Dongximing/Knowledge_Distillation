@@ -157,9 +157,9 @@ def main():
     parser.add_argument('--test_path',type= str,default='/home/dongxx/projects/def-mercer/dongxx/project/data/test.csv')
 
     parser.add_argument('--dropout', type=float, default=0.25)
-    parser.add_argument('--embedding_dim', type=int, default=100)
+    parser.add_argument('--embedding_dim', type=int, default=256)
     parser.add_argument('--num_epochs', type=int, default=12)
-    parser.add_argument('--batch_sz', type=int, default= 32)
+    parser.add_argument('--batch_sz', type=int, default= 64)
     parser.add_argument('--lr', type=float, default=1e-3)
 
     parser.add_argument('--weight_decay', type=float, default=0.5)
@@ -184,7 +184,7 @@ def main():
             param.requires_grad = False
     print(f'The model has {count_parameters(BertGRU_model):,} trainable parameters')
     optimizer = torch.optim.Adam(BertGRU_model.parameters(), lr=args.lr)
-    lr_scheduler = torch.optim.lr_scheduler.StepLR(optimizer, gamma=args.lr_gamma, step_size=5)
+    lr_scheduler = torch.optim.lr_scheduler.StepLR(optimizer, gamma=args.lr_gamma, step_size=6)
     criterion = nn.CrossEntropyLoss()
     criterion.to(device)
     train_dataset, validation_dataset,test_dataset = prepare_dateset(args.train_path, args.validation_path, args.test_path)
