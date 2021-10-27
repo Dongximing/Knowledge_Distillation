@@ -204,9 +204,16 @@ def validate(validation_dataset, model, criterion, device):
 
 def main():
     parser = argparse.ArgumentParser()
-    parser.add_argument('--train_path',type=str,default='/home/dongxx/projects/def-mercer/dongxx/project/data/train.csv')
-    parser.add_argument('--validation_path',type= str,default='/home/dongxx/projects/def-mercer/dongxx/project/data/valid.csv')
-    parser.add_argument('--test_path',type= str,default='/home/dongxx/projects/def-mercer/dongxx/project/data/test.csv')
+    parser.add_argument('--train_path', type=str,
+                        default='/home/dongxx/projects/def-mercer/dongxx/IMDB_data/train.csv')
+    parser.add_argument('--validation_path', type=str,
+                        default='/home/dongxx/projects/def-mercer/dongxx/IMDB_data/valid.csv')
+    parser.add_argument('--test_path', type=str,
+                        default='/home/dongxx/projects/def-mercer/dongxx/IMDB_data/test.csv')
+
+    # parser.add_argument('--train_path',type=str,default='/home/dongxx/projects/def-mercer/dongxx/project/data/train.csv')
+    # parser.add_argument('--validation_path',type= str,default='/home/dongxx/projects/def-mercer/dongxx/project/data/valid.csv')
+    # parser.add_argument('--test_path',type= str,default='/home/dongxx/projects/def-mercer/dongxx/project/data/test.csv')
 
     parser.add_argument('--dropout', type=float, default=0.25)
     parser.add_argument('--embedding_dim', type=int, default=100)
