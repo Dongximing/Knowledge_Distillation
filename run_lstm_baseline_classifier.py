@@ -2,7 +2,7 @@ import torch
 import torch.nn as nn
 import numpy as np
 from torch.utils.data import DataLoader
-from torchtext.vocab import GloVe,Vocab
+from torchtext.vocab import GloVe,Vocab,Vectors
 from tqdm import tqdm
 from utils import IMDB_indexing, pad_sequence,pad_sequencing
 from models import CNN_Baseline,LSTMBaseline
@@ -228,13 +228,23 @@ def main():
     glove = torchtext.vocab.GloVe(name='6B', dim=100,)
     # print(glove.get_vecs_by_tokens(['picture']))
     counter2 = Counter({'<unk>': 400002, '<pad>': 400001})
-    counter1 =  copy.deepcopy(glove.stoi)
 
 
+    glove = Vectors(name='glove.6B.100d.txt')
+    f = open('../glove.42B.{}d.txt'.format(100), 'r')
+    loop = tqdm(f)
+    vob = {}
+    loop.set_description('Load Glove')
+    for i,line in enumerate(loop):
+        values = line.split()
+        word = values[0]
+        vob[word] =400000-i
+    counter1 = copy.deepcopy(vob)
+    f.close()
     #jjjjewrwerewr print(counter1)
 # print(type(counter1))
-    for x, y in counter1.items():
-        counter1[x] = 400000-int(y)
+#     for x, y in counter1.items():
+#         counter1[x] = 400000-int(y)
 
     # print(counter1)cat ~/.gitconfig
     counter1.update(counter2)
