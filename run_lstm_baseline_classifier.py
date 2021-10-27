@@ -95,7 +95,7 @@ def prepare_dateset(train_data_path, validation_data_path,test_data_path,vocab):
     print('prepare training and test sets')
     logging.info('Prepare training and test sets')
 
-    train_dataset, validation_dataset,testing_dataset = IMDB_indexing(training_texts,training_labels,validation_texts,validation_labels,testing_texts,testing_labels,vocab= vocab)
+    train_dataset, validation_dataset,testing_dataset = IMDB_indexing(training_texts,training_labels,validation_texts,validation_labels,testing_texts,testing_labels,include_unk=False,vocab= vocab)
     print('building vocab')
 
     # vocab = train_dataset.get_vocab()
