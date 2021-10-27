@@ -28,6 +28,20 @@ stop_words = set(stopwords.words('english'))
 
 
 
+# def _text_iterator(text, labels=None, ngrams=1, yield_label=False):
+#     tokenizer = get_tokenizer('basic_english')
+#     for i, bert_text in enumerate(text):
+#         # print(text)
+#         texts = tokenizer(bert_text)
+#         # filtered_text = [word for word in texts ]
+#
+#         filtered_text = [word for word in texts if word not in stop_words ]
+#         # print(filtered_text)
+#         if yield_label:
+#             label = labels[i]
+#             yield label, bert_text, ngrams_iterator(filtered_text, ngrams)
+#         else:
+#             yield ngrams_iterator(filtered_text, ngrams)
 def _text_iterator(text, labels=None, ngrams=1, yield_label=False):
     tokenizer = get_tokenizer('basic_english')
     for i, bert_text in enumerate(text):
@@ -39,10 +53,12 @@ def _text_iterator(text, labels=None, ngrams=1, yield_label=False):
         # print(filtered_text)
         if yield_label:
             label = labels[i]
-            yield label, bert_text, ngrams_iterator(filtered_text, ngrams)
+            yield label, ngrams_iterator(filtered_text, ngrams)
         else:
             yield ngrams_iterator(filtered_text, ngrams)
-def _create_data_from_iterator(vocab,tokenizer, iterator, include_unk, is_test=False):
+
+
+def _create_data_from_iterator(vocab,  iterator, include_unk, is_test=False):
     data = []
     with tqdm(unit_scale=0, unit='lines') as t:
         if is_test:
@@ -59,47 +75,83 @@ def _create_data_from_iterator(vocab,tokenizer, iterator, include_unk, is_test=F
                 t.update(1)
             return data
         else:
-            for label,bert_text, text in iterator:
+            for label, text in iterator:
                 if include_unk:
                     # print(text)
                     tokens = torch.tensor([vocab[token] for token in text])
-                    # print("tokens", tokens)
-                    encoding = tokenizer.encode_plus(
-                        bert_text,
-                        add_special_tokens=True,
-                        max_length=512,
-                        return_token_type_ids=False,
-                        pad_to_max_length=False,
-                        return_attention_mask=True
-                    )
-                    bert_ids = encoding['input_ids']
-                    attention_mask = encoding['attention_mask']
+
                 else:
-             
 
                     token_ids = list(filter(lambda x: x is not Vocab.UNK, [vocab[token]
                                                                            for token in text]))
                     # print(token_ids)
                     tokens = torch.tensor(token_ids)
-                    # print(tokens)
-                    encoding = tokenizer.encode_plus(
-                        bert_text,
 
-                        add_special_tokens=True,
-                        max_length=512,
-                        return_token_type_ids=False,
-                        pad_to_max_length=False,
-                        return_attention_mask=True
-                    )
-                    bert_ids = encoding['input_ids']
-                    attention_mask = encoding['attention_mask']
                     # print("tokens",tokens)
                 if len(tokens) == 0:
                     logging.info('Row contains no tokens.')
-                data.append((label,tokens,bert_ids,attention_mask))
+                data.append((label, tokens))
 
                 t.update(1)
             return data
+# def _create_data_from_iterator(vocab,tokenizer, iterator, include_unk, is_test=False):
+#     data = []
+#     with tqdm(unit_scale=0, unit='lines') as t:
+#         if is_test:
+#             for text in iterator:
+#                 if include_unk:
+#                     tokens = torch.tensor([vocab[token] for token in text])
+#                 else:
+#                     token_ids = list(filter(lambda x: x is not Vocab.UNK, [vocab[token]
+#                                                                            for token in text]))
+#                     tokens = torch.tensor(token_ids)
+#                 if len(tokens) == 0:
+#                     logging.info('Row contains no tokens.')
+#                 data.append(tokens)
+#                 t.update(1)
+#             return data
+#         else:
+#             for label,bert_text, text in iterator:
+#                 if include_unk:
+#                     # print(text)
+#                     tokens = torch.tensor([vocab[token] for token in text])
+#                     # print("tokens", tokens)
+#                     encoding = tokenizer.encode_plus(
+#                         bert_text,
+#                         add_special_tokens=True,
+#                         max_length=512,
+#                         return_token_type_ids=False,
+#                         pad_to_max_length=False,
+#                         return_attention_mask=True
+#                     )
+#                     bert_ids = encoding['input_ids']
+#                     attention_mask = encoding['attention_mask']
+#                 else:
+#
+#
+#                     token_ids = list(filter(lambda x: x is not Vocab.UNK, [vocab[token]
+#                                                                            for token in text]))
+#                     # print(token_ids)
+#                     tokens = torch.tensor(token_ids)
+#                     # print(tokens)
+#                     encoding = tokenizer.encode_plus(
+#                         bert_text,
+#
+#                         add_special_tokens=True,
+#                         max_length=512,
+#                         return_token_type_ids=False,
+#                         pad_to_max_length=False,
+#                         return_attention_mask=True
+#                     )
+#                     bert_ids = encoding['input_ids']
+#                     attention_mask = encoding['attention_mask']
+#                     # print("tokens",tokens)
+#                 if len(tokens) == 0:
+#                     logging.info('Row contains no tokens.')
+#                 data.append((label,tokens,bert_ids,attention_mask))
+#
+#                 t.update(1)
+#             return data
 class IMDBDataset(torch.utils.data.Dataset):
     def __init__(self, vocab, data):
 
