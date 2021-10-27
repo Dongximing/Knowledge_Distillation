@@ -13,6 +13,7 @@ from tqdm import tqdm
 # from nltk.corpus import stopwords
 # stop_words = set(stopwords.words('english'))
 import nltk
+nltk.set_proxy('http://proxy.example.com:3128', ('USERNAME', 'PASSWORD'))
 stop_words = nltk.corpus.stopwords.words('english')
 #123
 
