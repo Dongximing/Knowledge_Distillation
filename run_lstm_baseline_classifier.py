@@ -221,16 +221,16 @@ def main():
 
     args = parser.parse_args()
 
-    # dddddddevice
+    # ddddddddevice
     # device = torch.device(args.device if torch.cuda.is_available() else "cpu")
     device = torch.device('cuda' if torch.cuda.is_available() else 'cpu')
     # dataset
-    glove = torchtext.vocab.GloVe(name='6B', dim=100,)
+    # glove = torchtext.vocab.GloVe(name='6B', dim=100,)
     # print(glove.get_vecs_by_tokens(['picture']))
     counter2 = Counter({'<unk>': 400002, '<pad>': 400001})
 
 
-    # glove = Vectors(name='glove.6B.100d.txt')
+    glove = Vectors(name='glove.6B.100d.txt')
     f = open('../glove.42B.{}d.txt'.format(100), 'r')
     loop = tqdm(f)
     vob = {}
