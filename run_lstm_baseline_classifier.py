@@ -230,7 +230,7 @@ def main():
     counter2 = Counter({'<unk>': 400002, '<pad>': 400001})
 
 
-    glove = Vectors(name='glove.6B.100d.txt')
+    glove = Vectors(name='../glove.6B.100d.txt')
     f = open('../glove.42B.{}d.txt'.format(100), 'r')
     loop = tqdm(f)
     vob = {}
