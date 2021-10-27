@@ -203,9 +203,9 @@ def validate(validation_dataset, model, criterion, device):
 
 def main():
     parser = argparse.ArgumentParser()
-    parser.add_argument('--train_path',type=str,default='/home/dongxx/projects/def-mercer/dongxx/IMDB_data/train.csv')
-    parser.add_argument('--validation_path',type= str,default='/home/dongxx/projects/def-mercer/dongxx/IMDB_data/valid.csv')
-    parser.add_argument('--test_path',type= str,default='/home/dongxx/projects/def-mercer/dongxx/IMDB_data/test.csv')
+    parser.add_argument('--train_path',type=str,default='/home/dongxx/projects/def-mercer/dongxx/project/data/train.csv')
+    parser.add_argument('--validation_path',type= str,default='/home/dongxx/projects/def-mercer/dongxx/project/data/valid.csv')
+    parser.add_argument('--test_path',type= str,default='/home/dongxx/projects/def-mercer/dongxx/project/data/test.csv')
 
     parser.add_argument('--dropout', type=float, default=0.25)
     parser.add_argument('--embedding_dim', type=int, default=100)
@@ -226,7 +226,7 @@ def main():
     # dataset
     glove = torchtext.vocab.GloVe(name='6B', dim=100,)
     # print(glove.get_vecs_by_tokens(['picture']))
-    counter2 = Counter({'<unk>': 400001, '<pad>': 400002})
+    counter2 = Counter({'<unk>': 400002, '<pad>': 400001})
     counter1 =  copy.deepcopy(glove.stoi)
 
 
@@ -240,9 +240,9 @@ def main():
     vocab = Vocab(counter1)
     vocab_size=vocab.__len__()
     print("vocab_size:",vocab_size)
-    print(vocab.stoi)
+    # print(vocab.stoi)
     #
-    print(vocab.itos[2])
+    # print(vocab.itos[2])
     # train_dataset, validation_dataset, test_dataset, vocab, vocab_size = prepare_dateset(args.train_path,args.validation_path)
     train_dataset, validation_dataset,test_dataset = prepare_dateset(args.train_path, args.validation_path, args.test_path, vocab)
     # modelvocab_size,hidden_dim,n_layers,dropout,number_class,bidirectional,embedding_dim =10
