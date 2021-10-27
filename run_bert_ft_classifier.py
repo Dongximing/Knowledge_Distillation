@@ -112,7 +112,7 @@ def train(train_dataset,model,criterion,device,optimizer,lr_scheduler):
     epoch_loss = 0
     epoch_acc = 0
     # if epoche>1:
-    #     model.embedding_layer.weight.requires_grad = False
+    #    e3e model.embedding_layer.weight.requires_grad = False
 
 
     for i,data in tqdm(enumerate(train_dataset),total = len(train_dataset)):
