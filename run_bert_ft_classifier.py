@@ -34,9 +34,9 @@ def generate_batch(batch):
         cls: a tensor saving the labels of individual text entries.
     """
     input_ids = [torch.tensor(entry['input_ids']) for entry in batch]
-    input_ids = pad_sequence(input_ids, batch_first=True)
+    # input_ids = pad_sequence(input_ids, batch_first=True)
     attention_mask = [torch.tensor(entry['attention_mask']) for entry in batch]
-    attention_mask = pad_sequence(attention_mask, batch_first=True)
+    # attention_mask = pad_sequence(attention_mask, batch_first=True)
     label = [entry['label'] for entry in batch]
     
     return input_ids, attention_mask, label
@@ -159,12 +159,12 @@ def main():
     parser.add_argument('--dropout', type=float, default=0.25)
     parser.add_argument('--embedding_dim', type=int, default=256)
     parser.add_argument('--num_epochs', type=int, default=12)
-    parser.add_argument('--batch_sz', type=int, default= 64)
+    parser.add_argument('--batch_sz', type=int, default= 128)
     parser.add_argument('--lr', type=float, default=1e-3)
 
     parser.add_argument('--weight_decay', type=float, default=0.5)
     parser.add_argument('--scheduler_step_sz', type=int, default=5)
-    parser.add_argument('--lr_gamma', type=float, default=0.1)
+    parser.add_argument('--lr_gamma', type=float, default=0.01)
     parser.add_argument('--number_class', type=int, default=2)
 
     args = parser.parse_args()

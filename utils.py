@@ -397,7 +397,7 @@ class bert_IMDBDataset(torch.utils.data.Dataset):
             add_special_tokens=True,
             max_length=self.max_len,
             return_token_type_ids=False,
-            pad_to_max_length=False,
+            pad_to_max_length=True,
             return_attention_mask=True
         )
         # lengths = (encoding['input_ids'] != self.tokenizer.pad_token_id).sum(dim=-1)
