@@ -109,7 +109,7 @@ class BERTGRUSentiment(nn.Module):
             embedded = self.bert(ids, attention_mask=mask)[0]
 
         # embedded = [batch size, sent len, emb dim]
-        output,(hidden,ct) = self.LSTM(embedded)
+        output,(hidden,ct) = self.GRU(embedded)
         #_, hidden = self.rnn(embedded)
         # print(hidden.shape)
 
