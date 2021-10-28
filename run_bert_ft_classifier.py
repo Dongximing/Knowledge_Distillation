@@ -34,9 +34,9 @@ def generate_batch(batch):
         cls: a tensor saving the labels of individual text entries.
     """
     input_ids = [torch.tensor(entry['input_ids']) for entry in batch]
-    # input_ids = pad_sequence(input_ids, batch_first=True)
+    input_ids = pad_sequence(input_ids, batch_first=True)
     attention_mask = [torch.tensor(entry['attention_mask']) for entry in batch]
-    # attention_mask = pad_sequence(attention_mask, batch_first=True)
+    attention_mask = pad_sequence(attention_mask, batch_first=True)
     label = [entry['label'] for entry in batch]
     
     return input_ids, attention_mask, label
