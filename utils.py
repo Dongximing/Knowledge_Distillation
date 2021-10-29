@@ -411,3 +411,34 @@ def bert_IMDB(training_texts,training_labels,validation_texts,validation_labels,
             bert_IMDBDataset(validation_texts,validation_labels, tokenizer, max_len),
             bert_IMDBDataset( testing_texts,testing_labels,tokenizer, max_len)
             )
+class bert_ft_IMDBDataset(torch.utils.data.Dataset):
+    def __init__(self, text, labels, tokenizer, max_len):
+        super(bert_ft_IMDBDataset, self).__init__()
+        self.text = text
+        self.labels = labels
+        self.tokenizer = tokenizer
+        self.max_len = max_len
+
+    def __len__(self):
+        return len(self.text)
+
+    def __getitem__(self, item):
+        encoding = self.tokenizer.encode_plus(
+            self.text[item],
+            add_special_tokens=True,
+            max_length=self.max_len,
+            return_token_type_ids=True,
+            pad_to_max_length=False,
+            return_attention_mask=True
+        )
+        # lengths = (encoding['input_ids'] != self.tokenizer.pad_token_id).sum(dim=-1)
+        # masks = encoding['input_ids'] != self.tokenizer.pad_token_id
+        return {'input_ids': encoding['input_ids'], 'attention_mask': encoding['attention_mask'],'token_type_ids':encoding['token_type_ids'],
+                'label': self.labels[item]}
+
+
+def bert_ft_IMDB(training_texts,training_labels,validation_texts,validation_labels,testing_texts,testing_labels, tokenizer, max_len):
+    return (bert_ft_IMDBDataset( training_texts,training_labels,tokenizer, max_len),
+            bert_ft_IMDBDataset(validation_texts,validation_labels, tokenizer, max_len),
+            bert_ft_IMDBDataset( testing_texts,testing_labels,tokenizer, max_len)
+            )

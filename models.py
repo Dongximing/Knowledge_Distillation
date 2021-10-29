@@ -158,20 +158,20 @@ class LSTM_atten(nn.Module):
         out = t.index_select(out, 0, un_idx)
         context = t.index_select(context, 0, un_idx)
         return self.fc(context)
-# class BERTGRUSentiment(nn.Module):
-#     def __init__(self,bert,hidden_dim,output_dim,n_layers,bidirectional,dropout):
+class BERT(nn.Module):
+    def __init__(self,bert):
 
-#         super().__init__()
+        super(BERT, self).__init__()
 
-#         self.bert = bert
-#         self.bert_drop = nn.Dropout(0.3)
-#         self.out = nn.Linear(768, 1)
+        self.bert = bert
+        self.bert_drop = nn.Dropout(0.3)
+        self.out = nn.Linear(768, 2)
 
-#     def forward(self, ids, mask, token_type_ids):
-#         o2 = self.bert(ids, attention_mask=mask, token_type_ids=token_type_ids)[1]
-#         bo = self.bert_drop(o2)
-#         output = self.out(bo)
-#         return output
+    def forward(self, ids, mask, token_type_ids):
+        o2 = self.bert(ids, attention_mask=mask, token_type_ids=token_type_ids)[1]
+        bo = self.bert_drop(o2)
+        output = self.out(bo)
+        return output
 
 
 # import torch
