@@ -227,8 +227,8 @@ def main():
 
     parser.add_argument('--dropout', type=float, default=0.25)
     parser.add_argument('--embedding_dim', type=int, default=100)
-    parser.add_argument('--num_epochs', type=int, default=10)
-    parser.add_argument('--batch_sz', type=int, default=16)
+    parser.add_argument('--num_epochs', type=int, default=25)
+    parser.add_argument('--batch_sz', type=int, default=32)
     parser.add_argument('--lr', type=float, default=1e-3)
 
     parser.add_argument('--weight_decay', type=float, default=0.5)
@@ -241,17 +241,38 @@ def main():
 
     device = torch.device('cuda' if torch.cuda.is_available() else 'cpu')
     # dataset
-    glove = torchtext.vocab.GloVe(name='6B', dim=100,)
+    # glove = torchtext.vocab.GloVe(name='6B', dim=100,)
     # print(glove.get_vecs_by_tokens(['picture']))
-    counter2 = Counter({'<unk>': 400000, '<pad>': 400001,'the':1})
-    counter1 =  copy.deepcopy(glove.stoi)
+    counter2 = Counter({'<unk>': 400002, '<pad>': 400001})
+    glove = Vectors(name='../glove.6B.100d.txt')
+    f = open('../glove.6B.{}d.txt'.format(100), 'r')
+    loop = tqdm(f)
+    vob = {}
+    loop.set_description('Load Glove')
+    for i, line in enumerate(loop):
+        values = line.split()
+        word = values[0]
+        vob[word] = 400000 - i
+    counter1 = copy.deepcopy(vob)
+    f.close()
+    # jjjjewrwerewr print(counter1)
+    # print(type(count er1))
+    #     for x, y in counter1.items():
+    #         counter1[x] = 400000-int(y)
 
+    # print(counter1)cat ~/.gitconfig
     counter1.update(counter2)
-    # print(counter1)
-
     vocab = Vocab(counter1)
-    vocab_size=vocab.__len__()
-    print("vocab_size:",vocab_size)
+    vocab_size = vocab.__len__()
+    print("vocab_size:", vocab_size)
+    # counter1 =  copy.deepcopy(glove.stoi)
+    #
+    # counter1.update(counter2)
+    # # print(counter1)
+    #
+    # vocab = Vocab(counter1)
+    # vocab_size=vocab.__len__()
+    # print("vocab_size:",vocab_size)
     # print(vocab.stoi)
     #
     # print(vocab.itos[2])
@@ -262,7 +283,7 @@ def main():
     LSTM_model.to(device)
     #opt scheduler criterion
     optimizer = torch.optim.Adam(LSTM_model.parameters(), lr=args.lr)
-    lr_scheduler = torch.optim.lr_scheduler.StepLR(optimizer, gamma=args.lr_gamma, step_size=8)
+    lr_scheduler = torch.optim.lr_scheduler.StepLR(optimizer, gamma=args.lr_gamma, step_size=5)
     criterion = nn.CrossEntropyLoss()
     kd_critertion = nn.MSELoss()
     kd_critertion = kd_critertion.to(device)
@@ -297,7 +318,7 @@ def main():
 
     best_loss = float('inf')
     print("training")
-    for epoch in range(21):
+    for epoch in range(args.num_epochs):
         start_time = time.time()
 
 
