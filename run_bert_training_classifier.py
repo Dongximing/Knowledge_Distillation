@@ -374,11 +374,11 @@ def validate(validation_dataset, model, criterion, device):
     epoch_acc = 0
 
     for i, data in enumerate(validation_dataset):
-        input_ids, attention_mask, label = data
-        input_ids, attention_mask, label = input_ids.to(device), attention_mask.to(device), torch.LongTensor(label)
+        input_ids, attention_mask,token_type_ids, label = data
+        input_ids, attention_mask, token_type_ids, label = input_ids.to(device), attention_mask.to(device),token_type_ids.to(device), torch.LongTensor(label)
         label = label.to(device)
         with torch.no_grad():
-            output = model(ids=input_ids, mask=attention_mask)
+            output = model(ids=input_ids, mask=attention_mask ,token_type_ids = token_type_ids)
         loss = criterion(output, label)
         acc = categorical_accuracy(output, label)
         epoch_loss += loss.item()
