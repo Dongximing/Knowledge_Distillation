@@ -326,7 +326,7 @@ def prepare_dateset(train_data_path, validation_data_path, test_data_path):
 
     tokenizers = BertTokenizer.from_pretrained('bert-base-uncased', do_lower_case=True)
 
-    train_dataset, validation_dataset, testing_dataset = bert_IMDB(training_texts, training_labels, validation_texts,
+    train_dataset, validation_dataset, testing_dataset = bert_ft_IMDB(training_texts, training_labels, validation_texts,
                                                                    validation_labels, testing_texts, testing_labels,
                                                                    tokenizer=tokenizers, max_len=512)
 
@@ -396,7 +396,7 @@ def main():
                         default='/home/dongxx/projects/def-mercer/dongxx/project/data/test.csv')
 
     parser.add_argument('--dropout', type=float, default=0.25)
-    parser.add_argument('--embedding_dim', type=int, default=100)
+
     parser.add_argument('--num_epochs', type=int, default=5)
     parser.add_argument('--batch_sz', type=int, default=16)
 
@@ -432,7 +432,7 @@ def main():
         optimizer, num_warmup_steps=0, num_training_steps=num_train_steps
     )
 
-    print(f'The model has {count_parameters(BertGRU_model):,} trainable parameters')
+    print(f'The model has {count_parameters(Bert_model):,} trainable parameters')
 
     criterion = nn.CrossEntropyLoss()
     criterion.to(device)
