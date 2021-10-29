@@ -169,8 +169,8 @@ class BERT(nn.Module):
 
     def forward(self, ids, mask, token_type_ids):
         o2 = self.bert(ids, attention_mask=mask, token_type_ids=token_type_ids)[1]
-        bo = self.bert_drop(o2)
-        output = self.out(bo)
+        # bo = self.bert_drop(o2)
+        output = self.out(o2)
         return output
 
 
