@@ -400,7 +400,7 @@ def main():
     parser.add_argument('--dropout', type=float, default=0.25)
 
     parser.add_argument('--num_epochs', type=int, default=5)
-    parser.add_argument('--batch_sz', type=int, default=16)
+    parser.add_argument('--batch_sz', type=int, default=8)
 
 
     parser.add_argument('--number_class', type=int, default=2)
