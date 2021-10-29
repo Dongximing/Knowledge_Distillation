@@ -245,7 +245,7 @@ def main():
     # print(glove.get_vecs_by_tokens(['picture']))
     counter2 = Counter({'<unk>': 400002, '<pad>': 400001})
     glove = Vectors(name='../glove.6B.100d.txt')
-    f = open('../glove.6B.{}d.txt'.format(100), 'r')
+    f = open('/home/dongxx/projects/def-mercer/dongxx/glove.6B.{}d.txt'.format(100), 'r')
     loop = tqdm(f)
     vob = {}
     loop.set_description('Load Glove')
