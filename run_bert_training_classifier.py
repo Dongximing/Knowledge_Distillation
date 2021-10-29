@@ -397,9 +397,9 @@ def main():
     parser.add_argument('--test_path', type=str,
                         default='/home/dongxx/projects/def-mercer/dongxx/project/data/test.csv')
 
-    parser.add_argument('--dropout', type=float, default=0.25)
 
-    parser.add_argument('--num_epochs', type=int, default=2)
+
+    parser.add_argument('--num_epochs', type=int, default=5)
     parser.add_argument('--batch_sz', type=int, default=8)
 
 
@@ -431,7 +431,7 @@ def main():
 
     optimizer = AdamW(optimizer_parameters, lr=3e-5)
     scheduler = get_linear_schedule_with_warmup(
-        optimizer, num_warmup_steps=0, num_training_steps=int(20000/8*2)
+        optimizer, num_warmup_steps=0, num_training_steps=int(20000/8*5)
     )
 
     print(f'The model has {count_parameters(Bert_model):,} trainable parameters')

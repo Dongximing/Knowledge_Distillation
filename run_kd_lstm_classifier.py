@@ -238,8 +238,7 @@ def main():
 
     args = parser.parse_args()
 
-    # device
-    # device = torch.device(args.device if torch.cuda.is_available() else "cpu")
+
     device = torch.device('cuda' if torch.cuda.is_available() else 'cpu')
     # dataset
     glove = torchtext.vocab.GloVe(name='6B', dim=100,)
