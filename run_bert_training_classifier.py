@@ -365,7 +365,7 @@ def train(train_dataset, model, criterion, device, optimizer, scheduler):
         epoch_acc += acc.item()
         loss.backward()
         optimizer.step()
-        # scheduler.step()
+        scheduler.step()
     return epoch_loss / len(train_dataset), epoch_acc / len(train_dataset)
 
 
@@ -400,7 +400,7 @@ def main():
     parser.add_argument('--dropout', type=float, default=0.25)
 
     parser.add_argument('--num_epochs', type=int, default=5)
-    parser.add_argument('--batch_sz', type=int, default=16)
+    parser.add_argument('--batch_sz', type=int, default=8)
 
 
     parser.add_argument('--number_class', type=int, default=2)
@@ -430,9 +430,9 @@ def main():
 
 
     optimizer = AdamW(optimizer_parameters, lr=3e-5)
-    # scheduler = get_linear_schedule_with_warmup(
-    #     optimizer, num_warmup_steps=0, num_training_steps=int(20000/12*16)
-    # )
+    scheduler = get_linear_schedule_with_warmup(
+        optimizer, num_warmup_steps=0, num_training_steps=int(20000/12*16)
+    )
 
     print(f'The model has {count_parameters(Bert_model):,} trainable parameters')
 
@@ -449,7 +449,7 @@ def main():
         start_time = time.time()
         # print("training emebedding")
 
-        train_loss, train_acc = train(training, Bert_model, criterion, device, optimizer)
+        train_loss, train_acc = train(training, Bert_model, criterion, device, optimizer, scheduler)
         # print("testing emebedding")
         valid_loss, valid_acc = validate(validation, Bert_model, criterion, device)
         end_time = time.time()
