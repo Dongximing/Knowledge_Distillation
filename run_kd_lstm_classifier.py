@@ -283,7 +283,7 @@ def main():
     LSTM_model.to(device)
     #opt scheduler criterion
     optimizer = torch.optim.Adam(LSTM_model.parameters(), lr=args.lr)
-    lr_scheduler = torch.optim.lr_scheduler.StepLR(optimizer, gamma=args.lr_gamma, step_size=5)
+    lr_scheduler = torch.optim.lr_scheduler.StepLR(optimizer, gamma=args.lr_gamma, step_size=10)
     criterion = nn.CrossEntropyLoss()
     kd_critertion = nn.MSELoss()
     kd_critertion = kd_critertion.to(device)
@@ -331,8 +331,8 @@ def main():
         print(f'Epoch: {epoch + 1:02} | Epoch Time: {epoch_mins}m {epoch_secs}s')
         print(f'\tTrain Loss: {train_loss:.3f} | Train Acc: {train_acc * 100:.2f}%')
         print(f'\t Val. Loss: {valid_loss:.3f} |  Val. Acc: {valid_acc * 100:.2f}%')
-        # print("hard", hard)
-        # print("soft", soft)
+        print("hard", hard)
+        print("soft", soft)
 
         if valid_loss < best_loss:
             best_loss = valid_loss
