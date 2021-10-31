@@ -407,7 +407,7 @@ def main():
     args = parser.parse_args()
 
     device = torch.device('cuda' if torch.cuda.is_available() else 'cpu')
-    bert = BertModel.from_pretrained('/home/dongxx/projects/def-mercer/dongxx/bert')
+    bert = BertModel.from_pretrained('/home/dongxx/projects/def-mercer/dongxx/bert-base-uncased')
     BertGRU_model = BERTGRUSentiment(bert,
                                      config.HIDDEN_DIM,
                                      config.OUTPUT_DIM,
