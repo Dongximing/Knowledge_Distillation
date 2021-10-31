@@ -322,7 +322,7 @@ def prepare_dateset(train_data_path, validation_data_path, test_data_path):
     print('prepare training and test sets')
     logging.info('Prepare training and test sets')
 
-    tokenizers = BertTokenizer.from_pretrained('/home/dongxx/projects/def-mercer/dongxx/bert-base-uncased', do_lower_case=True)
+    tokenizers = BertTokenizer.from_pretrained('bert-base-uncased', do_lower_case=True)
 
     train_dataset, validation_dataset, testing_dataset = bert_IMDB(training_texts, training_labels, validation_texts,
                                                                    validation_labels, testing_texts, testing_labels,
@@ -407,7 +407,7 @@ def main():
     args = parser.parse_args()
 
     device = torch.device('cuda' if torch.cuda.is_available() else 'cpu')
-    bert = BertModel.from_pretrained('/home/dongxx/projects/def-mercer/dongxx/bert-base-uncased')
+    bert = BertModel.from_pretrained('bert-base-uncased')
     BertGRU_model = BERTGRUSentiment(bert,
                                      config.HIDDEN_DIM,
                                      config.OUTPUT_DIM,
