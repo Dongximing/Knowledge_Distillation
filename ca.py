@@ -488,8 +488,22 @@
 # # print("best config: ", analysis.get_best_config(metric="score", mode="max"))
 #
 #
-#
-a = {"a":1,"b":2}
-for x, y in a.items():
-    a[x] = int(y)+1
-print(a)
+# #
+# a = {"a":1,"b":2}
+# for x, y in a.items():
+#     a[x] = int(y)+1
+# print(a)
+from transformers import BertModel,BertTokenizer
+import torch
+print(torch.__version__)
+
+
+BERT_PATH = '/Users/ximing/Desktop/bert-base-uncased'
+
+tokenizer = BertTokenizer.from_pretrained(BERT_PATH)
+
+print(tokenizer.tokenize('I have a good time, thank you.'))
+
+bert = BertModel.from_pretrained(BERT_PATH)
+
+print('load bert model over')
