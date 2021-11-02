@@ -96,7 +96,7 @@ def prepare_dateset(train_data_path, validation_data_path,test_data_path,vocab):
 
     print('prepare training and test sets')
     logging.info('Prepare training and test sets')
-    tokenize = BertTokenizer.from_pretrained('bert-base-uncased',do_lower_case=True)
+    tokenize = BertTokenizer.from_pretrained('/home/dongxx/projects/def-mercer/dongxx/bert-base-uncased',do_lower_case=True)
 
     train_dataset, validation_dataset,testing_dataset = IMDB_kd_indexing(training_texts,training_labels,validation_texts,validation_labels,testing_texts,testing_labels,tokenize,vocab=vocab)
     print('building vocab')
@@ -287,7 +287,7 @@ def main():
     criterion = nn.CrossEntropyLoss()
     kd_critertion = nn.MSELoss()
     kd_critertion = kd_critertion.to(device)
-    bert = BertModel.from_pretrained('bert-base-uncased')
+    bert = BertModel.from_pretrained('/home/dongxx/projects/def-mercer/dongxx/bert-base-uncased')
     criterion = criterion.to(device)
     bert_model = BERTGRUSentiment(bert,
                                   config.HIDDEN_DIM,
@@ -298,7 +298,6 @@ def main():
     bert_model.load_state_dict(torch.load(config.BERT_PATH))
     bert_model.to(device)
     bert_model.eval()
-
 
     training = DataLoader(train_dataset,collate_fn = generate_batch, batch_size=args.batch_sz,shuffle=True)
     validation = DataLoader(validation_dataset, collate_fn= generate_batch, batch_size=args.batch_sz, shuffle=False)
@@ -336,11 +335,11 @@ def main():
 
         if valid_loss < best_loss:
             best_loss = valid_loss
-            torch.save(LSTM_model.state_dict(), '/home/dongxx/projects/def-mercer/dongxx/project/LSTM-baseline/kd_test.pt')
+            torch.save(LSTM_model.state_dict(), '/home/dongxx/projects/def-mercer/dongxx/Model_parameter/kd_lstm.pt')
     print("training done")
 
     print("testing")
-    LSTM_model.load_state_dict(torch.load('/home/dongxx/projects/def-mercer/dongxx/project/LSTM-baseline/kd_test.pt'))
+    LSTM_model.load_state_dict(torch.load('/home/dongxx/projects/def-mercer/dongxx/Model_parameter/kd_lstm.pt'))
     test_loss, test_acc = validate(testing,LSTM_model,criterion,device)
 
     print(f'Test Loss: {test_loss:.3f} | Test Acc: {test_acc * 100:.2f}%')
