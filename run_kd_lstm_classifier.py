@@ -170,6 +170,7 @@ def train_kd_fc(data_loader, device, bert_model, model,optimizer, criterion,crit
         text_length = torch.Tensor(text_length)
         label = torch.tensor(label, dtype=torch.long)
         ids = text.to(device, dtype=torch.long)
+        label = label.to(device)
         bert_id = bert_id.to(device, dtype=torch.long)
         bert_mask = attention_mask.to(device, dtype=torch.long)
 
