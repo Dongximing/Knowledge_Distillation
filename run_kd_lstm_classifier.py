@@ -149,6 +149,12 @@ def categorical_accuracy(preds, y):
     correct = top_pred.eq(y.view_as(top_pred)).sum()
     acc = correct.float() / y.shape[0]
     return acc
+def loss_fn_kd(outputs, labels, teacher_outputs, T=20, alpha=0.5):
+
+    hard_loss = F.cross_entropy(outputs, labels) * (1. - alpha)
+    soft_loss = nn.KLDivLoss(reduction='batchmean')(F.log_softmax(outputs/T, dim=1),
+                             F.softmax(teacher_outputs/T, dim=1)) * (alpha * T * T)
+    return hard_loss + soft_loss
 
 def train_kd_fc(data_loader, device, bert_model, model,optimizer, criterion,criterion_kd,scheduler):
     model.train()
@@ -174,19 +180,22 @@ def train_kd_fc(data_loader, device, bert_model, model,optimizer, criterion,crit
             bert_output = bert_model(bert_id,bert_mask)
 
         outputs = model(ids,lengths)
-        loss_soft =criterion_kd(outputs,bert_output)
-        loss_hard = criterion(outputs, targets)
-        loss = loss_hard*a + (1-a)*loss_soft
+        # loss_soft =criterion_kd(outputs,bert_output)
+        # loss_hard = criterion(outputs, targets)
+        # loss = loss_hard*a + (1-a)*loss_soft
+        loss_fn_kd(outputs,label,bert_output,T=10,alpha=0.5)
+
         acc = categorical_accuracy(outputs, targets)
         loss.backward()
         #   torch.nn.utils.clip_grad_norm_(model.parameters(), 1.0)
         optimizer.step()
-        soft_loss += loss_soft.item()
-        hard_loss += loss_hard.item()
+        # soft_loss += loss_soft.item()
+        # hard_loss += loss_hard.item()
         epoch_loss += loss.item()
         epoch_acc += acc.item()
     scheduler.step()
-    return epoch_loss / len(data_loader), epoch_acc / len(data_loader) ,hard_loss / len(data_loader), soft_loss/ len(data_loader)
+    return epoch_loss / len(data_loader), epoch_acc / len(data_loader)
+        #,hard_loss / len(data_loader), soft_loss/ len(data_loader)
 
 
 def validate(validation_dataset, model, criterion, device):
@@ -322,7 +331,7 @@ def main():
 
 
 
-        train_loss, train_acc,hard, soft  = train_kd_fc(training, device, bert_model,LSTM_model,optimizer, criterion,kd_critertion,lr_scheduler)
+        train_loss, train_acc  = train_kd_fc(training, device, bert_model,LSTM_model,optimizer, criterion,kd_critertion,lr_scheduler)
 
         valid_loss, valid_acc = validate(validation,LSTM_model,criterion,device)
         end_time = time.time()
@@ -330,8 +339,8 @@ def main():
         print(f'Epoch: {epoch + 1:02} | Epoch Time: {epoch_mins}m {epoch_secs}s')
         print(f'\tTrain Loss: {train_loss:.3f} | Train Acc: {train_acc * 100:.2f}%')
         print(f'\t Val. Loss: {valid_loss:.3f} |  Val. Acc: {valid_acc * 100:.2f}%')
-        print("hard", hard)
-        print("soft", soft)
+        # print("hard", hard)
+        # print("soft", soft)
 
         if valid_loss < best_loss:
             best_loss = valid_loss
