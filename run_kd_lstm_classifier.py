@@ -6,6 +6,7 @@ from torchtext.vocab import GloVe,Vocab,Vectors
 from tqdm import tqdm
 from utils import IMDB_kd_indexing, pad_sequencing
 from models import CNN_Baseline,LSTMBaseline,BERTGRUSentiment
+import torch.nn.functional as F
 
 import torchtext.vocab
 import csv
