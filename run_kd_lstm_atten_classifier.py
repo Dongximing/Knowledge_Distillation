@@ -252,19 +252,41 @@ def main():
     # device = torch.device(args.device if torch.cuda.is_available() else "cpu")
     device = torch.device('cuda' if torch.cuda.is_available() else 'cpu')
     # dataset
-    glove = torchtext.vocab.GloVe(name='6B', dim=100,)
-    # print(glove.get_vecs_by_tokens(['picture']))
-    counter2 = Counter({'<unk>': 400000, '<pad>': 400001,'the':1})
-    counter1 =  copy.deepcopy(glove.stoi)
-
-    counter1.update(counter2)
-    # print(counter1)
-
-    vocab = Vocab(counter1)
-    vocab_size=vocab.__len__()
-    print("vocab_size:",vocab_size)
+    # glove = torchtext.vocab.GloVe(name='6B', dim=100,)
+    # # print(glove.get_vecs_by_tokens(['picture']))
+    # counter2 = Counter({'<unk>': 400000, '<pad>': 400001,'the':1})
+    # counter1 =  copy.deepcopy(glove.stoi)
+    #
+    # counter1.update(counter2)
+    # # print(counter1)
+    #
+    # vocab = Vocab(counter1)
+    # vocab_size=vocab.__len__()
+    # print("vocab_size:",vocab_size)
     # print(vocab.stoi)
     #
+    counter2 = Counter({'<unk>': 400002, '<pad>': 400001})
+    glove = Vectors(name='/home/dongxx/projects/def-mercer/dongxx/glove.6B.100d.txt')
+    f = open('/home/dongxx/projects/def-mercer/dongxx/glove.6B.{}d.txt'.format(100), 'r')
+    loop = tqdm(f)
+    vob = {}
+    loop.set_description('Load Glove')
+    for i, line in enumerate(loop):
+        values = line.split()
+        word = values[0]
+        vob[word] = 400000 - i
+    counter1 = copy.deepcopy(vob)
+    f.close()
+    # jjjjewrwerewr print(counter1)
+    # print(type(count er1))
+    #     for x, y in counter1.items():
+    #         counter1[x] = 400000-int(y)
+
+    # print(counter1)cat ~/.gitconfig
+    counter1.update(counter2)
+    vocab = Vocab(counter1)
+    vocab_size = vocab.__len__()
+    print("vocab_size:", vocab_size)
     # print(vocab.itos[2])
     # train_dataset, validation_dataset, test_dataset, vocab, vocab_size = prepare_dateset(args.train_path,args.validation_path)
     train_dataset, validation_dataset,test_dataset = prepare_dateset(args.train_path, args.validation_path, args.test_path, vocab)
