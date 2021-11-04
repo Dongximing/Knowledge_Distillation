@@ -6,6 +6,7 @@ from torchtext.vocab import GloVe,Vocab
 from tqdm import tqdm
 from utils import IMDB_kd_indexing, pad_sequencing
 from models import CNN_Baseline,LSTMBaseline,BERTGRUSentiment,LSTM_atten
+import torch.nn.functional as F
 
 import torchtext.vocab
 import csv
@@ -22,7 +23,12 @@ import time
 import copy
 from transformers import BertTokenizer, BertModel
 from torch.nn.utils.rnn import pad_sequence
+def loss_fn_kd(outputs, labels, teacher_outputs, T=20, alpha=0.5):
 
+    hard_loss = F.cross_entropy(outputs, labels) * (1. - alpha)
+    soft_loss = nn.KLDivLoss(reduction='batchmean')(F.log_softmax(outputs/T, dim=1),
+                             F.softmax(teacher_outputs/T, dim=1)) * (alpha * T * T)
+    return hard_loss + soft_loss
 def count_parameters(model):
     return sum(p.numel() for p in model.parameters() if p.requires_grad)
 
@@ -96,7 +102,7 @@ def prepare_dateset(train_data_path, validation_data_path,test_data_path,vocab):
 
     print('prepare training and test sets')
     logging.info('Prepare training and test sets')
-    tokenize = BertTokenizer.from_pretrained('bert-base-uncased',do_lower_case=True)
+    tokenize = BertTokenizer.from_pretrained('/home/dongxx/projects/def-mercer/dongxx/bert-base-uncased',do_lower_case=True)
 
     train_dataset, validation_dataset,testing_dataset = IMDB_kd_indexing(training_texts,training_labels,validation_texts,validation_labels,testing_texts,testing_labels,tokenize,vocab=vocab)
     print('building vocab')
@@ -155,8 +161,8 @@ def train_kd_fc(data_loader, device, bert_model, model,optimizer, criterion,crit
     a = 0.5
     epoch_loss = 0
     epoch_acc = 0
-    hard_loss = 0
-    soft_loss = 0
+    # hard_loss = 0
+    # soft_loss = 0
 
     for bi,data in tqdm(enumerate(data_loader),total = len(data_loader)):
         text, text_length, label, bert_id, attention_mask = data
@@ -169,24 +175,28 @@ def train_kd_fc(data_loader, device, bert_model, model,optimizer, criterion,crit
         lengths = text_length.to(device, dtype=torch.int)
 
         targets = label.to(device, dtype=torch.long)
+        label = label.to(device)
         optimizer.zero_grad()
         with torch.no_grad():
             bert_output = bert_model(bert_id,bert_mask)
 
         outputs = model(ids,lengths)
-        loss_soft =criterion_kd(outputs,bert_output)
-        loss_hard = criterion(outputs, targets)
-        loss = loss_hard*a + (1-a)*loss_soft
+        # loss_soft =criterion_kd(outputs,bert_output)
+        # loss_hard = criterion(outputs, targets)
+        # loss = loss_hard*a + (1-a)*loss_soft
+        loss = loss_fn_kd(outputs,label,bert_output,T=10,alpha=0.5)
+
         acc = categorical_accuracy(outputs, targets)
         loss.backward()
         #   torch.nn.utils.clip_grad_norm_(model.parameters(), 1.0)
         optimizer.step()
-        soft_loss += loss_soft.item()
-        hard_loss += loss_hard.item()
+        # soft_loss += loss_soft.item()
+        # hard_loss += loss_hard.item()
         epoch_loss += loss.item()
         epoch_acc += acc.item()
     scheduler.step()
-    return epoch_loss / len(data_loader), epoch_acc / len(data_loader) ,hard_loss / len(data_loader), soft_loss/ len(data_loader)
+    return epoch_loss / len(data_loader), epoch_acc / len(data_loader)
+        #,hard_loss / len(data_loader), soft_loss/ len(data_loader)
 
 
 def validate(validation_dataset, model, criterion, device):
@@ -221,19 +231,19 @@ def validate(validation_dataset, model, criterion, device):
 
 def main():
     parser = argparse.ArgumentParser()
-    parser.add_argument('--train_path',type=str,default='/home/dongxx/projects/def-mercer/dongxx/project/data/train.csv')
-    parser.add_argument('--validation_path',type= str,default='/home/dongxx/projects/def-mercer/dongxx/project/data/valid.csv')
-    parser.add_argument('--test_path',type= str,default='/home/dongxx/projects/def-mercer/dongxx/project/data/test.csv')
+    parser.add_argument('--train_path',type=str,default='/home/dongxx/projects/def-mercer/dongxx/IMDB_data/train.csv')
+    parser.add_argument('--validation_path',type= str,default='/home/dongxx/projects/def-mercer/dongxx/IMDB_data/valid.csv')
+    parser.add_argument('--test_path',type= str,default='/home/dongxx/projects/def-mercer/dongxx/IMDB_data/test.csv')
 
     parser.add_argument('--dropout', type=float, default=0.25)
     parser.add_argument('--embedding_dim', type=int, default=100)
-    parser.add_argument('--num_epochs', type=int, default=10)
-    parser.add_argument('--batch_sz', type=int, default=16)
+    parser.add_argument('--num_epochs', type=int, default=25)
+    parser.add_argument('--batch_sz', type=int, default=32)
     parser.add_argument('--lr', type=float, default=1e-3)
 
     parser.add_argument('--weight_decay', type=float, default=0.5)
     parser.add_argument('--scheduler_step_sz', type=int, default=6)
-    parser.add_argument('--lr_gamma', type=float, default=0.1)
+    parser.add_argument('--lr_gamma', type=float, default=0.5)
     parser.add_argument('--number_class', type=int, default=2)
 
     args = parser.parse_args()
@@ -263,11 +273,11 @@ def main():
     LSTM_atten_model.to(device)
     #opt scheduler criterion
     optimizer = torch.optim.Adam(LSTM_atten_model.parameters(), lr=args.lr)
-    lr_scheduler = torch.optim.lr_scheduler.StepLR(optimizer, gamma=args.lr_gamma, step_size=8)
+    lr_scheduler = torch.optim.lr_scheduler.StepLR(optimizer, gamma=args.lr_gamma, step_size =10)
     criterion = nn.CrossEntropyLoss()
     kd_critertion = nn.MSELoss()
     kd_critertion = kd_critertion.to(device)
-    bert = BertModel.from_pretrained('bert-base-uncased')
+    bert = BertModel.from_pretrained('/home/dongxx/projects/def-mercer/dongxx/bert-base-uncased')
     criterion = criterion.to(device)
     bert_model = BERTGRUSentiment(bert,
                                   config.HIDDEN_DIM,
@@ -298,12 +308,12 @@ def main():
 
     best_loss = float('inf')
     print("training")
-    for epoch in range(21):
+    for epoch in range(args.num_epochs):
         start_time = time.time()
 
 
 
-        train_loss, train_acc,hard, soft  = train_kd_fc(training, device, bert_model,LSTM_atten_model,optimizer, criterion,kd_critertion,lr_scheduler)
+        train_loss, train_acc  = train_kd_fc(training, device, bert_model,LSTM_atten_model,optimizer, criterion,kd_critertion,lr_scheduler)
 
         valid_loss, valid_acc = validate(validation,LSTM_atten_model,criterion,device)
         end_time = time.time()
@@ -316,11 +326,11 @@ def main():
 
         if valid_loss < best_loss:
             best_loss = valid_loss
-            torch.save(LSTM_atten_model.state_dict(), '/home/dongxx/projects/def-mercer/dongxx/project/LSTM-baseline/kd_atten.pt')
+            torch.save(LSTM_atten_model.state_dict(), '/home/dongxx/projects/def-mercer/dongxx/Model_parameter/kd_atten.pt')
     print("training done")
 
     print("testing")
-    LSTM_atten_model.load_state_dict(torch.load('/home/dongxx/projects/def-mercer/dongxx/project/LSTM-baseline/kd_atten.pt'))
+    LSTM_atten_model.load_state_dict(torch.load('/home/dongxx/projects/def-mercer/dongxx/Model_parameter/kd_atten.pt'))
     test_loss, test_acc = validate(testing,LSTM_atten_model,criterion,device)
 
     print(f'Test Loss: {test_loss:.3f} | Test Acc: {test_acc * 100:.2f}%')
