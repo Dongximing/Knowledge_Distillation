@@ -2,7 +2,7 @@ import torch
 import torch.nn as nn
 import numpy as np
 from torch.utils.data import DataLoader
-from torchtext.vocab import GloVe,Vocab
+from torchtext.vocab import GloVe,Vocab,Vectors
 from tqdm import tqdm
 from utils import IMDB_kd_indexing, pad_sequencing
 from models import CNN_Baseline,LSTMBaseline,BERTGRUSentiment,LSTM_atten
