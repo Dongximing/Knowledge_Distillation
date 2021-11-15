@@ -493,17 +493,27 @@
 # for x, y in a.items():
 #     a[x] = int(y)+1
 # print(a)
-from transformers import BertModel,BertTokenizer
-import torch
-print(torch.__version__)
+# from transformers import BertModel,BertTokenizer
+# import torch
+# print(torch.__version__)
+#
+#
+# BERT_PATH = '/Users/ximing/Desktop/bert-base-uncased'
+#
+# tokenizer = BertTokenizer.from_pretrained(BERT_PATH)
+#
+# print(tokenizer.tokenize('I have a good time, thank you.'))
+#
+# bert = BertModel.from_pretrained(BERT_PATH)
+#
+# print('load bert model over')
 
 
-BERT_PATH = '/Users/ximing/Desktop/bert-base-uncased'
+def Convert(string):
+    li = list(string.split(" "))
+    return li
 
-tokenizer = BertTokenizer.from_pretrained(BERT_PATH)
 
-print(tokenizer.tokenize('I have a good time, thank you.'))
-
-bert = BertModel.from_pretrained(BERT_PATH)
-
-print('load bert model over')
+# Driver code
+str1 = "Geeks for Geeks"
+print(Convert(str1))

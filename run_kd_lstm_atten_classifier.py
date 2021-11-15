@@ -277,12 +277,6 @@ def main():
         vob[word] = 400000 - i
     counter1 = copy.deepcopy(vob)
     f.close()
-    # jjjjewrwerewr print(counter1)
-    # print(type(count er1))
-    #     for x, y in counter1.items():
-    #         counter1[x] = 400000-int(y)
-
-    # print(counter1)cat ~/.gitconfig
     counter1.update(counter2)
     vocab = Vocab(counter1)
     vocab_size = vocab.__len__()
