@@ -156,36 +156,36 @@ class LSTM_atten(nn.Module):
         a_packed_input = t.nn.utils.rnn.pack_padded_sequence(input=seq, lengths=a_lengths.to('cpu'), batch_first=True)
         packed_output, (hidden, cell) = self.rnn(a_packed_input)
         out, _ = t.nn.utils.rnn.pad_packed_sequence(packed_output, batch_first=True)
-        (forward_out, backward_out) = torch.chunk(out, 2, dim=2)
-        out = forward_out + backward_out  # [seq_len, batch, hidden_size]
+        # (forward_out, backward_out) = torch.chunk(out, 2, dim=2)
+        # out = forward_out + backward_out  # [seq_len, batch, hidden_size]
 
 
 
         # 为了使用到lstm最后一个时间步时，每层lstm的表达，用h_n生成attention的权重  # [batch, num_layers * num_directions,  hidden_size]
-        (hidden_f, hidden) = torch.chunk(hidden, 2, dim=0)
-        hidden = hidden.permute(1, 0, 2)
-        hidden = t.sum(hidden, dim=1)
-           # [batch, 1,  hidden_size]
-        h_n = hidden.squeeze(dim=1)  # [batch, hidden_size]
-
-        attention_w = self.attention_weights_layer(h_n)  # [batch, hidden_size]
-        attention_w = attention_w.unsqueeze(dim=1)  # [batch, 1, hidden_size]
-
-        attention_context = torch.bmm(attention_w, out.transpose(1, 2))  # [batch, 1, seq_len]
-        softmax_w = F.softmax(attention_context, dim=-1)  # [batch, 1, seq_len],权重归一化
-
-        x = torch.bmm(softmax_w, out)  # [batch, 1, hidden_size]
-        x = x.squeeze(dim=1)  # [batch, hidden_size]
-        x = self.fc(x)
-        return x
-        # hidden = self.dropout(t.cat((hidden[-2, :, :], hidden[-1, :, :]), dim=1)).unsqueeze(2)
-        # # print(hidden.size())
-        # context = self.atten(out,hidden)
+        # (hidden_f, hidden) = torch.chunk(hidden, 2, dim=0)
+        # hidden = hidden.permute(1, 0, 2)
+        # hidden = t.sum(hidden, dim=1)
+        #    # [batch, 1,  hidden_size]
+        # h_n = hidden.squeeze(dim=1)  # [batch, hidden_size]
         #
-        # out = t.index_select(out, 0, un_idx)
-        # context = t.index_select(context, 0, un_idx)
-        # context = self.dropout(context)
-        # return self.fc(context)
+        # attention_w = self.attention_weights_layer(h_n)  # [batch, hidden_size]
+        # attention_w = attention_w.unsqueeze(dim=1)  # [batch, 1, hidden_size]
+        #
+        # attention_context = torch.bmm(attention_w, out.transpose(1, 2))  # [batch, 1, seq_len]
+        # softmax_w = F.softmax(attention_context, dim=-1)  # [batch, 1, seq_len],权重归一化
+        #
+        # x = torch.bmm(softmax_w, out)  # [batch, 1, hidden_size]
+        # x = x.squeeze(dim=1)  # [batch, hidden_size]
+        # x = self.fc(x)
+        # return x
+        hidden = self.dropout(t.cat((hidden[-2, :, :], hidden[-1, :, :]), dim=1)).unsqueeze(2)
+        # print(hidden.size())
+        context = self.atten(out,hidden)
+
+        out = t.index_select(out, 0, un_idx)
+        context = t.index_select(context, 0, un_idx)
+        context = self.dropout(context)
+        return self.fc(context)
 class BERT(nn.Module):
     def __init__(self,bert):
 
