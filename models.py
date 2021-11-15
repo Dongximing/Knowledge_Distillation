@@ -157,8 +157,10 @@ class LSTM_atten(nn.Module):
 
 
         # 为了使用到lstm最后一个时间步时，每层lstm的表达，用h_n生成attention的权重  # [batch, num_layers * num_directions,  hidden_size]
-        hidden = t.sum((hidden[-2, :, :], hidden[-1, :, :]), dim=1)
-        hidden =hidden.permute(1, 0, 2)   # [batch, 1,  hidden_size]
+        (hidden_f, hidden) = torch.chunk(hidden, 2, dim=0)
+        hidden = hidden.permute(1, 0, 2)
+        hidden = t.sum(hidden, dim=1)
+           # [batch, 1,  hidden_size]
         h_n = hidden.squeeze(dim=1)  # [batch, hidden_size]
 
         attention_w = self.attention_weights_layer(h_n)  # [batch, hidden_size]
