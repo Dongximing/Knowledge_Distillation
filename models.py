@@ -137,9 +137,9 @@ class LSTM_atten(nn.Module):
         self.fc = nn.Linear(hidden_dim , number_class)
         self.dropout = nn.Dropout(dropout)
         self.attention_weights_layer = nn.Sequential(
-            nn.Linear(hidden_size, hidden_size),
+            nn.Linear(hidden_dim, hidden_dim),
             nn.ReLU(inplace=True)
-        ) 
+        )
     def atten(self,output,finial_state):
         attent_weight = torch.bmm(output,finial_state).squeeze(2)
         soft_max_weights = F.softmax(attent_weight,1)
