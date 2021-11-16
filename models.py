@@ -184,7 +184,7 @@ class LSTM_atten(nn.Module):
 
         out = t.index_select(out, 0, un_idx)
         context = t.index_select(context, 0, un_idx)
-        context = self.dropout(context)
+        # context = self.dropout(context)
         return self.fc(context)
 class BERT(nn.Module):
     def __init__(self,bert):
