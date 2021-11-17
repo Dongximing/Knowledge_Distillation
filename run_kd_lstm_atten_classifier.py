@@ -23,7 +23,7 @@ import time
 import copy
 from transformers import BertTokenizer, BertModel
 from torch.nn.utils.rnn import pad_sequence
-def loss_fn_kd(outputs, labels, teacher_outputs, T=5, alpha=0.5):
+def loss_fn_kd(outputs, labels, teacher_outputs, T=10, alpha=0.5):
 
     hard_loss = F.cross_entropy(outputs, labels) * (1. - alpha)
     soft_loss = nn.KLDivLoss(reduction='batchmean')(F.log_softmax(outputs/T, dim=1),
@@ -184,7 +184,7 @@ def train_kd_fc(data_loader, device, bert_model, model,optimizer, criterion,crit
         # loss_soft =criterion_kd(outputs,bert_output)
         # loss_hard = criterion(outputs, targets)
         # loss = loss_hard*a + (1-a)*loss_soft
-        loss = loss_fn_kd(outputs,label,bert_output,T=5,alpha=0.5)
+        loss = loss_fn_kd(outputs,label,bert_output,T=10,alpha=0.5)
 
         acc = categorical_accuracy(outputs, targets)
         loss.backward()
