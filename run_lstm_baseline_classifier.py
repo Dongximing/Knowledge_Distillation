@@ -55,8 +55,8 @@ def prepare_dateset(train_data_path, validation_data_path,test_data_path,vocab):
     logging.info("Start loading training data")
     training = pd.read_csv(train_data_path)
 
-    training_review = training.Review[:10]
-    training_sentiment = training.Sentiment[:10]
+    training_review = training.Review
+    training_sentiment = training.Sentiment
 
     for text,label in zip(training_review,training_sentiment):
         training_texts.append(text)
@@ -69,8 +69,8 @@ def prepare_dateset(train_data_path, validation_data_path,test_data_path,vocab):
     logging.info("Start loading validation data")
 
     validation = pd.read_csv(validation_data_path)
-    validation_review = validation.Review[:10]
-    validation_sentiment = validation.Sentiment[:10]
+    validation_review = validation.Review
+    validation_sentiment = validation.Sentiment
 
 
     for text,label in zip(validation_review,validation_sentiment):
@@ -84,9 +84,9 @@ def prepare_dateset(train_data_path, validation_data_path,test_data_path,vocab):
     logging.info("Start loading testing data")
 
     testing = pd.read_csv(test_data_path)
-    testing_review = testing.Review[:10]
-    testing_sentiment = testing.Sentiment[:10]
-    labellist = list(testing.Sentiment[:10])
+    testing_review = testing.Review
+    testing_sentiment = testing.Sentiment
+    labellist = list(testing.Sentiment)
     for text, label in zip(testing_review, testing_sentiment):
         testing_texts.append(text)
         testing_labels.append(label)
@@ -313,17 +313,17 @@ def main():
         print(f'\t Val. Loss: {valid_loss:.3f} |  Val. Acc: {valid_acc * 100:.2f}%')
         if valid_loss < best_loss:
             best_loss = valid_loss
-            torch.save(LSTM_model.state_dict(), '/home/dongxx/projects/def-mercer/dongxx/Model_parameter/lstm123.pt')
+            torch.save(LSTM_model.state_dict(), MODEL_Base_PATH)
     print("training done")
 
     print("testing")
 
-    LSTM_model.load_state_dict(torch.load('/home/dongxx/projects/def-mercer/dongxx/Model_parameter/lstm123.pt'))
+    LSTM_model.load_state_dict(torch.load(MODEL_Base_PATH))
     test_loss, test_acc,flat_list = validate(testing,LSTM_model,criterion,device)
-    print(flat_list)
-    print(len(flat_list))
-    print(labellist)
-    print(len(labellist))
+    # print(flat_list)
+    # print(len(flat_list))
+    # print(labellist)
+    # print(len(labellist))
 
     print(f'Test Loss: {test_loss:.3f} | Test Acc: {test_acc * 100:.2f}%')
     print("testing done")
