@@ -137,7 +137,7 @@ def categorical_accuracy(preds, y):
     top_pred = preds.argmax(1, keepdim = True)
     correct = top_pred.eq(y.view_as(top_pred)).sum()
     acc = correct.float() / y.shape[0]
-    return acc
+    return acc, top_pred
 
 def train(train_dataset,model,criterion,device,optimizer,lr_scheduler,epoche):
     model.train()
@@ -163,7 +163,7 @@ def train(train_dataset,model,criterion,device,optimizer,lr_scheduler,epoche):
         optimizer.zero_grad()
         output = model(text,text_length)
         loss = criterion(output,label)
-        acc = categorical_accuracy(output, label)
+        acc,_ = categorical_accuracy(output, label)
         epoch_loss += loss.item()
         epoch_acc += acc.item()
         loss.backward()
@@ -177,6 +177,7 @@ def validate(validation_dataset, model, criterion, device):
 
     epoch_loss = 0
     epoch_acc = 0
+    total_pred = []
 
     for i,(text, length,label) in enumerate(validation_dataset):
         text_length = torch.Tensor(length)
@@ -189,13 +190,17 @@ def validate(validation_dataset, model, criterion, device):
         text = text.to(device,dtype = torch.long)
         label = label.to(device)
 
+
         with torch.no_grad():
             output = model(text,text_length)
         loss = criterion(output,label)
-        acc = categorical_accuracy(output, label)
+        acc, pred = categorical_accuracy(output, label)
+        total_pred.append(pred)
         epoch_loss += loss.item()
         epoch_acc += acc.item()
-    return epoch_loss / len(validation_dataset), epoch_acc / len(validation_dataset)
+    flat_list = [item for sublist in total_pred for item in sublist]
+
+    return epoch_loss / len(validation_dataset), epoch_acc / len(validation_dataset),flat_list
 
 
 
@@ -300,7 +305,7 @@ def main():
 
         train_loss, train_acc = train(training,LSTM_model,criterion,device,optimizer,lr_scheduler,epoch)
         # print("testing emebedding")
-        valid_loss, valid_acc = validate(validation,LSTM_model,criterion,device)
+        valid_loss, valid_acc,_ = validate(validation,LSTM_model,criterion,device)
         end_time = time.time()
         epoch_mins, epoch_secs = epoch_time(start_time, end_time)
         print(f'Epoch: {epoch + 1:02} | Epoch Time: {epoch_mins}m {epoch_secs}s')
@@ -308,12 +313,13 @@ def main():
         print(f'\t Val. Loss: {valid_loss:.3f} |  Val. Acc: {valid_acc * 100:.2f}%')
         if valid_loss < best_loss:
             best_loss = valid_loss
-            torch.save(LSTM_model.state_dict(), config.MODEL_Base_PATH_bu)
+            torch.save(LSTM_model.state_dict(), config.MODEL_Base_PATH_fk)
     print("training done")
 
     print("testing")
-    LSTM_model.load_state_dict(torch.load(config.MODEL_Base_PATH_bu))
-    test_loss, test_acc = validate(testing,LSTM_model,criterion,device)
+    LSTM_model.load_state_dict(torch.load(config.MODEL_Base_PATH_fk))
+    test_loss, test_acc,flat_list = validate(testing,LSTM_model,criterion,device)
+    print()
 
     print(f'Test Loss: {test_loss:.3f} | Test Acc: {test_acc * 100:.2f}%')
     print("testing done")
