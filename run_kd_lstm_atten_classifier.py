@@ -248,23 +248,9 @@ def main():
 
     args = parser.parse_args()
 
-    # device
-    # device = torch.device(args.device if torch.cuda.is_available() else "cpu")
+
     device = torch.device('cuda' if torch.cuda.is_available() else 'cpu')
-    # dataset
-    # glove = torchtext.vocab.GloVe(name='6B', dim=100,)
-    # # print(glove.get_vecs_by_tokens(['picture']))
-    # counter2 = Counter({'<unk>': 400000, '<pad>': 400001,'the':1})
-    # counter1 =  copy.deepcopy(glove.stoi)
-    #
-    # counter1.update(counter2)
-    # # print(counter1)
-    #
-    # vocab = Vocab(counter1)
-    # vocab_size=vocab.__len__()
-    # print("vocab_size:",vocab_size)
-    # print(vocab.stoi)
-    #
+
     counter2 = Counter({'<unk>': 400002, '<pad>': 400001})
     glove = Vectors(name='/home/dongxx/projects/def-mercer/dongxx/glove.6B.100d.txt')
     f = open('/home/dongxx/projects/def-mercer/dongxx/glove.6B.{}d.txt'.format(100), 'r')
