@@ -141,9 +141,9 @@ class LSTM_atten(nn.Module):
             nn.ReLU(inplace=True)
         )
         self.w_omega = nn.Parameter(torch.Tensor(
-            num_hiddens * 2, num_hiddens * 2))
-        self.u_omega = nn.Parameter(torch.Tensor(num_hiddens * 2, 1))
-        self.decoder = nn.Linear(2 * num_hiddens, 2)
+            hidden_dim * 2, hidden_dim* 2))
+        self.u_omega = nn.Parameter(torch.Tensor(hidden_dim * 2, 1))
+        self.decoder = nn.Linear(2 * hidden_dim, 2)
 
         nn.init.uniform_(self.w_omega, -0.1, 0.1)
         nn.init.uniform_(self.u_omega, -0.1, 0.1)
