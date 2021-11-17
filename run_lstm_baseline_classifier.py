@@ -86,7 +86,7 @@ def prepare_dateset(train_data_path, validation_data_path,test_data_path,vocab):
     testing = pd.read_csv(test_data_path)
     testing_review = testing.Review[:10]
     testing_sentiment = testing.Sentiment[:10]
-    labellist = list(testing.Sentiment)
+    labellist = list(testing.Sentiment[:10])
     for text, label in zip(testing_review, testing_sentiment):
         testing_texts.append(text)
         testing_labels.append(label)
@@ -320,7 +320,9 @@ def main():
 
     LSTM_model.load_state_dict(torch.load('/home/dongxx/projects/def-mercer/dongxx/Model_parameter/lstm123.pt'))
     test_loss, test_acc,flat_list = validate(testing,LSTM_model,criterion,device)
+    print(flat_list)
     print(len(flat_list))
+    print(labellist)
     print(len(labellist))
 
     print(f'Test Loss: {test_loss:.3f} | Test Acc: {test_acc * 100:.2f}%')
