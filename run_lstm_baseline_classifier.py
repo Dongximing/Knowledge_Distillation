@@ -86,6 +86,7 @@ def prepare_dateset(train_data_path, validation_data_path,test_data_path,vocab):
     testing = pd.read_csv(test_data_path)
     testing_review = testing.Review
     testing_sentiment = testing.Sentiment
+    labellist = list(testing.Sentiment)
     for text, label in zip(testing_review, testing_sentiment):
         testing_texts.append(text)
         testing_labels.append(label)
@@ -105,7 +106,7 @@ def prepare_dateset(train_data_path, validation_data_path,test_data_path,vocab):
     # print('building vocab length',vocab_size)
     # logging.info('Build vocab')
 
-    return train_dataset,validation_dataset,testing_dataset
+    return train_dataset,validation_dataset,testing_dataset,labellist
 
 def generate_batch(batch):
     """
