@@ -223,7 +223,7 @@ def main():
 
     parser.add_argument('--dropout', type=float, default=0.25)
     parser.add_argument('--embedding_dim', type=int, default=100)
-    parser.add_argument('--num_epochs', type=int, default=16)
+    parser.add_argument('--num_epochs', type=int, default=2)
     parser.add_argument('--batch_sz', type=int, default =32)
     parser.add_argument('--lr', type=float, default=1e-3)
 
@@ -313,11 +313,12 @@ def main():
         print(f'\t Val. Loss: {valid_loss:.3f} |  Val. Acc: {valid_acc * 100:.2f}%')
         if valid_loss < best_loss:
             best_loss = valid_loss
-            torch.save(LSTM_model.state_dict(), config.MODEL_Base_PATH_fk)
+            torch.save(LSTM_model.state_dict(), '/home/dongxx/projects/def-mercer/dongxx/Model_parameter/lstm123.pt')
     print("training done")
 
     print("testing")
-    LSTM_model.load_state_dict(torch.load(config.MODEL_Base_PATH_fk))
+
+    LSTM_model.load_state_dict(torch.load('/home/dongxx/projects/def-mercer/dongxx/Model_parameter/lstm123.pt'))
     test_loss, test_acc,flat_list = validate(testing,LSTM_model,criterion,device)
     print(len(flat_list))
     print(len(labellist))
