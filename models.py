@@ -36,21 +36,6 @@ class LSTMBaseline(nn.Module):
         hidden = self.dropout(t.cat((hidden[-2, :, :], hidden[-1, :, :]), dim=1))
         out = t.index_select(out, 0, un_idx)
         hidden = t.index_select(hidden, 0, un_idx)
-        # last_timesteps =text_length.unsqueeze(1)
-        # last_timesteps = last_timesteps-1
-        # last_timesteps =torch.tensor(last_timesteps, dtype=torch.int64).to(device = 'cuda')
-        #
-        # relative_hidden_size = self.hidden_size * 2
-        # last_timesteps = last_timesteps.repeat(1, relative_hidden_size)  # (1, B x H*)
-        # last_timesteps = last_timesteps.view(-1, 1, relative_hidden_size)  # (B, 1, H*)
-        #
-        # pooled_sequence_output = out.gather(  # (B, H*)
-        #     dim=1,
-        #     index=last_timesteps
-        # ).squeeze()
-
-
-        # hidden = [batch size, hid dim]
 
         output = self.fc(hidden)
 
