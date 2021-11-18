@@ -4,7 +4,7 @@ import numpy as np
 from torch.utils.data import DataLoader
 from torchtext.vocab import GloVe
 from tqdm import tqdm
-from utils import IMDB_indexing, pad_sequence
+from utils import IMDB_indexing, pad_sequenc
 from models import CNN_Baseline
 import torchtext.vocab
 from transformers import BertTokenizer, BertModel
