@@ -52,8 +52,8 @@ def prepare_dateset(train_data_path, validation_data_path,test_data_path, vocab)
     training_labels =[]
     validation_texts = []
     validation_labels = []
-    # testing_texts = []
-    # testing_labels = []
+    testing_texts = []
+    testing_labels = []
     # training #
     print('Start loading training data')
     logging.info("Start loading training data")
