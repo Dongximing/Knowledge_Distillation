@@ -148,7 +148,8 @@ def categorical_accuracy(preds, y):
     correct = top_pred.eq(y.view_as(top_pred)).sum()
     acc = correct.float() / y.shape[0]
     return acc, top_pred
-def train_kd_fc(data_loader, device,model, bert_model, optimizer, criterion,criterion_kd,scheduler):
+# training,cnn_model,bert_model,criterion,device,optimizer,lr_scheduler
+def train_kd_fc(data_loader, device, bert_model, model,optimizer, criterion,criterion_kd,scheduler):
     model.train()
     a = 0.5
     epoch_loss = 0
@@ -308,6 +309,10 @@ def main():
     lr_scheduler = torch.optim.lr_scheduler.StepLR(optimizer, gamma=args.lr_gamma, step_size=8)
     criterion = nn.CrossEntropyLoss()
 
+    kd_critertion = nn.MSELoss()
+    kd_critertion = kd_critertion.to(device)
+    criterion.to(device)
+
     training = DataLoader(train_dataset,collate_fn = generate_batch, batch_size=args.batch_sz,shuffle=True)
     validation = DataLoader(validation_dataset, collate_fn= generate_batch, batch_size=args.batch_sz, shuffle=False)
     testing = DataLoader(test_dataset, collate_fn=generate_batch, batch_size=args.batch_sz, shuffle=False)
@@ -318,7 +323,8 @@ def main():
 
     best_loss = float('inf')
     for epoch in range(args.num_epochs):
-        train_loss, train_acc =train_kd_fc(training,cnn_model,bert_model,criterion,device,optimizer,lr_scheduler)
+
+        train_loss, train_acc =train_kd_fc(training,device,bert_model,cnn_model,optimizer,criterion,criterion_kd,lr_scheduler)
 
         valid_loss, valid_acc,_ = validate(validation,cnn_model,criterion,device)
         print("epoch is ",epoch)
