@@ -132,7 +132,7 @@ def generate_batch(batch):
         # print(text)
         # text_length = [len(seq) for seq in text]
         # print(text_length)
-        text, text_length= pad_sequencing(text, ksz = 512, batch_first=True)
+        text, text_length= pad_sequencing(text, ksz = 256, batch_first=True)
 
 
         bert_id = [torch.tensor(entry[2]) for entry in batch]
