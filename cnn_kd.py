@@ -7,6 +7,7 @@ from tqdm import tqdm
 from utils import IMDB_indexing, pad_sequence
 from models import CNN_Baseline
 import torchtext.vocab
+from transformers import BertTokenizer, BertModel
 import csv
 import pandas as pd
 import argparse
@@ -254,7 +255,7 @@ def main():
     parser.add_argument('--ksz', type=list, default=[3,4,5])
     parser.add_argument('--dropout', type=float, default=0.2)
     parser.add_argument('--embedding_dim', type=int, default=100)
-    parser.add_argument('--num_epochs', type=int, default=15)
+    parser.add_argument('--num_epochs', type=int, default=20)
     parser.add_argument('--batch_sz', type=int, default=32)
     parser.add_argument('--lr', type=float, default=1e-3)
 
