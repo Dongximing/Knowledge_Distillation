@@ -140,13 +140,50 @@ class LSTM_atten(nn.Module):
             nn.Linear(hidden_dim, hidden_dim),
             nn.ReLU(inplace=True)
         )
-        self.w_omega = nn.Parameter(torch.Tensor(
-            hidden_dim * 2, hidden_dim* 2))
-        self.u_omega = nn.Parameter(torch.Tensor(hidden_dim * 2, 1))
-        self.decoder = nn.Linear(2 * hidden_dim, 2)
+        self.fc_out = nn.Sequential(
+            nn.Dropout(self.keep_dropout),
+            nn.Linear(self.hidden_dims, self.hidden_dims),
+            nn.ReLU(inplace=True),
+            nn.Dropout(self.keep_dropout),
+            nn.Linear(self.hidden_dims, self.num_classes)
+        )
 
-        nn.init.uniform_(self.w_omega, -0.1, 0.1)
-        nn.init.uniform_(self.u_omega, -0.1, 0.1)
+
+        def attention_net_with_w(self, lstm_out, lstm_hidden):
+            '''
+
+            :param lstm_out:    [batch_size, len_seq, n_hidden * 2]
+            :param lstm_hidden: [batch_size, num_layers * num_directions, n_hidden]
+            :return: [batch_size, n_hidden]
+            '''
+            lstm_tmp_out = torch.chunk(lstm_out, 2, -1)
+            # h [batch_size, time_step, hidden_dims]
+            h = lstm_tmp_out[0] + lstm_tmp_out[1]
+            # [batch_size, num_layers * num_directions, n_hidden]
+            lstm_hidden = torch.sum(lstm_hidden, dim=1)
+            # [batch_size, 1, n_hidden]
+            lstm_hidden = lstm_hidden.unsqueeze(1)
+            # atten_w [batch_size, 1, hidden_dims]
+            atten_w = self.attention_layer(lstm_hidden)
+            # m [batch_size, time_step, hidden_dims]
+            m = nn.Tanh()(h)
+            # atten_context [batch_size, 1, time_step]
+            atten_context = torch.bmm(atten_w, m.transpose(1, 2))
+            # softmax_w [batch_size, 1, time_step]
+            softmax_w = F.softmax(atten_context, dim=-1)
+            # context [batch_size, 1, hidden_dims]
+            context = torch.bmm(softmax_w, h)
+            result = context.squeeze(1)
+            return result
+
+
+        # self.w_omega = nn.Parameter(torch.Tensor(
+        #     hidden_dim * 2, hidden_dim* 2))
+        # self.u_omega = nn.Parameter(torch.Tensor(hidden_dim * 2, 1))
+        # self.decoder = nn.Linear(2 * hidden_dim, 2)
+        #
+        # nn.init.uniform_(self.w_omega, -0.1, 0.1)
+        # nn.init.uniform_(self.u_omega, -0.1, 0.1)
     def atten(self,output,finial_state):
         attent_weight = torch.bmm(output,finial_state).squeeze(2)
         soft_max_weights = F.softmax(attent_weight,1)
@@ -163,17 +200,17 @@ class LSTM_atten(nn.Module):
         a_packed_input = t.nn.utils.rnn.pack_padded_sequence(input=seq, lengths=a_lengths.to('cpu'), batch_first=True)
         packed_output, (hidden, cell) = self.rnn(a_packed_input)
         out, _ = t.nn.utils.rnn.pad_packed_sequence(packed_output, batch_first=True)
-        u = torch.tanh(torch.matmul(out, self.w_omega))
-        # u形状是(batch_size, seq_len, 2 * num_hiddens)
-        att = torch.matmul(u, self.u_omega)
-        # att形状是(batch_size, seq_len, 1)
-        att_score = F.softmax(att, dim=1)
-        # att_score形状仍为(batch_size, seq_len, 1)
-        scored_x = out * att_score
-        # scored_x形状是(batch_size, seq_len, 2 * num_hiddens)
-        # Attention过程结束
+        # u = torch.tanh(torch.matmul(out, self.w_omega))
+        # # u形状是(batch_size, seq_len, 2 * num_hiddens)
+        # att = torch.matmul(u, self.u_omega)
+        # # att形状是(batch_size, seq_len, 1)
+        # att_score = F.softmax(att, dim=1)
+        # # att_score形状仍为(batch_size, seq_len, 1)
+        # scored_x = out * att_score
+        # # scored_x形状是(batch_size, seq_len, 2 * num_hiddens)
+        # # Attention过程结束
 
-        context = torch.sum(scored_x, dim=1)
+        # context = torch.sum(scored_x, dim=1)
 
 
         # (forward_out, backward_out) = torch.chunk(out, 2, dim=2)
@@ -201,11 +238,13 @@ class LSTM_atten(nn.Module):
         # hidden = self.dropout(t.cat((hidden[-2, :, :], hidden[-1, :, :]), dim=1)).unsqueeze(2)
         # # print(hidden.size())
         # context = self.atten(out,hidden)
+        hidden = hidden.permute(1, 0, 2)
+        context = self.attention_net_with_w(output, hidden)
 
         out = t.index_select(out, 0, un_idx)
         context = t.index_select(context, 0, un_idx)
         # context = self.dropout(context)
-        return self.fc(context)
+        return self.fc_out(context)
 class BERT(nn.Module):
     def __init__(self,bert):
 
