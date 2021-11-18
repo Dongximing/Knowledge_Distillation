@@ -324,7 +324,7 @@ def main():
     best_loss = float('inf')
     for epoch in range(args.num_epochs):
 
-        train_loss, train_acc =train_kd_fc(training,device,bert_model,cnn_model,optimizer,criterion,criterion_kd,lr_scheduler)
+        train_loss, train_acc =train_kd_fc(training,device,bert_model,cnn_model,optimizer,criterion,kd_critertion,lr_scheduler)
 
         valid_loss, valid_acc,_ = validate(validation,cnn_model,criterion,device)
         print("epoch is ",epoch)
