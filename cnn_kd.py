@@ -23,8 +23,10 @@ import numpy as np
 from torch.utils.data import DataLoader
 from torchtext.vocab import GloVe,Vocab,Vectors
 from tqdm import tqdm
-from utils import IMDB_indexing, pad_sequence,pad_sequencing,IMDB_kd_indexing
+from utils import IMDB_indexing,pad_sequencing,IMDB_kd_indexing
 from models import CNN_Baseline,LSTMBaseline,BERTGRUSentiment
+from torch.nn.utils.rnn import pad_sequence
+
 import torchtext.vocab
 import csv
 import pandas as pd
@@ -124,7 +126,7 @@ def generate_batch(batch):
         # padding according to the maximum sequence length in batch
         text = [entry[1] for entry in batch]
         text_length = [len(seq) for seq in text]
-        text = pad_sequence(text, ksz=10, batch_first=True)
+        text = pad_sequencing(text, ksz=512, batch_first=True)
         bert_id = [torch.tensor(entry[2]) for entry in batch]
         # print(bert_id)
         bert_id = pad_sequence(bert_id, batch_first=True)
