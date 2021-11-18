@@ -226,7 +226,9 @@ def validate(validation_dataset, model, criterion, device):
     epoch_loss = 0
     epoch_acc = 0
 
-    for i,(text, length,label) in enumerate(validation_dataset):
+    for i,data in enumerate(validation_dataset):
+        text, text_length, label, bert_id, attention_mask = data
+
         text_length = torch.Tensor(length)
         text_length = text_length.to(device)
         text = text.to(device)
