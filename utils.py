@@ -295,7 +295,7 @@ def IMDB_indexing(train_text, train_labels, validation_text, validation_labels, 
 #
 #
 #     return out_tensor, true
-def pad_sequence(sequences, ksz, batch_first=False, padding_value=1):
+def pad_sequenc(sequences, ksz, batch_first=False, padding_value=1):
 
     max_size = sequences[0].size()
     trailing_dims = max_size[1:]
