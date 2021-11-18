@@ -313,12 +313,12 @@ def main():
         print(f'\t Val. Loss: {valid_loss:.3f} |  Val. Acc: {valid_acc * 100:.2f}%')
         if valid_loss < best_loss:
             best_loss = valid_loss
-            torch.save(LSTM_model.state_dict(), MODEL_Base_PATH_fk)
+            torch.save(LSTM_model.state_dict(), config.MODEL_Base_PATH_fk)
     print("training done")
 
     print("testing")
 
-    LSTM_model.load_state_dict(torch.load(MODEL_Base_PATH_fk))
+    LSTM_model.load_state_dict(torch.load(config.MODEL_Base_PATH_fk))
     test_loss, test_acc,flat_list = validate(testing,LSTM_model,criterion,device)
     # print(flat_list)
     # print(len(flat_list))

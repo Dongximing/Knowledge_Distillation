@@ -5,7 +5,7 @@ from torch.utils.data import DataLoader
 from torchtext.vocab import GloVe,Vocab,Vectors
 from tqdm import tqdm
 from utils import IMDB_indexing, pad_sequence,pad_sequencing
-from models import LSTM_atten
+from models import CNN_Baseline,LSTMBaseline
 import torchtext.vocab
 import csv
 import pandas as pd
@@ -270,7 +270,7 @@ def main():
     # train_dataset, validation_dataset, test_dataset, vocab, vocab_size = prepare_dateset(args.train_path,args.validation_path)
     train_dataset, validation_dataset,test_dataset,labellist = prepare_dateset(args.train_path, args.validation_path, args.test_path, vocab)
     # modelvocab_size,hidden_dim,n_layers,dropout,number_class,bidirectional,embedding_dim =10
-    LSTM_model =LSTM_atten(vocab_size = vocab_size,hidden_dim = config.HIDDEN_DIM, n_layers =config.N_LAYERS, dropout = args.dropout, number_class = args.number_class, bidirectional = True, embedding_dim =100)
+    LSTM_model =LSTMBaseline(vocab_size = vocab_size,hidden_dim = config.HIDDEN_DIM, n_layers =config.N_LAYERS, dropout = args.dropout, number_class = args.number_class, bidirectional = True, embedding_dim =100)
     LSTM_model.to(device)
     #opt scheduler criterion
     optimizer = torch.optim.Adam(LSTM_model.parameters(), lr=args.lr)
@@ -313,12 +313,12 @@ def main():
         print(f'\t Val. Loss: {valid_loss:.3f} |  Val. Acc: {valid_acc * 100:.2f}%')
         if valid_loss < best_loss:
             best_loss = valid_loss
-            torch.save(LSTM_model.state_dict(), '')
+            torch.save(LSTM_model.state_dict(), MODEL_Base_PATH)
     print("training done")
 
     print("testing")
 
-    LSTM_model.load_state_dict(torch.load())
+    LSTM_model.load_state_dict(torch.load(MODEL_Base_PATH))
     test_loss, test_acc,flat_list = validate(testing,LSTM_model,criterion,device)
     # print(flat_list)
     # print(len(flat_list))
