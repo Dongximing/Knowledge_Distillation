@@ -94,7 +94,7 @@ def prepare_dateset(train_data_path, validation_data_path,test_data_path, vocab)
         testing_labels.append(label)
     print("Finish loading testing data")
     logging.info("Finish loading testing data")
-
+    labellist = list(testing.Sentiment)
     print('prepare training and test sets')
     logging.info('Prepare training and test sets')
 
@@ -106,7 +106,7 @@ def prepare_dateset(train_data_path, validation_data_path,test_data_path, vocab)
 
 
 
-    return train_dataset,validation_dataset,vocab,vocab_size
+    return train_dataset,validation_dataset,testing_dataset,labellist
 
 def generate_batch(batch):
     """
