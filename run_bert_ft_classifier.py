@@ -428,7 +428,7 @@ def main():
     lr_scheduler = torch.optim.lr_scheduler.StepLR(optimizer, gamma=args.lr_gamma, step_size=5)
     criterion = nn.CrossEntropyLoss()
     criterion.to(device)
-    train_dataset, validation_dataset, test_dataset = prepare_dateset(args.train_path, args.validation_path,
+    train_dataset, validation_dataset, test_dataset,labellist = prepare_dateset(args.train_path, args.validation_path,
                                                                       args.test_path)
 
     training = DataLoader(train_dataset, collate_fn=generate_batch, batch_size=args.batch_sz, shuffle=True)
