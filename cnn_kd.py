@@ -37,6 +37,8 @@ import pickle
 import sys
 import config
 config.seed_torch()
+import torch.nn.functional as F
+
 from collections import Counter
 import time
 import copy
