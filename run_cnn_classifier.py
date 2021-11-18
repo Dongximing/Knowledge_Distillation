@@ -45,7 +45,7 @@ def weight_matrix(vocab, vectors, dim=100):
         except KeyError:
             weight_matrix[i] = np.random.normal(scale=0.5, size=(dim,))
     return torch.from_numpy(weight_matrix)
-def prepare_dateset(train_data_path, validation_data_path):
+def prepare_dateset(train_data_path, validation_data_path,test_data_path, vocab):
     # with open(train_data_path,'r') as csvfile:
     #     csvreader = csv.reader(csvf
     training_texts = []
