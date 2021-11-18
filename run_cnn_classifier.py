@@ -134,7 +134,7 @@ def categorical_accuracy(preds, y):
     top_pred = preds.argmax(1, keepdim = True)
     correct = top_pred.eq(y.view_as(top_pred)).sum()
     acc = correct.float() / y.shape[0]
-    return acc
+    return acc, top_pred
 
 def train(train_dataset,model,criterion,device,optimizer,lr_scheduler):
     model.train()
