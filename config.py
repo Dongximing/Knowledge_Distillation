@@ -32,3 +32,4 @@ BERT_PATH = '/home/dongxx/projects/def-mercer/dongxx/Model_parameter/new_bert.pt
 MODEL_Base_PATH_bu = '/home/dongxx/projects/def-mercer/dongxx/Model_parameter/baseline.pt'
 BERT_ft_PATH = '/home/dongxx/projects/def-mercer/dongxx/project/Model_parameter/new_ft_bert.pt'
 MODEL_Base_PATH_fk ='/home/dongxx/projects/def-mercer/dongxx/Model_parameter/fk.pt'
+MODEL_CNN_PATH_kd ='/home/dongxx/projects/def-mercer/dongxx/Model_parameter/cnn_kd.pt'

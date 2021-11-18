@@ -179,7 +179,6 @@ def train_kd_fc(data_loader, device,model, bert_model, optimizer, criterion,crit
 
         acc,_ = categorical_accuracy(outputs, targets)
         loss.backward()
-        #   torch.nn.utils.clip_grad_norm_(model.parameters(), 1.0)
         optimizer.step()
         # soft_loss += loss_soft.item()
         # hard_loss += loss_hard.item()
@@ -305,7 +304,7 @@ def main():
     bert_model.eval()
     #opt scheduler criterion
     optimizer = torch.optim.Adam(cnn_model.parameters(), lr=args.lr)
-    lr_scheduler = torch.optim.lr_scheduler.StepLR(optimizer, gamma=args.lr_gamma, step_size=5)
+    lr_scheduler = torch.optim.lr_scheduler.StepLR(optimizer, gamma=args.lr_gamma, step_size=8)
     criterion = nn.CrossEntropyLoss()
 
     training = DataLoader(train_dataset,collate_fn = generate_batch, batch_size=args.batch_sz,shuffle=True)
@@ -327,11 +326,11 @@ def main():
         print(f'\t Val. Loss: {valid_loss:.3f} |  Val. Acc: {valid_acc * 100:.2f}%')
         if valid_loss < best_loss:
             best_loss = valid_loss
-            torch.save(cnn_model.state_dict(), config.MODEL_CNN_PATH)
+            torch.save(cnn_model.state_dict(), config.MODEL_CNN_PATH_kd)
     print("training done")
 
     print("testing")
-    cnn_model.load_state_dict(torch.load(config.MODEL_CNN_PATH))
+    cnn_model.load_state_dict(torch.load(config.MODEL_CNN_PATH_kd))
     test_loss, test_acc, flat_list = validate(testing, cnn_model, criterion, device)
 
     print(f'Test Loss: {test_loss:.3f} | Test Acc: {test_acc * 100:.2f}%')
