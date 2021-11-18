@@ -149,32 +149,27 @@ class LSTM_atten(nn.Module):
         )
 
 
-        def attention_net_with_w(self, lstm_out, lstm_hidden):
-            '''
+    def attention_net_with_w(self, lstm_out, lstm_hidden):
 
-            :param lstm_out:    [batch_size, len_seq, n_hidden * 2]
-            :param lstm_hidden: [batch_size, num_layers * num_directions, n_hidden]
-            :return: [batch_size, n_hidden]
-            '''
-            lstm_tmp_out = torch.chunk(lstm_out, 2, -1)
+        lstm_tmp_out = torch.chunk(lstm_out, 2, -1)
             # h [batch_size, time_step, hidden_dims]
-            h = lstm_tmp_out[0] + lstm_tmp_out[1]
+        h = lstm_tmp_out[0] + lstm_tmp_out[1]
             # [batch_size, num_layers * num_directions, n_hidden]
-            lstm_hidden = torch.sum(lstm_hidden, dim=1)
+        lstm_hidden = torch.sum(lstm_hidden, dim=1)
             # [batch_size, 1, n_hidden]
-            lstm_hidden = lstm_hidden.unsqueeze(1)
+        lstm_hidden = lstm_hidden.unsqueeze(1)
             # atten_w [batch_size, 1, hidden_dims]
-            atten_w = self.attention_layer(lstm_hidden)
+        atten_w = self.attention_layer(lstm_hidden)
             # m [batch_size, time_step, hidden_dims]
-            m = nn.Tanh()(h)
+        m = nn.Tanh()(h)
             # atten_context [batch_size, 1, time_step]
-            atten_context = torch.bmm(atten_w, m.transpose(1, 2))
+        atten_context = torch.bmm(atten_w, m.transpose(1, 2))
             # softmax_w [batch_size, 1, time_step]
-            softmax_w = F.softmax(atten_context, dim=-1)
+        softmax_w = F.softmax(atten_context, dim=-1)
             # context [batch_size, 1, hidden_dims]
-            context = torch.bmm(softmax_w, h)
-            result = context.squeeze(1)
-            return result
+        context = torch.bmm(softmax_w, h)
+        result = context.squeeze(1)
+        return result
 
 
         # self.w_omega = nn.Parameter(torch.Tensor(
