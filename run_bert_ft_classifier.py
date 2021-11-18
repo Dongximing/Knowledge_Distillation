@@ -356,7 +356,7 @@ def train(train_dataset, model, criterion, device, optimizer, lr_scheduler):
         optimizer.zero_grad()
         output = model(ids=input_ids, mask=attention_mask)
         loss = criterion(output, label)
-        acc = categorical_accuracy(output, label)
+        acc,_= categorical_accuracy(output, label)
         epoch_loss += loss.item()
         epoch_acc += acc.item()
         loss.backward()
