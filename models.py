@@ -215,16 +215,16 @@ class LSTM_atten(nn.Module):
         # x = x.squeeze(dim=1)  # [batch, hidden_size]
         # x = self.fc(x)
         # return x
-        # hidden = self.dropout(t.cat((hidden[-2, :, :], hidden[-1, :, :]), dim=1)).unsqueeze(2)
+        hidden = self.dropout(t.cat((hidden[-2, :, :], hidden[-1, :, :]), dim=1)).unsqueeze(2)
         # # print(hidden.size())
-        # context = self.atten(out,hidden)
-        hidden = hidden.permute(1, 0, 2)
-        context = self.attention_net_with_w(out, hidden)
+        context = self.atten(out,hidden)
+        # hidden = hidden.permute(1, 0, 2)
+        # context = self.attention_net_with_w(out, hidden)
 
         out = t.index_select(out, 0, un_idx)
         context = t.index_select(context, 0, un_idx)
         # context = self.dropout(context)
-        return self.fc_out(context)
+        return self.fc(context)
 class BERT(nn.Module):
     def __init__(self,bert):
 
