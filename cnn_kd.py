@@ -172,7 +172,7 @@ def train_kd_fc(data_loader, device,model, bert_model, optimizer, criterion,crit
         with torch.no_grad():
             bert_output = bert_model(bert_id,bert_mask)
 
-        outputs = model(ids,lengths)
+        outputs = model(ids)
         # loss_soft =criterion_kd(outputs,bert_output)
         # loss_hard = criterion(outputs, targets)
         # loss = loss_hard*a + (1-a)*loss_soft
