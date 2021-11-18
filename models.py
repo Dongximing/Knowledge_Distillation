@@ -145,7 +145,7 @@ class LSTM_atten(nn.Module):
             nn.Linear(self.hidden_size, self.hidden_size),
             nn.ReLU(inplace=True),
             nn.Dropout(dropout),
-            nn.Linear(self.hidden_size, self.hidden_size)
+            nn.Linear(self.hidden_size, number_class)
         )
 
 
