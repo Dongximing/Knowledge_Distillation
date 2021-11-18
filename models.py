@@ -142,10 +142,10 @@ class LSTM_atten(nn.Module):
         )
         self.fc_out = nn.Sequential(
             nn.Dropout(dropout),
-            nn.Linear(self.hidden_dim, self.hidden_dim),
+            nn.Linear(self.hidden_size, self.hidden_size),
             nn.ReLU(inplace=True),
             nn.Dropout(dropout),
-            nn.Linear(self.hidden_dim, self.num_classe)
+            nn.Linear(self.hidden_size, self.hidden_size)
         )
 
 
