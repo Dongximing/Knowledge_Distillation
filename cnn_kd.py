@@ -229,7 +229,7 @@ def validate(validation_dataset, model, criterion, device):
     for i,data in enumerate(validation_dataset):
         text, text_length, label, bert_id, attention_mask = data
 
-        text_length = torch.Tensor(length)
+        text_length = torch.Tensor(text_length)
         text_length = text_length.to(device)
         text = text.to(device)
         label = torch.tensor(label, dtype=torch.long, device=device)
