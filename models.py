@@ -234,7 +234,7 @@ class LSTM_atten(nn.Module):
         # # print(hidden.size())
         # context = self.atten(out,hidden)
         hidden = hidden.permute(1, 0, 2)
-        context = self.attention_net_with_w(output, hidden)
+        context = self.attention_net_with_w(out, hidden)
 
         out = t.index_select(out, 0, un_idx)
         context = t.index_select(context, 0, un_idx)
