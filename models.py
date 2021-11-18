@@ -136,7 +136,7 @@ class LSTM_atten(nn.Module):
                            batch_first=True)
         self.fc = nn.Linear(hidden_dim*2 , number_class)
         self.dropout = nn.Dropout(dropout)
-        self.attention_weights_layer = nn.Sequential(
+        self.attention_layer = nn.Sequential(
             nn.Linear(hidden_dim, hidden_dim),
             nn.ReLU(inplace=True)
         )
