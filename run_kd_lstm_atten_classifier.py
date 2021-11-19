@@ -184,7 +184,7 @@ def train_kd_fc(data_loader, device, bert_model, model,optimizer, criterion,crit
         # loss_soft =criterion_kd(outputs,bert_output)
         # loss_hard = criterion(outputs, targets)
         # loss = loss_hard*a + (1-a)*loss_soft
-        loss = loss_fn_kd(outputs,label,bert_output,T=10,alpha=0.25)
+        loss = loss_fn_kd(outputs,label,bert_output,T=10,alpha=0.5)
 
         acc = categorical_accuracy(outputs, targets)
         loss.backward()
