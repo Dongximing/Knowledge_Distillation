@@ -23,7 +23,7 @@ import time
 import copy
 from transformers import BertTokenizer, BertModel
 from torch.nn.utils.rnn import pad_sequence
-def loss_fn_kd(outputs, labels, teacher_outputs, T=10, alpha=0.5):
+def loss_fn_kd(outputs, labels, teacher_outputs, T=10, alpha=0.8):
 
     hard_loss = F.cross_entropy(outputs, labels) * (1. - alpha)
     soft_loss = nn.KLDivLoss(reduction='batchmean')(F.log_softmax(outputs/T, dim=1),
