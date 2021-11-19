@@ -4,7 +4,7 @@ import numpy as np
 from torch.utils.data import DataLoader
 from torchtext.vocab import GloVe
 from tqdm import tqdm
-from utils import IMDB_indexing, pad_sequence
+from utils import IMDB_indexing, pad_sequenc
 from models import CNN_Baseline
 import torchtext.vocab
 import csv
@@ -22,7 +22,7 @@ import numpy as np
 from torch.utils.data import DataLoader
 from torchtext.vocab import GloVe,Vocab,Vectors
 from tqdm import tqdm
-from utils import IMDB_indexing, pad_sequence,pad_sequencing
+from utils import IMDB_indexing, pad_sequenc,pad_sequencing
 from models import CNN_Baseline,LSTMBaseline
 import torchtext.vocab
 import csv
