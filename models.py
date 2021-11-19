@@ -50,7 +50,7 @@ class LSTMBaseline(nn.Module):
         #                   bidirectional=bidirectional,
         #                   batch_first=True,
         #                   dropout=0 if n_layers < 2 else dropout)
-        self.fc = nn.Linear(hidden_dim*2,number_class)
+        self.fc = nn.Linear(hidden_dim,number_class)
         self.dropout = nn.Dropout(dropout)
     def forward(self,text,text_length):
 
@@ -66,7 +66,7 @@ class LSTMBaseline(nn.Module):
         a_packed_input = t.nn.utils.rnn.pack_padded_sequence(input=seq, lengths=a_lengths.to('cpu'), batch_first=True)
         packed_output, (hidden, cell) = self.rnn(a_packed_input)
         out, _ = t.nn.utils.rnn.pad_packed_sequence(packed_output, batch_first=True)
-        hidden = self.dropout(t.cat((hidden[-2, :, :], hidden[-1, :, :]), dim=1))
+        hidden = t.cat((hidden[-2, :, :], hidden[-1, :, :]), dim=1)
         out = t.index_select(out, 0, un_idx)
         hidden = t.index_select(hidden, 0, un_idx)
 
