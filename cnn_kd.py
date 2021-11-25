@@ -51,8 +51,6 @@ def weight_matrix(vocab, vectors, dim=100):
             weight_matrix[i] = np.random.normal(scale=0.5, size=(dim,))
     return torch.from_numpy(weight_matrix)
 def prepare_dateset(train_data_path, validation_data_path,test_data_path, vocab):
-    # with open(train_data_path,'r') as csvfile:
-    #     csvreader = csv.reader(csvf
     training_texts = []
     training_labels =[]
     validation_texts = []
@@ -262,7 +260,7 @@ def main():
     parser.add_argument('--ksz', type=list, default=[3,4,5])
     parser.add_argument('--dropout', type=float, default=0.2)
     parser.add_argument('--embedding_dim', type=int, default=100)
-    parser.add_argument('--num_epochs', type=int, default=20)
+    parser.add_argument('--num_epochs', type=int, default=15)
     parser.add_argument('--batch_sz', type=int, default=32)
     parser.add_argument('--lr', type=float, default=1e-3)
 

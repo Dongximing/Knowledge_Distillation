@@ -11,12 +11,6 @@ class GRUBaseline(nn.Module):
         self.embedding_layer = nn.Embedding(num_embeddings =vocab_size,embedding_dim= embedding_dim,padding_idx=1)
         self.hidden_size = hidden_dim
         self.rnn = nn.GRU(embedding_dim,hidden_dim,num_layers=n_layers,dropout=dropout, bidirectional=bidirectional,batch_first=True)
-        # self.rnn = nn.GRU(embedding_dim,
-        #                   hidden_dim,
-        #                   num_layers=n_layers,
-        #                   bidirectional=bidirectional,
-        #                   batch_first=True,
-        #                   dropout=0 if n_layers < 2 else dropout)
         self.fc = nn.Linear(hidden_dim*2,number_class)
         self.dropout = nn.Dropout(dropout)
     def forward(self,text,text_length):
@@ -44,31 +38,25 @@ class LSTMBaseline(nn.Module):
         self.embedding_layer = nn.Embedding(num_embeddings =vocab_size,embedding_dim= embedding_dim,padding_idx=1)
         self.hidden_size = hidden_dim
         self.rnn = nn.LSTM(embedding_dim,hidden_dim,num_layers=n_layers,dropout=dropout, bidirectional=bidirectional,batch_first=True)
-        # self.rnn = nn.GRU(embedding_dim,
-        #                   hidden_dim,
-        #                   num_layers=n_layers,
-        #                   bidirectional=bidirectional,
-        #                   batch_first=True,
-        #                   dropout=0 if n_layers < 2 else dropout)
-        self.fc = nn.Linear(hidden_dim,number_class)
+        self.fc = nn.Linear(hidden_dim*2,number_class)
         self.dropout = nn.Dropout(dropout)
     def forward(self,text,text_length):
 
-        a_lengths, idx = text_length.sort(0, descending=True)
-        _, un_idx = t.sort(idx, dim=0)
-        seq = text[idx]
+        # a_lengths, idx = text_length.sort(0, descending=True)
+        # _, un_idx = t.sort(idx, dim=0)
+        # seq = text[idx]
         # print(text)
-        seq = self.dropout(self.embedding_layer(seq))
+        seq = self.dropout(self.embedding_layer(text))
         # seq = self.embedding_layer(seq)
 
         # print(seq)
 
-        a_packed_input = t.nn.utils.rnn.pack_padded_sequence(input=seq, lengths=a_lengths.to('cpu'), batch_first=True)
+        a_packed_input = t.nn.utils.rnn.pack_padded_sequence(input=seq, lengths=text_length.to('cpu'), batch_first=True,enforce_sorted=False)
         packed_output, (hidden, cell) = self.rnn(a_packed_input)
         out, _ = t.nn.utils.rnn.pad_packed_sequence(packed_output, batch_first=True)
-        hidden =hidden.squeeze(0)
-        out = t.index_select(out, 0, un_idx)
-        hidden = t.index_select(hidden, 0, un_idx)
+        hidden = self.dropout(t.cat((hidden[-2, :, :], hidden[-1, :, :]), dim=1))
+
+
 
         output = self.fc(hidden)
 
@@ -205,12 +193,12 @@ class LSTM_atten(nn.Module):
 
     def forward(self,text,text_length):
 
-        a_lengths, idx = text_length.sort(0, descending=True)
-        _, un_idx = t.sort(idx, dim=0)
-        seq = text[idx]
+        # a_lengths, idx = text_length.sort(0, descending=True)
+        # _, un_idx = t.sort(idx, dim=0)
+        # seq = text[idx]
 
-        seq = self.dropout(self.embedding_layer(seq))
-        a_packed_input = t.nn.utils.rnn.pack_padded_sequence(input=seq, lengths=a_lengths.to('cpu'), batch_first=True)
+        seq = self.dropout(self.embedding_layer(text))
+        a_packed_input = t.nn.utils.rnn.pack_padded_sequence(input=seq, lengths=text_length.to('cpu'), batch_first=True,enforce_sorted=False)
         packed_output, (hidden, cell) = self.rnn(a_packed_input)
         out, _ = t.nn.utils.rnn.pad_packed_sequence(packed_output, batch_first=True)
         # u = torch.tanh(torch.matmul(out, self.w_omega))

@@ -322,7 +322,7 @@ def prepare_dateset(train_data_path, validation_data_path, test_data_path):
     print('prepare training and test sets')
     logging.info('Prepare training and test sets')
     labellist = list(testing.Sentiment)
-    tokenizers = BertTokenizer.from_pretrained('/home/dongxx/projects/def-mercer/dongxx/bert-base-uncased', do_lower_case=True)
+    tokenizers = BertTokenizer.from_pretrained('/home/dongxx/projects/def-parimala/dongxx/bert-base-uncased', do_lower_case=True)
 
     train_dataset, validation_dataset, testing_dataset = bert_IMDB(training_texts, training_labels, validation_texts,
                                                                    validation_labels, testing_texts, testing_labels,
@@ -391,11 +391,11 @@ def validate(validation_dataset, model, criterion, device):
 def main():
     parser = argparse.ArgumentParser()
     parser.add_argument('--train_path', type=str,
-                        default='/home/dongxx/projects/def-mercer/dongxx/IMDB_data/train.csv')
+                        default='/home/dongxx/projects/def-parimala/dongxx/IMDB_data/train.csv')
     parser.add_argument('--validation_path', type=str,
-                        default='/home/dongxx/projects/def-mercer/dongxx/IMDB_data/valid.csv')
+                        default='/home/dongxx/projects/def-parimala/dongxx/IMDB_data/valid.csv')
     parser.add_argument('--test_path', type=str,
-                        default='/home/dongxx/projects/def-mercer/dongxx/IMDB_data/test.csv')
+                        default='/home/dongxx/projects/def-parimala/dongxx/IMDB_data/test.csv')
 
     parser.add_argument('--dropout', type=float, default=0.25)
     parser.add_argument('--embedding_dim', type=int, default=100)
@@ -411,7 +411,7 @@ def main():
     args = parser.parse_args()
 
     device = torch.device('cuda' if torch.cuda.is_available() else 'cpu')
-    bert = BertModel.from_pretrained('/home/dongxx/projects/def-mercer/dongxx/bert-base-uncased')
+    bert = BertModel.from_pretrained('/home/dongxx/projects/def-parimala/dongxx/bert-base-uncased')
     BertGRU_model = BERTGRUSentiment(bert,
                                      config.HIDDEN_DIM,
                                      config.OUTPUT_DIM,

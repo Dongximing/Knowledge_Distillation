@@ -25,7 +25,7 @@ EPOCHS = 25
 BASELINE_EPOCHS = 15
 
 MODEL_KD_PATH ='/home/dongxx/projects/def-mercer/dongxx/project/LSTM-baseline/kd.pt'
-MODEL_Base_PATH ='/home/dongxx/projects/def-mercer/dongxx/Model_parameter/baseline_bas.pt'
+MODEL_Base_PATH ='/home/dongxx/projects/def-parimala/dongxx/Model_parameter/baseline_bas.pt'
 #    Teachedr_MODEL_PATH ='/home/dongxx/projects/def-mercer/dongxx/project/pythonProject/bert.pt'
 MODEL_CNN_PATH = '/home/dongxx/projects/def-mercer/dongxx/Model_parameter/cnn.pt'
 BERT_PATH = '/home/dongxx/projects/def-mercer/dongxx/Model_parameter/new_bert.pt'

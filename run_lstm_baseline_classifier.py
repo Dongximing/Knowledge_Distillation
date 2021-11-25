@@ -211,11 +211,11 @@ def validate(validation_dataset, model, criterion, device):
 def main():
     parser = argparse.ArgumentParser()
     parser.add_argument('--train_path', type=str,
-                        default='/home/dongxx/projects/def-mercer/dongxx/IMDB_data/train.csv')
+                        default='/home/dongxx/projects/def-parimala/dongxx/IMDB_data/train.csv')
     parser.add_argument('--validation_path', type=str,
-                        default='/home/dongxx/projects/def-mercer/dongxx/IMDB_data/valid.csv')
+                        default='/home/dongxx/projects/def-parimala/dongxx/IMDB_data/valid.csv')
     parser.add_argument('--test_path', type=str,
-                        default='/home/dongxx/projects/def-mercer/dongxx/IMDB_data/test.csv')
+                        default='/home/dongxx/projects/def-parimala/dongxx/IMDB_data/test.csv')
 
     # parser.add_argument('--train_path',type=str,default='/home/dongxx/projects/def-mercer/dongxx/project/data/train.csv')
     # parser.add_argument('--validation_path',type= str,default='/home/dongxx/projects/def-mercer/dongxx/project/data/valid.csv')
@@ -270,7 +270,7 @@ def main():
     # train_dataset, validation_dataset, test_dataset, vocab, vocab_size = prepare_dateset(args.train_path,args.validation_path)
     train_dataset, validation_dataset,test_dataset,labellist = prepare_dateset(args.train_path, args.validation_path, args.test_path, vocab)
     # modelvocab_size,hidden_dim,n_layers,dropout,number_class,bidirectional,embedding_dim =10
-    LSTM_model =LSTMBaseline(vocab_size = vocab_size,hidden_dim = config.HIDDEN_DIM, n_layers =1, dropout = args.dropout, number_class = args.number_class, bidirectional = False, embedding_dim =100)
+    LSTM_model =LSTMBaseline(vocab_size = vocab_size,hidden_dim = config.HIDDEN_DIM, n_layers =2, dropout = args.dropout, number_class = args.number_class, bidirectional = True, embedding_dim =100)
     LSTM_model.to(device)
     #opt scheduler criterion
     optimizer = torch.optim.Adam(LSTM_model.parameters(), lr=args.lr)
@@ -320,10 +320,7 @@ def main():
 
     LSTM_model.load_state_dict(torch.load(config.MODEL_Base_PATH))
     test_loss, test_acc,flat_list = validate(testing,LSTM_model,criterion,device)
-    # print(flat_list)
-    # print(len(flat_list))
-    # print(labellist)
-    # print(len(labellist))
+
 
     print(f'Test Loss: {test_loss:.3f} | Test Acc: {test_acc * 100:.2f}%')
     print("testing done")
