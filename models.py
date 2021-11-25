@@ -252,7 +252,7 @@ class LSTM_atten(nn.Module):
         # return x
         # hidden = self.dropout(t.cat((hidden[-2, :, :], hidden[-1, :, :]), dim=1)).unsqueeze(2)
         # # print(hidden.size())
-        H = out[:, :, : hidden_dim] + out[:, :, hidden_dim:]
+        H = out[:, :, : self.hidden_size] + out[:, :, self.hidden_size:]
         context, alphas = self.attention(H)
         context = self.tanh(context)
         # context = self.atten(out,hidden)
