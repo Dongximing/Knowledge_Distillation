@@ -198,7 +198,7 @@ class LSTM_atten(nn.Module):
         M = self.tanh(finial_state)  # (batch_size, word_pad_len, rnn_size)
 
         # eq.10: α = softmax(w^T M)
-        alpha = self.w(M).squeeze(2)  # (batch_size, word_pad_len)
+        alpha = self.w(finial_state).squeeze(2)  # (batch_size, word_pad_len)
         alpha = self.softmax(alpha)  # (batch_size, word_pad_len)
 
         r = H * alpha.unsqueeze(2)  # (batch_size, word_pad_len, rnn_size)
