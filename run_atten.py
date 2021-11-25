@@ -211,11 +211,11 @@ def validate(validation_dataset, model, criterion, device):
 def main():
     parser = argparse.ArgumentParser()
     parser.add_argument('--train_path', type=str,
-                        default='/home/dongxx/projects/def-mercer/dongxx/IMDB_data/train.csv')
+                        default='/home/dongxx/projects/def-parimala/dongxx/IMDB_data/train.csv')
     parser.add_argument('--validation_path', type=str,
-                        default='/home/dongxx/projects/def-mercer/dongxx/IMDB_data/valid.csv')
+                        default='/home/dongxx/projects/def-parimala/dongxx/IMDB_data/valid.csv')
     parser.add_argument('--test_path', type=str,
-                        default='/home/dongxx/projects/def-mercer/dongxx/IMDB_data/test.csv')
+                        default='/home/dongxx/projects/def-parimala/dongxx/IMDB_data/test.csv')
 
     # parser.add_argument('--train_path',type=str,default='/home/dongxx/projects/def-mercer/dongxx/project/data/train.csv')
     # parser.add_argument('--validation_path',type= str,default='/home/dongxx/projects/def-mercer/dongxx/project/data/valid.csv')
@@ -254,27 +254,18 @@ def main():
         vob[word] =400000-i
     counter1 = copy.deepcopy(vob)
     f.close()
-    #jjjjewrwerewr print(counter1)
-# print(type(count er1))
-#     for x, y in counter1.items():
-#         counter1[x] = 400000-int(y)
 
-    # print(counter1)cat ~/.gitconfig
     counter1.update(counter2)
     vocab = Vocab(counter1)
     vocab_size=vocab.__len__()
     print("vocab_size:",vocab_size)
-    # print(vocab.stoi)
-    #
-    # print(vocab.itos[2])
-    # train_dataset, validation_dataset, test_dataset, vocab, vocab_size = prepare_dateset(args.train_path,args.validation_path)
     train_dataset, validation_dataset,test_dataset,labellist = prepare_dateset(args.train_path, args.validation_path, args.test_path, vocab)
     # modelvocab_size,hidden_dim,n_layers,dropout,number_class,bidirectional,embedding_dim =10
     LSTM_model =LSTM_atten(vocab_size = vocab_size,hidden_dim = config.HIDDEN_DIM, n_layers =config.N_LAYERS, dropout = args.dropout, number_class = args.number_class, bidirectional = True, embedding_dim =100)
     LSTM_model.to(device)
     #opt scheduler criterion
     optimizer = torch.optim.Adam(LSTM_model.parameters(), lr=args.lr)
-    lr_scheduler = torch.optim.lr_scheduler.StepLR(optimizer, gamma=args.lr_gamma, step_size=10)
+    lr_scheduler = torch.optim.lr_scheduler.StepLR(optimizer, gamma=args.lr_gamma, step_size=7)
     criterion = nn.CrossEntropyLoss()
     criterion.to(device)
 

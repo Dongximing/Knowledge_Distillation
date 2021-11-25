@@ -140,12 +140,15 @@ class LSTM_atten(nn.Module):
         self.hidden_size = hidden_dim
         self.rnn = nn.LSTM(embedding_dim, hidden_dim, num_layers=n_layers, dropout=dropout, bidirectional=bidirectional,
                            batch_first=True)
-        self.fc = nn.Linear(hidden_dim*2 , number_class)
+        self.fc = nn.Linear(hidden_dim , number_class)
         self.dropout = nn.Dropout(dropout)
         self.attention_layer = nn.Sequential(
             nn.Linear(hidden_dim, hidden_dim),
             nn.ReLU(inplace=True)
         )
+        self.w = nn.Linear(hidden_dim, 1)
+        self.tanh = nn.Tanh()
+        self.softmax = nn.Softmax(dim=1)
         self.fc_out = nn.Sequential(
             nn.Dropout(dropout),
             nn.Linear(self.hidden_size, self.hidden_size),
@@ -190,7 +193,18 @@ class LSTM_atten(nn.Module):
         soft_max_weights = F.softmax(attent_weight,1)
         context = torch.bmm(output.transpose(1,2),soft_max_weights.unsqueeze(2)).squeeze(2)
         return context
+    def attention(self,finial_state):
 
+        M = self.tanh(finial_state)  # (batch_size, word_pad_len, rnn_size)
+
+        # eq.10: α = softmax(w^T M)
+        alpha = self.w(M).squeeze(2)  # (batch_size, word_pad_len)
+        alpha = self.softmax(alpha)  # (batch_size, word_pad_len)
+
+        r = H * alpha.unsqueeze(2)  # (batch_size, word_pad_len, rnn_size)
+        r = r.sum(dim = 1)  # (batch_size, rnn_size)
+
+        return r, alpha
     def forward(self,text,text_length):
 
         # a_lengths, idx = text_length.sort(0, descending=True)
@@ -236,14 +250,17 @@ class LSTM_atten(nn.Module):
         # x = x.squeeze(dim=1)  # [batch, hidden_size]
         # x = self.fc(x)
         # return x
-        hidden = self.dropout(t.cat((hidden[-2, :, :], hidden[-1, :, :]), dim=1)).unsqueeze(2)
+        # hidden = self.dropout(t.cat((hidden[-2, :, :], hidden[-1, :, :]), dim=1)).unsqueeze(2)
         # # print(hidden.size())
-        context = self.atten(out,hidden)
+        H = out[:, :, : hidden_dim] + out[:, :, hidden_dim:]
+        context, alphas = self.attention(H)
+        context = self.tanh(context)
+        # context = self.atten(out,hidden)
         # hidden = hidden.permute(1, 0, 2)
         # context = self.attention_net_with_w(out, hidden)
 
-        out = t.index_select(out, 0, un_idx)
-        context = t.index_select(context, 0, un_idx)
+        # out = t.index_select(out, 0, un_idx)
+        # context = t.index_select(context, 0, un_idx)
         # context = self.dropout(context)
         return self.fc(context)
 class BERT(nn.Module):
