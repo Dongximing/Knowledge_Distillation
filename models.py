@@ -140,7 +140,7 @@ class LSTM_atten(nn.Module):
         self.hidden_size = hidden_dim
         self.rnn = nn.LSTM(embedding_dim, hidden_dim, num_layers=n_layers, dropout=dropout, bidirectional=bidirectional,
                            batch_first=True)
-        self.fc = nn.Linear(hidden_dim , number_class)
+        self.fc = nn.Linear(hidden_dim*2 , number_class)
         self.dropout = nn.Dropout(dropout)
         self.attention_layer = nn.Sequential(
             nn.Linear(hidden_dim, hidden_dim),
@@ -250,12 +250,12 @@ class LSTM_atten(nn.Module):
         # x = x.squeeze(dim=1)  # [batch, hidden_size]
         # x = self.fc(x)
         # return x
-        # hidden = self.dropout(t.cat((hidden[-2, :, :], hidden[-1, :, :]), dim=1)).unsqueeze(2)
+        hidden = t.cat((hidden[-2, :, :], hidden[-1, :, :]), dim=1).unsqueeze(2)
         # # print(hidden.size())
-        H = out[:, :, : self.hidden_size] + out[:, :, self.hidden_size:]
-        context, alphas = self.attention(H)
-        context = self.tanh(context)
-        # context = self.atten(out,hidden)
+        # H = out[:, :, : self.hidden_size] + out[:, :, self.hidden_size:]
+        # context, alphas = self.attention(H)
+        # context = self.tanh(context)
+        context = self.atten(out,hidden)
         # hidden = hidden.permute(1, 0, 2)
         # context = self.attention_net_with_w(out, hidden)
 
