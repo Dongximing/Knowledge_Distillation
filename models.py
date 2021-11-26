@@ -221,8 +221,8 @@ class LSTM_atten(nn.Module):
         a_packed_input = t.nn.utils.rnn.pack_padded_sequence(input=seq, lengths=text_length.to('cpu'), batch_first=True,enforce_sorted=False)
         packed_output, (hidden, cell) = self.rnn(a_packed_input)
         out, _ = t.nn.utils.rnn.pad_packed_sequence(packed_output, batch_first=True)
-        out = out.view(-1, self.max_len, 2, self.hidden_size)
-        out = torch.sum(out, dim=2)
+        # out = out.view(-1, self.max_len, 2, self.hidden_size)
+        # out = torch.sum(out, dim=2)
         # u = torch.tanh(torch.matmul(out, self.w_omega))
         # # u形状是(batch_size, seq_len, 2 * num_hiddens)
         # att = torch.matmul(u, self.u_omega)
@@ -260,11 +260,11 @@ class LSTM_atten(nn.Module):
         # return x
         # hidden = self.dropout(t.cat((hidden[-2, :, :], hidden[-1, :, :]), dim=1)).unsqueeze(2)
         # # print(hidden.size())
-        # H = out[:, :, : self.hidden_size] + out[:, :, self.hidden_size:]
+        out = out[:, :, : self.hidden_size] + out[:, :, self.hidden_size:]
         # context, alphas = self.attention(H)
         # context = self.tanh(context)
 
-        context = self.atten(out,mask)
+        context = self.attention(out,mask)
         # hidden = hidden.permute(1, 0, 2)
         # context = self.attention_net_with_w(out, hidden)
 
