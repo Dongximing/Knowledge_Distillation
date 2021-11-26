@@ -181,9 +181,10 @@ def validate(validation_dataset, model, criterion, device):
     epoch_acc = 0
     total_pred = []
 
-    for i,(text, length,label) in enumerate(validation_dataset):
+    for i,(text, length,label,mask) in enumerate(validation_dataset):
         text_length = torch.Tensor(length)
         label = torch.tensor(label, dtype=torch.long)
+        mask = mask.to(device)
 
         # lengths, indices = torch.sort(text_length, dim=0, descending=True)
         # text = torch.index_select(text, dim=0, index=indices)
@@ -194,7 +195,7 @@ def validate(validation_dataset, model, criterion, device):
 
 
         with torch.no_grad():
-            output = model(text,text_length)
+            output = model(text,text_length,mask)
         loss = criterion(output,label)
         acc, pred = categorical_accuracy(output, label)
         total_pred.append(pred)
