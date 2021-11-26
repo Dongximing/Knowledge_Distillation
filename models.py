@@ -54,7 +54,7 @@ class LSTMBaseline(nn.Module):
         # a_packed_input = t.nn.utils.rnn.pack_padded_sequence(input=seq, lengths=text_length.to('cpu'), batch_first=True,enforce_sorted=False)
         packed_output, (hidden, cell) = self.rnn(seq)
         # out, _ = t.nn.utils.rnn.pad_packed_sequence(packed_output, batch_first=True)
-        hidden = self.dropout(packed_output[:,-1:])
+        hidden = self.dropout(packed_output[:,-1,:])
 
 
 
