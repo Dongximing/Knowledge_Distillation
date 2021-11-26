@@ -123,8 +123,8 @@ def generate_batch(batch):
         text = [entry[1] for entry in batch]
         # text_length = [len(seq) for seq in text]
         # text= pad_sequence(text, ksz = 10, batch_first=True)
-        text, text_length = pad_sequencing(text, ksz=512, batch_first=True)
-        return text, text_length, label
+        text, text_length,_ = pad_sequencing(text, ksz=512, batch_first=True)
+        return text, text_length, label,_
     else:
         text = [entry for entry in batch]
         text_length = [len(seq) for seq in text]
@@ -147,7 +147,7 @@ def train(train_dataset,model,criterion,device,optimizer,lr_scheduler,epoche):
     #     model.embedding_layer.weight.requires_grad = False
 
 
-    for i,(text, length,label) in tqdm(enumerate(train_dataset),total = len(train_dataset)):
+    for i,(text, length,label,_) in tqdm(enumerate(train_dataset),total = len(train_dataset)):
         text_length = torch.Tensor(length)
         label = torch.tensor(label,dtype=torch.long)
 
@@ -179,13 +179,9 @@ def validate(validation_dataset, model, criterion, device):
     epoch_acc = 0
     total_pred = []
 
-    for i,(text, length,label) in enumerate(validation_dataset):
+    for i,(text, length,label,_) in enumerate(validation_dataset):
         text_length = torch.Tensor(length)
         label = torch.tensor(label, dtype=torch.long)
-
-        # lengths, indices = torch.sort(text_length, dim=0, descending=True)
-        # text = torch.index_select(text, dim=0, index=indices)
-        # label = torch.index_select(label, dim=0, index=indices)
         text_length = text_length.to(device)
         text = text.to(device,dtype = torch.long)
         label = label.to(device)
