@@ -1,29 +1,29 @@
-# #
-# # # print(t[0,-5:])
-# #
-# # import torch
-# # from torch import LongTensor
-# # from torch.nn import Embedding, LSTM
-# # from torch.autograd import Variable
-# # from torch.nn.utils.rnn import pack_padded_sequence, pad_packed_sequence
-# # from nltk.corpus import stopwords
-# # from tqdm import tqdm
-# # from torch import nn as nn
-# #
-# # import config
-# # key_embedding = torch.zeros(0)
-# # x = torch.arange(3).reshape(1, 3)
-# # key_embedding = torch.cat((key_embedding, x), dim=0)
-# # key_embedding = torch.cat((key_embedding, x), dim=0)
-# # key_embedding = torch.mean(input=key_embedding, dim=0, keepdim=True)
-# # print(key_embedding)
-# #
-# #
-# # with tqdm(total=100) as pbar:
-# #     for i in range(10):
-# #         pbar.update(10)
+#
+# # print(t[0,-5:])
+#
 # import torch
-# import torch.nn as nn
+# from torch import LongTensor
+# from torch.nn import Embedding, LSTM
+# from torch.autograd import Variable
+# from torch.nn.utils.rnn import pack_padded_sequence, pad_packed_sequence
+# from nltk.corpus import stopwords
+# from tqdm import tqdm
+# from torch import nn as nn
+#
+# import config
+# key_embedding = torch.zeros(0)
+# x = torch.arange(3).reshape(1, 3)
+# key_embedding = torch.cat((key_embedding, x), dim=0)
+# key_embedding = torch.cat((key_embedding, x), dim=0)
+# key_embedding = torch.mean(input=key_embedding, dim=0, keepdim=True)
+# print(key_embedding)
+#
+#
+# with tqdm(total=100) as pbar:
+#     for i in range(10):
+#         pbar.update(10)
+import torch
+import torch.nn as nn
 # x = torch.rand(2,4,2)
 # print(x)
 # x = x.permute(0,2,1)
@@ -48,13 +48,13 @@
 # train_data_path = '/Users/ximing/Desktop/IMDB-Movie-Reviews-50k-main/LSTM-baseline/valid.csv'
 # text = []
 # fields = []
-# # with open(train_data_path, 'r') as csvfile:
-# #     csvreader = csv.reader(csvfile)
-# #     fields = next(csvreader)
-# #     for row in csvreader:
-# #         text.append(row[2])
-# # print(len(text))
-# import pandas as pd
+# with open(train_data_path, 'r') as csvfile:
+#     csvreader = csv.reader(csvfile)
+#     fields = next(csvreader)
+#     for row in csvreader:
+#         text.append(row[2])
+# print(len(text))
+import pandas as pd
 # df = pd.read_csv(train_data_path)
 # # saved_column = df.Review
 # # for line in saved_column:
@@ -97,83 +97,87 @@
 # # embedding1.weight.data.copy_(embedding.weight)
 # embedding1 = nn.Embedding.from_pretrained(embedding.weight,freeze=False)
 # print(embedding1.weight)
-#
-# def pad_sequence(sequences, ksz, batch_first=False, padding_value=1):
-#     # type: (List[Tensor], bool, float) -> Tensor
-#     r"""Pad a list of variable length Tensors with ``padding_value``
-#     ``pad_sequence`` stacks a list of Tensors along a new dimension,
-#     and pads them to equal length. For example, if the input is list of
-#     sequences with size ``L x *`` and if batch_first is False, and ``T x B x *``
-#     otherwise.
-#     `B` is batch size. It is equal to the number of elements in ``sequences``.
-#     `T` is length of the longest sequence.
-#     `L` is length of the sequence.
-#     `*` is any number of trailing dimensions, including none.
-#     Example:
-#         >>> from torch.nn.utils.rnn import pad_sequence
-#         >>> a = torch.ones(25, 300)
-#         >>> b = torch.ones(22, 300)
-#         >>> c = torch.ones(15, 300)
-#         >>> pad_sequence([a, b, c]).size()
-#         torch.Size([25, 3, 300])
-#     Note:
-#         This function returns a Tensor of size ``T x B x *`` or ``B x T x *``
-#         where `T` is the length of the longest sequence. This function assumes
-#         trailing dimensions and type of all the Tensors in sequences are same.
-#     Arguments:
-#         sequences (list[Tensor]): list of variable length sequences.
-#         batch_first (bool, optional): output will be in ``B x T x *`` if True, or in
-#             ``T x B x *`` otherwise
-#         padding_value (float, optional): value for padded elements. Default: 0.
-#     Returns:
-#         Tensor of size ``T x B x *`` if :attr:`batch_first` is ``False``.
-#         Tensor of size ``B x T x *`` otherwise
-#     """
-#
-#     # assuming trailing dimensions and type of all the Tensors
-#     # in sequences are same and fetching those from sequences[0]
-#     max_size = sequences[0].size()
-#
-#     trailing_dims = max_size[1:]
-#     max_len = max([s.size(0) for s in sequences])
-#     print(max_len)
-#     if max_len > ksz:
-#         max_len = ksz
-#     if batch_first:
-#         out_dims = (len(sequences), max_len) + trailing_dims
-#
-#
-#
-#     out_tensor = sequences[0].new_full(out_dims, padding_value)
-#
-#     true =[]
-#     for i, tensor in enumerate(sequences):
-#         length = tensor.size(0)
-#         print(length)
-#         if length > max_len:
-#             length = max_len
-#             out_tensor[i, :length, ...] = tensor[:length]
-#             true.append(length)
-#         else:
-#             out_tensor[i, :length, ...] = tensor[:length]
-#             true.append(length)
-#
-#
-#     return out_tensor, true
-# import numpy as np
-# list = []
-# a = np.array([1,2,3,4])
-# b =np.array([1,2,3,4])
-# a = torch.from_numpy(a)
-#
-# b = torch.from_numpy(b)
-# list.append(b)
-# list.append(a)
-#
-#
-# c, d = pad_sequence(list, 5, batch_first=True, padding_value=10)
-# print(c)
-# print(d)
+
+def pad_sequence(sequences, ksz, batch_first=False, padding_value=1):
+    # type: (List[Tensor], bool, float) -> Tensor
+    r"""Pad a list of variable length Tensors with ``padding_value``
+    ``pad_sequence`` stacks a list of Tensors along a new dimension,
+    and pads them to equal length. For example, if the input is list of
+    sequences with size ``L x *`` and if batch_first is False, and ``T x B x *``
+    otherwise.
+    `B` is batch size. It is equal to the number of elements in ``sequences``.
+    `T` is length of the longest sequence.
+    `L` is length of the sequence.
+    `*` is any number of trailing dimensions, including none.
+    Example:
+        >>> from torch.nn.utils.rnn import pad_sequence
+        >>> a = torch.ones(25, 300)
+        >>> b = torch.ones(22, 300)
+        >>> c = torch.ones(15, 300)
+        >>> pad_sequence([a, b, c]).size()
+        torch.Size([25, 3, 300])
+    Note:
+        This function returns a Tensor of size ``T x B x *`` or ``B x T x *``
+        where `T` is the length of the longest sequence. This function assumes
+        trailing dimensions and type of all the Tensors in sequences are same.
+    Arguments:
+        sequences (list[Tensor]): list of variable length sequences.
+        batch_first (bool, optional): output will be in ``B x T x *`` if True, or in
+            ``T x B x *`` otherwise
+        padding_value (float, optional): value for padded elements. Default: 0.
+    Returns:
+        Tensor of size ``T x B x *`` if :attr:`batch_first` is ``False``.
+        Tensor of size ``B x T x *`` otherwise
+    """
+
+    # assuming trailing dimensions and type of all the Tensors
+    # in sequences are same and fetching those from sequences[0]
+    max_size = sequences[0].size()
+
+    trailing_dims = max_size[1:]
+    max_len = max([s.size(0) for s in sequences])
+    print(max_len)
+    if max_len > ksz:
+        max_len = ksz
+    if batch_first:
+        out_dims = (len(sequences), max_len) + trailing_dims
+
+
+
+    out_tensor = sequences[0].new_full(out_dims, padding_value)
+    mask_tensor = sequences[0].new_full(out_dims, 0)
+
+    true =[]
+    for i, tensor in enumerate(sequences):
+        length = tensor.size(0)
+        print(length)
+        if length > max_len:
+            length = max_len
+            out_tensor[i, :length, ...] = tensor[:length]
+            mask_tensor[i, :length, ...] = torch.ones(length)
+            true.append(length)
+        else:
+            out_tensor[i, :length, ...] = tensor[:length]
+            mask_tensor[i, :length, ...] = torch.ones(length)
+            true.append(length)
+
+
+    return out_tensor, true,mask_tensor
+import numpy as np
+list = []
+a = np.array([1,6,7])
+b =np.array([1,2,3,])
+a = torch.from_numpy(a)
+
+b = torch.from_numpy(b)
+list.append(b)
+list.append(a)
+
+
+c, d,mask = pad_sequence(list, 5, batch_first=True, padding_value=10)
+print(c)
+print(d)
+print(mask)
 #
 # from collections import Counter
 # counter1 =  Counter({'x': 5, 'y': 12, 'z': -2, 'x1':0})
@@ -509,11 +513,11 @@
 # print('load bert model over')
 
 
-def Convert(string):
-    li = list(string.split(" "))
-    return li
-
-
-# Driver code
-str1 = "Geeks for Geeks"
-print(Convert(str1))
+# def Convert(string):
+#     li = list(string.split(" "))
+#     return li
+#
+#
+# # Driver code
+# str1 = "Geeks for Geeks"
+# print(Convert(str1))

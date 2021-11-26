@@ -121,10 +121,11 @@ def generate_batch(batch):
 
         # padding according to the maximum sequence length in batch
         text = [entry[1] for entry in batch]
+
         # text_length = [len(seq) for seq in text]
         # text= pad_sequence(text, ksz = 10, batch_first=True)
-        text, text_length = pad_sequencing(text, ksz=512, batch_first=True)
-        return text, text_length, label
+        text, text_length,mask = pad_sequencing(text, ksz=512, batch_first=True)
+        return text, text_length, label,mask
     else:
         text = [entry for entry in batch]
         text_length = [len(seq) for seq in text]
@@ -147,7 +148,7 @@ def train(train_dataset,model,criterion,device,optimizer,lr_scheduler,epoche):
     #     model.embedding_layer.weight.requires_grad = False
 
 
-    for i,(text, length,label) in tqdm(enumerate(train_dataset),total = len(train_dataset)):
+    for i,(text, length,label,mask) in tqdm(enumerate(train_dataset),total = len(train_dataset)):
         text_length = torch.Tensor(length)
         label = torch.tensor(label,dtype=torch.long)
 
@@ -158,10 +159,11 @@ def train(train_dataset,model,criterion,device,optimizer,lr_scheduler,epoche):
         text_length= text_length.to(device)
         text = text.to(device,dtype = torch.long)
         label =label.to(device)
+        mask =mask.to(device)
 
 
         optimizer.zero_grad()
-        output = model(text,text_length)
+        output = model(text,text_length,mask)
         loss = criterion(output,label)
         acc,_ = categorical_accuracy(output, label)
         epoch_loss += loss.item()

@@ -142,6 +142,7 @@ class LSTM_atten(nn.Module):
                            batch_first=True)
         self.fc = nn.Linear(hidden_dim*2 , number_class)
         self.dropout = nn.Dropout(dropout)
+        self.att_weight = nn.Parameter(torch.randn(1, self.hidden_size, 1))
         self.attention_layer = nn.Sequential(
             nn.Linear(hidden_dim, hidden_dim),
             nn.ReLU(inplace=True)
@@ -193,19 +194,24 @@ class LSTM_atten(nn.Module):
         soft_max_weights = F.softmax(attent_weight,1)
         context = torch.bmm(output.transpose(1,2),soft_max_weights.unsqueeze(2)).squeeze(2)
         return context
-    def attention(self,finial_state):
-
-        M = self.tanh(finial_state)  # (batch_size, word_pad_len, rnn_size)
-
+    def attention(self,finial_state,mask):
+        att_weight = self.att_weight.expand(mask.shape[0], -1, -1)
+        h = self.tanh(finial_state)  # (batch_size, word_pad_len, rnn_size)
+        att_score = torch.bmm(self.tanh(h), att_weight)
         # eq.10: α = softmax(w^T M)
-        alpha = self.w(M).squeeze(2)  # (batch_size, word_pad_len)
-        alpha = self.softmax(alpha)  # (batch_size, word_pad_len)
+        mask = mask.unsqueeze(dim=-1)
+        att_score = att_score.masked_fill(mask.eq(0), float('-inf'))
+        att_weight = F.softmax(att_score, dim=1)
+        reps = torch.bmm(h.transpose(1, 2), att_weight).squeeze(dim=-1)  # B*H*L *  B*L*1 -> B*H*1 -> B*H
+        reps = self.tanh(reps)
+        # alpha = self.w(M).squeeze(2)  # (batch_size, word_pad_len)
+        # alpha = self.softmax(alpha)  # (batch_size, word_pad_len)
+        #
+        # r = finial_state * alpha.unsqueeze(2)  # (batch_size, word_pad_len, rnn_size)
+        # r = r.sum(dim = 1)  # (batch_size, rnn_size)
 
-        r = finial_state * alpha.unsqueeze(2)  # (batch_size, word_pad_len, rnn_size)
-        r = r.sum(dim = 1)  # (batch_size, rnn_size)
-
-        return r, alpha
-    def forward(self,text,text_length):
+        return reps
+    def forward(self,text,text_length,mask):
 
         # a_lengths, idx = text_length.sort(0, descending=True)
         # _, un_idx = t.sort(idx, dim=0)
@@ -215,6 +221,8 @@ class LSTM_atten(nn.Module):
         a_packed_input = t.nn.utils.rnn.pack_padded_sequence(input=seq, lengths=text_length.to('cpu'), batch_first=True,enforce_sorted=False)
         packed_output, (hidden, cell) = self.rnn(a_packed_input)
         out, _ = t.nn.utils.rnn.pad_packed_sequence(packed_output, batch_first=True)
+        out = out.view(-1, self.max_len, 2, self.hidden_size)
+        out = torch.sum(out, dim=2)
         # u = torch.tanh(torch.matmul(out, self.w_omega))
         # # u形状是(batch_size, seq_len, 2 * num_hiddens)
         # att = torch.matmul(u, self.u_omega)
@@ -250,18 +258,19 @@ class LSTM_atten(nn.Module):
         # x = x.squeeze(dim=1)  # [batch, hidden_size]
         # x = self.fc(x)
         # return x
-        hidden = self.dropout(t.cat((hidden[-2, :, :], hidden[-1, :, :]), dim=1)).unsqueeze(2)
+        # hidden = self.dropout(t.cat((hidden[-2, :, :], hidden[-1, :, :]), dim=1)).unsqueeze(2)
         # # print(hidden.size())
         # H = out[:, :, : self.hidden_size] + out[:, :, self.hidden_size:]
         # context, alphas = self.attention(H)
         # context = self.tanh(context)
-        context = self.atten(out,hidden)
+
+        context = self.atten(out,mask)
         # hidden = hidden.permute(1, 0, 2)
         # context = self.attention_net_with_w(out, hidden)
 
         # out = t.index_select(out, 0, un_idx)
         # context = t.index_select(context, 0, un_idx)
-        # context = self.dropout(context)
+        context = self.dropout(context)
         return self.fc(context)
 class BERT(nn.Module):
     def __init__(self,bert):
