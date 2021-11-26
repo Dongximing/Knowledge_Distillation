@@ -166,7 +166,7 @@ def pad_sequence(sequences, ksz, batch_first=False, padding_value=1):
 import numpy as np
 list = []
 a = np.array([1,6,7])
-b =np.array([1,2,3,])
+b =np.array([1,2,3,1,1,1,1,1])
 a = torch.from_numpy(a)
 
 b = torch.from_numpy(b)
