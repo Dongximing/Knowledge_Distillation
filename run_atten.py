@@ -160,12 +160,12 @@ def train(train_dataset,model,criterion,device,optimizer,lr_scheduler,epoche):
         text = text.to(device,dtype = torch.long)
         label =label.to(device)
         mask =mask.to(device)
-        print("mask")
-        print(mask)
-        print("text")
-        print(text)
-        print("text_length")
-        print(text_length)
+        # print("mask")
+        # print(mask)
+        # print("text")
+        # print(text)
+        # print("text_length")
+        # print(text_length)
 
 
         optimizer.zero_grad()
@@ -233,7 +233,7 @@ def main():
     parser.add_argument('--dropout', type=float, default=0.25)
     parser.add_argument('--embedding_dim', type=int, default=100)
     parser.add_argument('--num_epochs', type=int, default=15)
-    parser.add_argument('--batch_sz', type=int, default =2)
+    parser.add_argument('--batch_sz', type=int, default =32)
     parser.add_argument('--lr', type=float, default=1e-3)
 
     parser.add_argument('--weight_decay', type=float, default=0.5)
@@ -274,7 +274,7 @@ def main():
     LSTM_model.to(device)
     #opt scheduler criterion
     optimizer = torch.optim.Adam(LSTM_model.parameters(), lr=args.lr)
-    lr_scheduler = torch.optim.lr_scheduler.StepLR(optimizer, gamma=args.lr_gamma, step_size=7)
+    lr_scheduler = torch.optim.lr_scheduler.StepLR(optimizer, gamma=args.lr_gamma, step_size=8)
     criterion = nn.CrossEntropyLoss()
     criterion.to(device)
 
