@@ -97,7 +97,7 @@ def prepare_dateset(train_data_path, validation_data_path,test_data_path,vocab):
 
     print('prepare training and test sets')
     logging.info('Prepare training and test sets')
-    tokenize = BertTokenizer.from_pretrained('/home/dongxx/projects/def-mercer/dongxx/bert-base-uncased',do_lower_case=True)
+    tokenize = BertTokenizer.from_pretrained('/home/dongxx/projects/def-parimala/dongxx/bert-base-uncased',do_lower_case=True)
 
     train_dataset, validation_dataset,testing_dataset = IMDB_kd_indexing(training_texts,training_labels,validation_texts,validation_labels,testing_texts,testing_labels,tokenize,vocab=vocab)
     print('building vocab')
@@ -127,7 +127,7 @@ def generate_batch(batch):
         # print(text)
         # text_length = [len(seq) for seq in text]
         # print(text_length)
-        text, text_length= pad_sequencing(text, ksz = 512, batch_first=True)
+        text, text_length,_= pad_sequencing(text, ksz = 512, batch_first=True)
 
 
         bert_id = [torch.tensor(entry[2]) for entry in batch]
@@ -185,7 +185,7 @@ def train_kd_fc(data_loader, device, bert_model, model,optimizer, criterion,crit
         # loss_soft =criterion_kd(outputs,bert_output)
         # loss_hard = criterion(outputs, targets)
         # loss = loss_hard*a + (1-a)*loss_soft
-        loss = loss_fn_kd(outputs,label,bert_output,T=10,alpha=0.5)
+        loss = loss_fn_kd(outputs,label,bert_output,T=2,alpha=0.5)
 
         acc = categorical_accuracy(outputs, targets)
         loss.backward()
@@ -232,9 +232,9 @@ def validate(validation_dataset, model, criterion, device):
 
 def main():
     parser = argparse.ArgumentParser()
-    parser.add_argument('--train_path',type=str,default='/home/dongxx/projects/def-mercer/dongxx/IMDB_data/train.csv')
-    parser.add_argument('--validation_path',type= str,default='/home/dongxx/projects/def-mercer/dongxx/IMDB_data/valid.csv')
-    parser.add_argument('--test_path',type= str,default='/home/dongxx/projects/def-mercer/dongxx/IMDB_data/test.csv')
+    parser.add_argument('--train_path',type=str,default='/home/dongxx/projects/def-parimala/dongxx/IMDB_data/train.csv')
+    parser.add_argument('--validation_path',type= str,default='/home/dongxx/projects/def-parimala/dongxx/IMDB_data/valid.csv')
+    parser.add_argument('--test_path',type= str,default='/home/dongxx/projects/def-parimala/dongxx/IMDB_data/test.csv')
 
     parser.add_argument('--dropout', type=float, default=0.25)
     parser.add_argument('--embedding_dim', type=int, default=100)
@@ -255,8 +255,8 @@ def main():
     # glove = torchtext.vocab.GloVe(name='6B', dim=100,)
     # print(glove.get_vecs_by_tokens(['picture']))
     counter2 = Counter({'<unk>': 400002, '<pad>': 400001})
-    glove = Vectors(name='/home/dongxx/projects/def-mercer/dongxx/glove.6B.100d.txt')
-    f = open('/home/dongxx/projects/def-mercer/dongxx/glove.6B.{}d.txt'.format(100), 'r')
+    glove = Vectors(name='/home/dongxx/projects/def-parimala/dongxx/glove.6B.100d.txt')
+    f = open('/home/dongxx/projects/def-parimala/dongxx/glove.6B.{}d.txt'.format(100), 'r')
     loop = tqdm(f)
     vob = {}
     loop.set_description('Load Glove')
@@ -290,7 +290,7 @@ def main():
     # train_dataset, validation_dataset, test_dataset, vocab, vocab_size = prepare_dateset(args.train_path,args.validation_path)
     train_dataset, validation_dataset,test_dataset = prepare_dateset(args.train_path, args.validation_path, args.test_path, vocab)
     # modelvocab_size,hidden_dim,n_layers,dropout,number_class,bidirectional,embedding_dim =10
-    LSTM_model =LSTMBaseline(vocab_size = vocab_size,hidden_dim = config.HIDDEN_DIM, n_layers =1, dropout = args.dropout, number_class = args.number_class, bidirectional = False, embedding_dim =100)
+    LSTM_model =LSTMBaseline(vocab_size = vocab_size,hidden_dim = config.HIDDEN_DIM, n_layers =2, dropout = args.dropout, number_class = args.number_class, bidirectional = True, embedding_dim =100)
     LSTM_model.to(device)
     #opt scheduler criterion
     optimizer = torch.optim.Adam(LSTM_model.parameters(), lr=args.lr)
@@ -298,7 +298,7 @@ def main():
     criterion = nn.CrossEntropyLoss()
     kd_critertion = nn.MSELoss()
     kd_critertion = kd_critertion.to(device)
-    bert = BertModel.from_pretrained('/home/dongxx/projects/def-mercer/dongxx/bert-base-uncased')
+    bert = BertModel.from_pretrained('/home/dongxx/projects/def-parimala/dongxx/bert-base-uncased')
     criterion = criterion.to(device)
     bert_model = BERTGRUSentiment(bert,
                                   config.HIDDEN_DIM,
@@ -346,11 +346,11 @@ def main():
 
         if valid_loss < best_loss:
             best_loss = valid_loss
-            torch.save(LSTM_model.state_dict(), '/home/dongxx/projects/def-mercer/dongxx/Model_parameter/kd_lstm.pt')
+            torch.save(LSTM_model.state_dict(), '/home/dongxx/projects/def-parimala/dongxx/Model_parameter/kd_lstm.pt')
     print("training done")
 
     print("testing")
-    LSTM_model.load_state_dict(torch.load('/home/dongxx/projects/def-mercer/dongxx/Model_parameter/kd_lstm.pt'))
+    LSTM_model.load_state_dict(torch.load('/home/dongxx/projects/def-parimala/dongxx/Model_parameter/kd_lstm.pt'))
     test_loss, test_acc = validate(testing,LSTM_model,criterion,device)
 
     print(f'Test Loss: {test_loss:.3f} | Test Acc: {test_acc * 100:.2f}%')
