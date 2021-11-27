@@ -132,7 +132,7 @@ def generate_batch(batch):
         # print(text)
         # text_length = [len(seq) for seq in text]
         # print(text_length)
-        text, text_length= pad_sequencing(text, ksz = 512, batch_first=True)
+        text, text_length, mask= pad_sequencing(text, ksz = 512, batch_first=True)
 
 
         bert_id = [torch.tensor(entry[2]) for entry in batch]
@@ -141,7 +141,7 @@ def generate_batch(batch):
         attention_mask = [torch.tensor(entry[3]) for entry in batch]
         attention_mask = pad_sequence(attention_mask, batch_first=True)
 
-        return text, text_length, label,bert_id,attention_mask
+        return text, text_length, label,bert_id,attention_mask,mask
     else:
         text = [entry for entry in batch]
         text_length = [len(seq) for seq in text]
@@ -165,12 +165,14 @@ def train_kd_fc(data_loader, device, bert_model, model,optimizer, criterion,crit
     # soft_loss = 0
 
     for bi,data in tqdm(enumerate(data_loader),total = len(data_loader)):
-        text, text_length, label, bert_id, attention_mask = data
+        text, text_length, label, bert_id, attention_mask,mask = data
         text_length = torch.Tensor(text_length)
         label = torch.tensor(label, dtype=torch.long)
         ids = text.to(device, dtype=torch.long)
         bert_id = bert_id.to(device, dtype=torch.long)
         bert_mask = attention_mask.to(device, dtype=torch.long)
+
+        mask = mask.to(device)
 
         lengths = text_length.to(device, dtype=torch.int)
 
@@ -180,7 +182,7 @@ def train_kd_fc(data_loader, device, bert_model, model,optimizer, criterion,crit
         with torch.no_grad():
             bert_output = bert_model(bert_id,bert_mask)
 
-        outputs = model(ids,lengths)
+        outputs = model(ids,lengths,mask)
         # loss_soft =criterion_kd(outputs,bert_output)
         # loss_hard = criterion(outputs, targets)
         # loss = loss_hard*a + (1-a)*loss_soft
@@ -231,9 +233,9 @@ def validate(validation_dataset, model, criterion, device):
 
 def main():
     parser = argparse.ArgumentParser()
-    parser.add_argument('--train_path',type=str,default='/home/dongxx/projects/def-mercer/dongxx/IMDB_data/train.csv')
-    parser.add_argument('--validation_path',type= str,default='/home/dongxx/projects/def-mercer/dongxx/IMDB_data/valid.csv')
-    parser.add_argument('--test_path',type= str,default='/home/dongxx/projects/def-mercer/dongxx/IMDB_data/test.csv')
+    parser.add_argument('--train_path',type=str,default='/home/dongxx/projects/def-parimala/dongxx/IMDB_data/train.csv')
+    parser.add_argument('--validation_path',type= str,default='/home/dongxx/projects/def-parimala/dongxx/IMDB_data/valid.csv')
+    parser.add_argument('--test_path',type= str,default='/home/dongxx/projects/def-parimala/dongxx/IMDB_data/test.csv')
 
     parser.add_argument('--dropout', type=float, default=0.25)
     parser.add_argument('--embedding_dim', type=int, default=100)
@@ -252,8 +254,8 @@ def main():
     device = torch.device('cuda' if torch.cuda.is_available() else 'cpu')
 
     counter2 = Counter({'<unk>': 400002, '<pad>': 400001})
-    glove = Vectors(name='/home/dongxx/projects/def-mercer/dongxx/glove.6B.100d.txt')
-    f = open('/home/dongxx/projects/def-mercer/dongxx/glove.6B.{}d.txt'.format(100), 'r')
+    glove = Vectors(name='/home/dongxx/projects/def-parimala/dongxx/glove.6B.100d.txt')
+    f = open('/home/dongxx/projects/def-parimala/dongxx/glove.6B.{}d.txt'.format(100), 'r')
     loop = tqdm(f)
     vob = {}
     loop.set_description('Load Glove')
@@ -279,7 +281,7 @@ def main():
     criterion = nn.CrossEntropyLoss()
     kd_critertion = nn.MSELoss()
     kd_critertion = kd_critertion.to(device)
-    bert = BertModel.from_pretrained('/home/dongxx/projects/def-mercer/dongxx/bert-base-uncased')
+    bert = BertModel.from_pretrained('/home/dongxx/projects/def-parimala/dongxx/bert-base-uncased')
     criterion = criterion.to(device)
     bert_model = BERTGRUSentiment(bert,
                                   config.HIDDEN_DIM,
@@ -328,11 +330,11 @@ def main():
 
         if valid_loss < best_loss:
             best_loss = valid_loss
-            torch.save(LSTM_atten_model.state_dict(), '/home/dongxx/projects/def-mercer/dongxx/Model_parameter/kd_atten.pt')
+            torch.save(LSTM_atten_model.state_dict(), '/home/dongxx/projects/def-parimala/dongxx/Model_parameter/kd_atten.pt')
     print("training done")
 
     print("testing")
-    LSTM_atten_model.load_state_dict(torch.load('/home/dongxx/projects/def-mercer/dongxx/Model_parameter/kd_atten.pt'))
+    LSTM_atten_model.load_state_dict(torch.load('/home/dongxx/projects/def-parimala/dongxx/Model_parameter/kd_atten.pt'))
     test_loss, test_acc = validate(testing,LSTM_atten_model,criterion,device)
 
     print(f'Test Loss: {test_loss:.3f} | Test Acc: {test_acc * 100:.2f}%')
