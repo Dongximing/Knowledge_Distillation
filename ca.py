@@ -178,6 +178,10 @@ c, d,mask = pad_sequence(list, 5, batch_first=True, padding_value=10)
 print(c)
 print(d)
 print(mask)
+def a(a =10):
+    c = a+10
+    print(c)
+a(20)
 #
 # from collections import Counter
 # counter1 =  Counter({'x': 5, 'y': 12, 'z': -2, 'x1':0})
