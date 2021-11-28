@@ -211,6 +211,8 @@ def validate(validation_dataset, model, criterion, device):
         text_length = torch.Tensor(text_length)
         label = torch.tensor(label, dtype=torch.long)
         text = text.to(device, dtype=torch.long)
+        mask = mask.to(device)
+
 
         text_length = text_length.to(device,dtype=torch.int)
 
