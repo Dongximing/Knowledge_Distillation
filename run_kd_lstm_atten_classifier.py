@@ -202,13 +202,12 @@ def train_kd_fc(data_loader, device, bert_model, model,optimizer, criterion,crit
 
 
 def validate(validation_dataset, model, criterion, device):
-    model.eval()
 
     epoch_loss = 0
     epoch_acc = 0
 
     for i,data in enumerate(validation_dataset):
-        text, text_length, label, _, _ ,_= data
+        text, text_length, label, _, _ ,mask= data
         text_length = torch.Tensor(text_length)
         label = torch.tensor(label, dtype=torch.long)
         text = text.to(device, dtype=torch.long)
@@ -218,7 +217,7 @@ def validate(validation_dataset, model, criterion, device):
         label = label.to(device)
 
         with torch.no_grad():
-            output = model(text,text_length)
+            output = model(text,text_length,mask)
         loss = criterion(output,label)
         acc = categorical_accuracy(output, label)
         epoch_loss += loss.item()
