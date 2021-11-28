@@ -220,6 +220,7 @@ def validate(validation_dataset, model, criterion, device):
             output = model(text,text_length)
         loss = criterion(output,label)
         acc = categorical_accuracy(output, label)
+
         epoch_loss += loss.item()
         epoch_acc += acc.item()
     return epoch_loss / len(validation_dataset), epoch_acc / len(validation_dataset)
