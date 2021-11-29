@@ -208,6 +208,7 @@ class LSTM_atten(nn.Module):
         mask = mask.unsqueeze(dim=-1)
         att_score = att_score.masked_fill(mask.eq(0), float('-inf'))
         att_weight = F.softmax(att_score, dim=1)
+        print(att_weight)
         reps = torch.bmm(h.transpose(1, 2), att_weight).squeeze(dim=-1)  # B*H*L *  B*L*1 -> B*H*1 -> B*H
         reps = self.tanh(reps)
         # alpha = self.w(M).squeeze(2)  # (batch_size, word_pad_len)
@@ -234,7 +235,7 @@ class LSTM_atten(nn.Module):
 
         seq = self.dropout(self.embedding_layer(text))
         a_packed_input = t.nn.utils.rnn.pack_padded_sequence(input=seq, lengths=text_length.to('cpu'), batch_first=True,enforce_sorted=False)
-        out, (hidden, cell) = self.rnn(a_packed_input,self.hidden)
+        packed_output, (hidden, cell) = self.rnn(a_packed_input,self.hidden)
         out, _ = t.nn.utils.rnn.pad_packed_sequence(packed_output, batch_first=True)
         # out = out.view(-1, self.max_len, 2, self.hidden_size)
         # out = torch.sum(out, dim=2)

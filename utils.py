@@ -114,8 +114,7 @@ def _create_data_kd_from_iterator(vocab,tokenizer, iterator, include_unk, is_tes
                 if include_unk:
                     print(text)
                     tokens = torch.tensor([vocab[token] for token in text])
-                    print("1111")
-                    print("tokens", tokens)
+
                     encoding = tokenizer.encode_plus(
                         bert_text,
                         add_special_tokens=True,
@@ -134,7 +133,7 @@ def _create_data_kd_from_iterator(vocab,tokenizer, iterator, include_unk, is_tes
 
 
 
-                    print("tokens_id",token_ids)
+                    # print("tokens_id",token_ids)
                     tokens = torch.tensor(token_ids)
                     # print(tokens)
                     encoding = tokenizer.encode_plus(
