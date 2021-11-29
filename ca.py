@@ -183,7 +183,10 @@ def a(a =10):
     print(c)
 a(20)
 import torch
-a = torch.rand(3,2,3)
+a = torch.rand(4,3,6)
+print(a)
+a = a.view(-1, 3, 2, 3)
+a = torch.sum(a, dim=2)
 print(a)
 merged_state = torch.cat([s for s in a],1)
 print(merged_state)
