@@ -182,6 +182,11 @@ def a(a =10):
     c = a+10
     print(c)
 a(20)
+import torch
+a = torch.rand(3,2,3)
+print(a)
+merged_state = torch.cat([s for s in a],1)
+print(merged_state)
 #
 # from collections import Counter
 # counter1 =  Counter({'x': 5, 'y': 12, 'z': -2, 'x1':0})
