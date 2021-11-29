@@ -128,9 +128,9 @@ def _create_data_kd_from_iterator(vocab,tokenizer, iterator, include_unk, is_tes
                     attention_mask = encoding['attention_mask']
                 else:
 
-                    print(list(text))
-                    token_ids = list(filter(lambda x: x is not vocab.itos(0), [vocab[token]
-                                                                      for token in text]))
+
+                    token_ids = [word for word in example if word in vocab.stoi]
+
 
 
                     print("tokens_id",token_ids)
