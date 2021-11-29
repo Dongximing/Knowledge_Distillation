@@ -5,6 +5,9 @@ from torch.autograd import Variable
 import config
 import torch.nn.functional as F
 config.seed_torch()
+device = torch.device('cuda' if torch.cuda.is_available() else 'cpu')
+
+
 class GRUBaseline(nn.Module):
     def __init__(self,vocab_size,hidden_dim,n_layers,dropout,number_class,bidirectional,embedding_dim =100):
         super().__init__()
@@ -191,7 +194,9 @@ class LSTM_atten(nn.Module):
         # nn.init.uniform_(self.w_omega, -0.1, 0.1)
         # nn.init.uniform_(self.u_omega, -0.1, 0.1)
     def atten(self,output,finial_state):
-        attent_weight = torch.bmm(output,finial_state).squeeze(2)
+        merged_state = torch.cat([s for s in finial_state], 1)
+        merged_state = merged_state.squeeze(0).unsqueeze(2)
+        attent_weight = torch.bmm(output,merged_state).squeeze(2)
         soft_max_weights = F.softmax(attent_weight,1)
         context = torch.bmm(output.transpose(1,2),soft_max_weights.unsqueeze(2)).squeeze(2)
         return context
@@ -212,16 +217,25 @@ class LSTM_atten(nn.Module):
         # r = r.sum(dim = 1)  # (batch_size, rnn_size)
 
         return reps
+
+    def init_hidden(self, b_size):
+        h0 = Variable(torch.zeros(2* 2, b_size, self.hidden_size))
+        c0 = Variable(torch.zeros(2* 2, b_size, self.hidden_size))
+
+        h0 = h0.to(device)
+        c0 = c0.to(device)
+        return (h0, c0)
     def forward(self,text,text_length,mask):
 
         # a_lengths, idx = text_length.sort(0, descending=True)
         # _, un_idx = t.sort(idx, dim=0)
         # seq = text[idx]
+        self.hidden = self.init_hidden(text.size(0))
 
         seq = self.dropout(self.embedding_layer(text))
-        a_packed_input = t.nn.utils.rnn.pack_padded_sequence(input=seq, lengths=text_length.to('cpu'), batch_first=True,enforce_sorted=False)
-        packed_output, (hidden, cell) = self.rnn(a_packed_input)
-        out, _ = t.nn.utils.rnn.pad_packed_sequence(packed_output, batch_first=True)
+        # a_packed_input = t.nn.utils.rnn.pack_padded_sequence(input=seq, lengths=text_length.to('cpu'), batch_first=True,enforce_sorted=False)
+        packed_output, (hidden, cell) = self.rnn(a_packed_input,self.hidden)
+        # out, _ = t.nn.utils.rnn.pad_packed_sequence(packed_output, batch_first=True)
         # out = out.view(-1, self.max_len, 2, self.hidden_size)
         # out = torch.sum(out, dim=2)
         # u = torch.tanh(torch.matmul(out, self.w_omega))
@@ -265,9 +279,9 @@ class LSTM_atten(nn.Module):
         # context, alphas = self.attention(H)
         # context = self.tanh(context)
 
-        context = self.attention(out,mask)
+        # context = self.attention(out,mask)
         # hidden = hidden.permute(1, 0, 2)
-        # context = self.attention_net_with_w(out, hidden)
+        context = self.atten(out, hidden)
 
         # out = t.index_select(out, 0, un_idx)
         # context = t.index_select(context, 0, un_idx)
