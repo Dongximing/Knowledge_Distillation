@@ -131,7 +131,7 @@ def _create_data_kd_from_iterator(vocab,tokenizer, iterator, include_unk, is_tes
                     print(list(text))
                     token_ids = list(filter(lambda x: x is not vocab.itos(0), [vocab[token]
                                                                       for token in text]))
-                    print("tokens", tokens)
+
 
                     print("tokens_id",token_ids)
                     tokens = torch.tensor(token_ids)
