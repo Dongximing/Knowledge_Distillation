@@ -233,9 +233,9 @@ class LSTM_atten(nn.Module):
         self.hidden = self.init_hidden(text.size(0))
 
         seq = self.dropout(self.embedding_layer(text))
-        # a_packed_input = t.nn.utils.rnn.pack_padded_sequence(input=seq, lengths=text_length.to('cpu'), batch_first=True,enforce_sorted=False)
-        out, (hidden, cell) = self.rnn(seq,self.hidden)
-        # out, _ = t.nn.utils.rnn.pad_packed_sequence(packed_output, batch_first=True)
+        a_packed_input = t.nn.utils.rnn.pack_padded_sequence(input=seq, lengths=text_length.to('cpu'), batch_first=True,enforce_sorted=False)
+        out, (hidden, cell) = self.rnn(a_packed_input,self.hidden)
+        out, _ = t.nn.utils.rnn.pad_packed_sequence(packed_output, batch_first=True)
         # out = out.view(-1, self.max_len, 2, self.hidden_size)
         # out = torch.sum(out, dim=2)
         # u = torch.tanh(torch.matmul(out, self.w_omega))
