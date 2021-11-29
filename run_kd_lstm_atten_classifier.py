@@ -161,8 +161,7 @@ def train_kd_fc(data_loader, device, bert_model, model,optimizer, criterion,crit
     a = 0.5
     epoch_loss = 0
     epoch_acc = 0
-    # hard_loss = 0
-    # soft_loss = 0
+
 
     for bi,data in tqdm(enumerate(data_loader),total = len(data_loader)):
         text, text_length, label, bert_id, attention_mask,mask = data

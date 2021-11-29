@@ -111,21 +111,7 @@ def _create_data_kd_from_iterator(vocab,tokenizer, iterator, include_unk, is_tes
             return data
         else:
             for label,bert_text, text in iterator:
-                if include_unk:
-                    # print(text)
-                    tokens = torch.tensor([vocab[token] for token in text])
-                    # print("tokens", tokens)
-                    encoding = tokenizer.encode_plus(
-                        bert_text,
-                        add_special_tokens=True,
-                        max_length=512,
-                        return_token_type_ids=False,
-                        pad_to_max_length=False,
-                        return_attention_mask=True
-                    )
-                    bert_ids = encoding['input_ids']
-                    attention_mask = encoding['attention_mask']
-                else:
+
 
 
                     token_ids = list(filter(lambda x: x is not Vocab.UNK, [vocab[token]
