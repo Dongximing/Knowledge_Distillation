@@ -151,6 +151,7 @@ class LSTM_atten(nn.Module):
             nn.Linear(hidden_dim, hidden_dim),
             nn.ReLU(inplace=True)
         )
+        self.lstm_dropout = nn.Dropout(0.5)
         self.w = nn.Linear(hidden_dim, 1)
         self.tanh = nn.Tanh()
         self.softmax = nn.Softmax(dim=1)
@@ -208,9 +209,10 @@ class LSTM_atten(nn.Module):
         mask = mask.unsqueeze(dim=-1)
         att_score = att_score.masked_fill(mask.eq(0), float('-inf'))
         att_weight = F.softmax(att_score, dim=1)
-        print(att_weight)
+
         reps = torch.bmm(h.transpose(1, 2), att_weight).squeeze(dim=-1)  # B*H*L *  B*L*1 -> B*H*1 -> B*H
         reps = self.tanh(reps)
+
         # alpha = self.w(M).squeeze(2)  # (batch_size, word_pad_len)
         # alpha = self.softmax(alpha)  # (batch_size, word_pad_len)
         #
@@ -282,11 +284,12 @@ class LSTM_atten(nn.Module):
 
         # context = self.attention(out,mask)
         # hidden = hidden.permute(1, 0, 2)
+        out =self.dropout(out)
         context = self.attention(out, mask)
 
         # out = t.index_select(out, 0, un_idx)
         # context = t.index_select(context, 0, un_idx)
-        context = self.dropout(context)
+        context = self.lstm_dropout(context)
         return self.fc(context)
 class BERT(nn.Module):
     def __init__(self,bert):
