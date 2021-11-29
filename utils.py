@@ -129,7 +129,7 @@ def _create_data_kd_from_iterator(vocab,tokenizer, iterator, include_unk, is_tes
                 else:
 
 
-                    token_ids = [word for word in text if word in vocab.stoi]
+                    token_ids = torch.tensor([vocab[token] for token in text])
 
 
 
