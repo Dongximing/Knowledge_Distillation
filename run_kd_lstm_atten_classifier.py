@@ -171,6 +171,7 @@ def train_kd_fc(data_loader, device, bert_model, model,optimizer, criterion,crit
         ids = text.to(device, dtype=torch.long)
         bert_id = bert_id.to(device, dtype=torch.long)
         bert_mask = attention_mask.to(device, dtype=torch.long)
+        print(text)
 
         mask = mask.to(device)
 
