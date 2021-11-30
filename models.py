@@ -195,7 +195,8 @@ class LSTM_atten(nn.Module):
         # nn.init.uniform_(self.w_omega, -0.1, 0.1)
         # nn.init.uniform_(self.u_omega, -0.1, 0.1)
     def atten(self,output,finial_state):
-        merged_state = finial_state[-1,:,:]+finial_state[-2,:,:]
+        merged_state = torch.sum(finial_state,dim=0)
+        # merged_state = finial_state[-1,:,:]+finial_state[-2,:,:]
         merged_state = merged_state.squeeze(0).unsqueeze(2)
         attent_weight = torch.bmm(output,merged_state).squeeze(2)
         soft_max_weights = F.softmax(attent_weight,1)
@@ -276,21 +277,21 @@ class LSTM_atten(nn.Module):
         # x = x.squeeze(dim=1)  # [batch, hidden_size]
         # x = self.fc(x)
         # return x
-        hidden = self.dropout(t.cat((hidden[-2, :, :], hidden[-1, :, :]), dim=1)).unsqueeze(2)
+        # hidden = self.dropout(t.cat((hidden[-2, :, :], hidden[-1, :, :]), dim=1)).unsqueeze(2)
         # # print(hidden.size())
         # out = out[:, :, : self.hidden_size] + out[:, :, self.hidden_size:]
         # context, alphas = self.attention(H)
         # context = self.tanh(context)
 
         # context = self.attention(out,mask)
-        # hidden = hidden.permute(1, 0, 2)
+        hidden = hidden.permute(1, 0, 2)
         # out =self.dropout(out)
-        context = self.atten(out, hidden)
+        context = self.attention_net_with_w(out, hidden)
 
         # out = t.index_select(out, 0, un_idx)
         # context = t.index_select(context, 0, un_idx)
-        context = self.lstm_dropout(context)
-        return self.fc(context)
+        # context = self.lstm_dropout(context)
+        return self.fc_out(context)
 class BERT(nn.Module):
     def __init__(self,bert):
 
