@@ -185,11 +185,17 @@ a(20)
 import torch
 a = torch.rand(4,3,6)
 print(a)
-a = a.view(-1, 3, 2, 3)
-a = torch.sum(a, dim=2)
+a = a.view(2, 2, 3, 6)[-1,:,:,:]
+print("=====================")
+
 print(a)
-merged_state = torch.cat([s for s in a],1)
-print(merged_state)
+print("=====================")
+
+a = torch.cat([a[i,:,:] for i in range(a.shape[0])], dim=1)
+print(a)
+concatenated_vector = torch.cat([a, a], dim=1)
+print(concatenated_vector)
+
 #
 # from collections import Counter
 # counter1 =  Counter({'x': 5, 'y': 12, 'z': -2, 'x1':0})
