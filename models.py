@@ -223,8 +223,8 @@ class LSTM_atten(nn.Module):
         return reps
 
     def init_hidden(self, b_size):
-        h0 = Variable(torch.zeros(2* 2, b_size, self.hidden_size))
-        c0 = Variable(torch.zeros(2* 2, b_size, self.hidden_size))
+        h0 = Variable(torch.zeros(3* 2, b_size, self.hidden_size))
+        c0 = Variable(torch.zeros(3* 2, b_size, self.hidden_size))
 
         h0 = h0.to(device)
         c0 = c0.to(device)
