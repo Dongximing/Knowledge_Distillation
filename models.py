@@ -195,7 +195,7 @@ class LSTM_atten(nn.Module):
         # nn.init.uniform_(self.w_omega, -0.1, 0.1)
         # nn.init.uniform_(self.u_omega, -0.1, 0.1)
     def atten(self,output,finial_state):
-        merged_state = torch.sum(finial_state, dim=0)
+        merged_state = finial_state[-1,:,:]+finial_state[-2,:,:]
         merged_state = merged_state.squeeze(0).unsqueeze(2)
         attent_weight = torch.bmm(output,merged_state).squeeze(2)
         soft_max_weights = F.softmax(attent_weight,1)
@@ -284,8 +284,8 @@ class LSTM_atten(nn.Module):
 
         # context = self.attention(out,mask)
         # hidden = hidden.permute(1, 0, 2)
-        out =self.dropout(out)
-        context = self.attention(out, mask)
+        # out =self.dropout(out)
+        context = self.atten(out, hidden)
 
         # out = t.index_select(out, 0, un_idx)
         # context = t.index_select(context, 0, un_idx)
