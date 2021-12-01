@@ -187,8 +187,9 @@ a = torch.rand(4,3,6)
 print(a)
 # a = a.view(2, 2, 3, 6)[-1,:,:,:]
 # print("=====================")
-
-print(a+a)
+b = torch.cat([a[-1,:,:],a[-2,:,:]],1)
+print(b)
+print(b.size())
 print("=====================")
 
 a = torch.cat([a[i,:,:] for i in range(a.shape[0])], dim=1)
