@@ -293,7 +293,7 @@ class LSTM_atten(nn.Module):
         final_hidden_state = torch.cat([h_n_final_layer[i, :, :] for i in range(h_n_final_layer.shape[0])], dim=1)
         # out =self.dropout(out)
         context = self.atten(out, final_hidden_state)
-        concatenated_vector = final_hidden_state+context
+        concatenated_vector = context
         concatenated_vector =self.dropout(concatenated_vector)
 
         # out = t.index_select(out, 0, un_idx)
