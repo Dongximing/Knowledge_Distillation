@@ -185,10 +185,10 @@ a(20)
 import torch
 a = torch.rand(4,3,6)
 print(a)
-a = a.view(2, 2, 3, 6)[-1,:,:,:]
-print("=====================")
+# a = a.view(2, 2, 3, 6)[-1,:,:,:]
+# print("=====================")
 
-print(a)
+print(a+a)
 print("=====================")
 
 a = torch.cat([a[i,:,:] for i in range(a.shape[0])], dim=1)
