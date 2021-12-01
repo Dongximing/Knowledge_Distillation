@@ -144,7 +144,7 @@ class LSTM_atten(nn.Module):
         self.hidden_size = hidden_dim
         self.rnn = nn.LSTM(embedding_dim, hidden_dim, num_layers=n_layers, dropout=dropout, bidirectional=bidirectional,
                            batch_first=True)
-        self.fc = nn.Linear(hidden_dim , number_class)
+        self.fc = nn.Linear(hidden_dim*4 , number_class)
         self.dropout = nn.Dropout(dropout)
         self.att_weight = nn.Parameter(torch.randn(1, self.hidden_size, 1))
         self.attention_layer = nn.Sequential(
@@ -223,8 +223,8 @@ class LSTM_atten(nn.Module):
         return reps
 
     def init_hidden(self, b_size):
-        h0 = Variable(torch.zeros(3* 2, b_size, self.hidden_size))
-        c0 = Variable(torch.zeros(3* 2, b_size, self.hidden_size))
+        h0 = Variable(torch.zeros(2* 2, b_size, self.hidden_size))
+        c0 = Variable(torch.zeros(2* 2, b_size, self.hidden_size))
 
         h0 = h0.to(device)
         c0 = c0.to(device)
@@ -240,6 +240,11 @@ class LSTM_atten(nn.Module):
         a_packed_input = t.nn.utils.rnn.pack_padded_sequence(input=seq, lengths=text_length.to('cpu'), batch_first=True,enforce_sorted=False)
         packed_output, (hidden, cell) = self.rnn(a_packed_input,self.hidden)
         out, _ = t.nn.utils.rnn.pad_packed_sequence(packed_output, batch_first=True)
+        batch_size = hidden.shape[1]
+        h_n_final_layer = hidden.view(2,
+                                   2,
+                                   batch_size,
+                                   256)[-1, :, :, :]
         # out = out.view(-1, self.max_len, 2, self.hidden_size)
         # out = torch.sum(out, dim=2)
         # u = torch.tanh(torch.matmul(out, self.w_omega))
@@ -284,14 +289,17 @@ class LSTM_atten(nn.Module):
         # context = self.tanh(context)
 
         # context = self.attention(out,mask)
-        hidden = hidden.permute(1, 0, 2)
+        # hidden = hidden.permute(1, 0, 2)
+        final_hidden_state = torch.cat([h_n_final_layer[i, :, :] for i in range(h_n_final_layer.shape[0])], dim=1)
         # out =self.dropout(out)
-        context = self.attention_net_with_w(out, hidden)
+        context = self.atten(out, final_hidden_state)
+        concatenated_vector = torch.cat([final_hidden_state, context], dim=1)
+        concatenated_vector =self.dropout(concatenated_vector)
 
         # out = t.index_select(out, 0, un_idx)
         # context = t.index_select(context, 0, un_idx)
         # context = self.lstm_dropout(context)
-        return self.fc_out(context)
+        return self.fc(concatenated_vector)
 class BERT(nn.Module):
     def __init__(self,bert):
 
