@@ -238,13 +238,13 @@ class LSTM_atten(nn.Module):
 
         seq = self.dropout(self.embedding_layer(text))
         a_packed_input = t.nn.utils.rnn.pack_padded_sequence(input=seq, lengths=text_length.to('cpu'), batch_first=True,enforce_sorted=False)
-        packed_output, (hidden, cell) = self.rnn(a_packed_input)
+        packed_output, (hidden, cell) = self.rnn(a_packed_input,self.hidden)
         out, _ = t.nn.utils.rnn.pad_packed_sequence(packed_output, batch_first=True)
-        batch_size = hidden.shape[1]
-        h_n_final_layer = hidden.view(2,
-                                   2,
-                                   batch_size,
-                                   256)[-1, :, :, :]
+        # batch_size = hidden.shape[1]
+        # h_n_final_layer = hidden.view(2,
+        #                            2,
+        #                            batch_size,
+        #                            256)[-1, :, :, :]
         # out = out.view(-1, self.max_len, 2, self.hidden_size)
         # out = torch.sum(out, dim=2)
         # u = torch.tanh(torch.matmul(out, self.w_omega))
@@ -282,7 +282,7 @@ class LSTM_atten(nn.Module):
         # x = x.squeeze(dim=1)  # [batch, hidden_size]
         # x = self.fc(x)
         # return x
-        # hidden = self.dropout(t.cat((hidden[-2, :, :], hidden[-1, :, :]), dim=1)).unsqueeze(2)
+        hidden = self.dropout(t.cat((hidden[-2, :, :], hidden[-1, :, :]), dim=1)).unsqueeze(2)
         # # print(hidden.size())
         # out = out[:, :, : self.hidden_size] + out[:, :, self.hidden_size:]
         # context, alphas = self.attention(H)
@@ -290,9 +290,9 @@ class LSTM_atten(nn.Module):
 
         # context = self.attention(out,mask)
         # hidden = hidden.permute(1, 0, 2)
-        final_hidden_state = torch.cat([h_n_final_layer[i, :, :] for i in range(h_n_final_layer.shape[0])], dim=1)
+        # final_hidden_state = torch.cat([h_n_final_layer[i, :, :] for i in range(h_n_final_layer.shape[0])], dim=1)
         # out =self.dropout(out)
-        context = self.atten(out, final_hidden_state)
+        context = self.atten(out, hidden)
         concatenated_vector = context
         concatenated_vector =self.dropout(concatenated_vector)
 
