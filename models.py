@@ -157,7 +157,7 @@ class LSTM_atten(nn.Module):
         self.softmax = nn.Softmax(dim=1)
         self.fc_out = nn.Sequential(
             nn.Dropout(dropout),
-            nn.Linear(self.hidden_size, self.hidden_size),
+            nn.Linear(self.hidden_size*4, self.hidden_size),
             nn.ReLU(inplace=True),
             nn.Dropout(dropout),
             nn.Linear(self.hidden_size, number_class)
@@ -198,6 +198,7 @@ class LSTM_atten(nn.Module):
         # merged_state = torch.sum(finial_state,dim=0)
         # merged_state = finial_state[-1,:,:]+finial_state[-2,:,:]
         # merged_state = finial_state.squeeze(0)
+        finial_state =finial_state.unsqueeze(2)
         attent_weight = torch.bmm(output,finial_state).squeeze(2)
         soft_max_weights = F.softmax(attent_weight,1)
         context = torch.bmm(output.transpose(1,2),soft_max_weights.unsqueeze(2)).squeeze(2)
@@ -282,7 +283,9 @@ class LSTM_atten(nn.Module):
         # x = x.squeeze(dim=1)  # [batch, hidden_size]
         # x = self.fc(x)
         # return x
-        hidden = self.dropout(t.cat((hidden[-2, :, :], hidden[-1, :, :]), dim=1)).unsqueeze(2)
+        hidden = self.dropout(t.cat((hidden[-2, :, :], hidden[-1, :, :]), dim=1))
+        # hidden = self.dropout(t.cat((hidden[-2, :, :], hidden[-1, :, :]), dim=1))
+
         # # print(hidden.size())
         # out = out[:, :, : self.hidden_size] + out[:, :, self.hidden_size:]
         # context, alphas = self.attention(H)
@@ -293,13 +296,13 @@ class LSTM_atten(nn.Module):
         # final_hidden_state = torch.cat([h_n_final_layer[i, :, :] for i in range(h_n_final_layer.shape[0])], dim=1)
         # out =self.dropout(out)
         context = self.atten(out, hidden)
-        concatenated_vector = context
-        concatenated_vector =self.dropout(concatenated_vector)
+        concatenated_vector = torch.cat([hidden, context], dim=1)
+        # concatenated_vector =self.dropout(concatenated_vector)
 
         # out = t.index_select(out, 0, un_idx)
         # context = t.index_select(context, 0, un_idx)
         # context = self.lstm_dropout(context)
-        return self.fc(concatenated_vector)
+        return self.fc_out(concatenated_vector)
 class BERT(nn.Module):
     def __init__(self,bert):
 

@@ -185,17 +185,28 @@ a(20)
 import torch
 a = torch.rand(4,3,6)
 print(a)
+print("=====================")
+c= a.view(2,
+                           2,
+                           3,
+                           6)[-1, :, :, :]
+print(c)
+print("=====================")
+
+d = torch.cat([c[i,:,:] for i in range(c.shape[0])], dim=1)
+print(d)
+print("=====================")
 # a = a.view(2, 2, 3, 6)[-1,:,:,:]
 # print("=====================")
-b = torch.cat([a[-1,:,:],a[-2,:,:]],1)
+b = torch.cat([a[-2,:,:],a[-1,:,:]],1)
 print(b)
 print(b.size())
 print("=====================")
 
-a = torch.cat([a[i,:,:] for i in range(a.shape[0])], dim=1)
-print(a)
-concatenated_vector = torch.cat([a, a], dim=1)
-print(concatenated_vector)
+
+# print(a)
+# concatenated_vector = torch.cat([a, a], dim=1)
+# print(concatenated_vector)
 
 #
 # from collections import Counter
