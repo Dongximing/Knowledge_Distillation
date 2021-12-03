@@ -157,7 +157,7 @@ class LSTM_atten(nn.Module):
         self.softmax = nn.Softmax(dim=1)
         self.fc_out = nn.Sequential(
             nn.Dropout(dropout),
-            nn.Linear(self.hidden_size*4, self.hidden_size),
+            nn.Linear(self.hidden_size*2, self.hidden_size),
             nn.ReLU(inplace=True),
             nn.Dropout(dropout),
             nn.Linear(self.hidden_size, number_class)
@@ -296,13 +296,13 @@ class LSTM_atten(nn.Module):
         # final_hidden_state = torch.cat([h_n_final_layer[i, :, :] for i in range(h_n_final_layer.shape[0])], dim=1)
         # out =self.dropout(out)
         context = self.atten(out, hidden)
-        concatenated_vector = torch.cat([hidden, context], dim=1)
+        # concatenated_vector = torch.cat([hidden, context], dim=1)
         # concatenated_vector =self.dropout(concatenated_vector)
 
         # out = t.index_select(out, 0, un_idx)
         # context = t.index_select(context, 0, un_idx)
-        # context = self.lstm_dropout(context)
-        return self.fc_out(concatenated_vector)
+        context = self.dropout(context)
+        return self.fc(context)
 class BERT(nn.Module):
     def __init__(self,bert):
 

@@ -178,15 +178,16 @@ def train_kd_fc(data_loader, device, bert_model, model,optimizer, criterion,crit
 
         targets = label.to(device, dtype=torch.long)
         label = label.to(device)
-        optimizer.zero_grad()
+
         with torch.no_grad():
             bert_output = bert_model(bert_id,bert_mask)
+        optimizer.zero_grad()
 
         outputs = model(ids,lengths,mask)
-        # loss_soft =criterion_kd(outputs,bert_output)
-        # loss_hard = criterion(outputs, targets)
-        # loss = loss_hard*a + (1-a)*loss_soft
-        loss = loss_fn_kd(outputs,label,bert_output,T=10,alpha=0.5)
+        loss_soft =criterion_kd(outputs,bert_output)
+        loss_hard = criterion(outputs, targets)
+        loss = loss_hard*a + (1-a)*loss_soft
+        # loss = loss_fn_kd(outputs,label,bert_output,T=10,alpha=0.5)
 
         acc = categorical_accuracy(outputs, targets)
         loss.backward()
@@ -274,11 +275,11 @@ def main():
     # train_dataset, validation_dataset, test_dataset, vocab, vocab_size = prepare_dateset(args.train_path,args.validation_path)
     train_dataset, validation_dataset,test_dataset = prepare_dateset(args.train_path, args.validation_path, args.test_path, vocab)
     # modelvocab_size,hidden_dim,n_layers,dropout,number_class,bidirectional,embedding_dim =10
-    LSTM_atten_model =LSTM_atten(vocab_size = vocab_size,hidden_dim = config.HIDDEN_DIM, n_layers =2, dropout = 0.3, number_class = args.number_class, bidirectional = True, embedding_dim =100)
+    LSTM_atten_model =LSTM_atten(vocab_size = vocab_size,hidden_dim = config.HIDDEN_DIM, n_layers =2, dropout = 0.25, number_class = args.number_class, bidirectional = True, embedding_dim =100)
     LSTM_atten_model.to(device)
     #opt scheduler criterion
     optimizer = torch.optim.Adam(LSTM_atten_model.parameters(), lr=args.lr)
-    lr_scheduler = torch.optim.lr_scheduler.StepLR(optimizer, gamma=args.lr_gamma, step_size=8)
+    lr_scheduler = torch.optim.lr_scheduler.StepLR(optimizer, gamma=args.lr_gamma, step_size=10)
     criterion = nn.CrossEntropyLoss()
     kd_critertion = nn.MSELoss()
     kd_critertion = kd_critertion.to(device)
