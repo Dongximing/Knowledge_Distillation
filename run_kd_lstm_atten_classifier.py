@@ -241,7 +241,7 @@ def main():
 
     parser.add_argument('--dropout', type=float, default=0.25)
     parser.add_argument('--embedding_dim', type=int, default=100)
-    parser.add_argument('--num_epochs', type=int, default =16)
+    parser.add_argument('--num_epochs', type=int, default =21)
     parser.add_argument('--batch_sz', type=int, default=16)
     parser.add_argument('--lr', type=float, default=1e-3)
 
@@ -271,15 +271,13 @@ def main():
     vocab = Vocab(counter1)
     vocab_size = vocab.__len__()
     print("vocab_size:", vocab_size)
-    # print(vocab.itos[2])
-    # train_dataset, validation_dataset, test_dataset, vocab, vocab_size = prepare_dateset(args.train_path,args.validation_path)
     train_dataset, validation_dataset,test_dataset = prepare_dateset(args.train_path, args.validation_path, args.test_path, vocab)
     # modelvocab_size,hidden_dim,n_layers,dropout,number_class,bidirectional,embedding_dim =10
     LSTM_atten_model =LSTM_atten(vocab_size = vocab_size,hidden_dim = config.HIDDEN_DIM, n_layers =2, dropout = 0.25, number_class = args.number_class, bidirectional = True, embedding_dim =100)
     LSTM_atten_model.to(device)
     #opt scheduler criterion
     optimizer = torch.optim.Adam(LSTM_atten_model.parameters(), lr=args.lr)
-    lr_scheduler = torch.optim.lr_scheduler.StepLR(optimizer, gamma=args.lr_gamma, step_size=5)
+    lr_scheduler = torch.optim.lr_scheduler.StepLR(optimizer, gamma=args.lr_gamma, step_size=)
     criterion = nn.CrossEntropyLoss()
     kd_critertion = nn.MSELoss()
     kd_critertion = kd_critertion.to(device)
@@ -308,7 +306,7 @@ def main():
     LSTM_atten_model.embedding_layer.weight.data[0] = torch.zeros(100)
 
 
-    LSTM_atten_model.embedding_layer.weight.requires_grad = True
+    LSTM_atten_model.embedding_layer.weight.requires_grad = False
     print(f'The model has {count_parameters(LSTM_atten_model):,} trainable parameters')
 
     best_loss = float('inf')
