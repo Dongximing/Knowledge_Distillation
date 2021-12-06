@@ -5,7 +5,7 @@ from torch.utils.data import DataLoader
 from torchtext.vocab import GloVe,Vocab,Vectors
 from tqdm import tqdm
 from utils import IMDB_kd_indexing, pad_sequencing
-from models import CNN_Baseline,LSTMBaseline,BERTGRUSentiment,LSTM_atten
+from models import CNN_Baseline,LSTMBaseline,BERTGRUSentiment,LSTM_atten,BERT
 import torch.nn.functional as F
 
 import torchtext.vocab
@@ -272,14 +272,17 @@ def main():
     criterion = nn.CrossEntropyLoss()
     kd_critertion = nn.MSELoss()
     kd_critertion = kd_critertion.to(device)
-    bert = BertModel.from_pretrained('bert-base-uncased')
+    # bert = BertModel.from_pretrained('bert-base-uncased')
     criterion = criterion.to(device)
-    bert_model = BERTGRUSentiment(bert,
-                                  config.HIDDEN_DIM,
-                                  config.OUTPUT_DIM,
-                                  config.N_LAYERS,
-                                  config.BIDIRECTIONAL,
-                                  config.DROPOUT)
+    bert = BertModel.from_pretrained('bert-base-uncased')
+    bert_model = BERT(bert)
+    bert_model.to(device)
+    # bert_model = BERTGRUSentiment(bert,
+    #                               config.HIDDEN_DIM,
+    #                               config.OUTPUT_DIM,
+    #                               config.N_LAYERS,
+    #                               config.BIDIRECTIONAL,
+    #                               config.DROPOUT)
     bert_model.load_state_dict(torch.load(config.BERT_ft_PATH))
     bert_model.to(device)
     bert_model.eval()
