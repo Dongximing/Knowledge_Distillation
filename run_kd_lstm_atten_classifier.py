@@ -106,12 +106,6 @@ def prepare_dateset(train_data_path, validation_data_path,test_data_path,vocab):
     train_dataset, validation_dataset,testing_dataset = IMDB_kd_indexing(training_texts,training_labels,validation_texts,validation_labels,testing_texts,testing_labels,tokenizers,vocab=vocab)
     print('building vocab')
 
-    # vocab = train_dataset.get_vocab()
-
-
-    # vocab_size = len(vocab)
-    # print('building vocab length',vocab_size)
-    # logging.info('Build vocab')
 
     return train_dataset,validation_dataset,testing_dataset
 
@@ -169,7 +163,6 @@ def train_kd_fc(data_loader, device, bert_model, model,optimizer, criterion,crit
         ids = text.to(device, dtype=torch.long)
         bert_id = bert_id.to(device, dtype=torch.long)
         bert_mask = attention_mask.to(device, dtype=torch.long)
-        # print(text)
 
         mask = mask.to(device)
 
