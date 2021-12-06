@@ -279,15 +279,15 @@ def main():
     # bert = Bert Model.from_pretrained('bert-base-uncased')
     criterion = criterion.to(device)
     bert = BertModel.from_pretrained('bert-base-uncased')
-    bert_model = BERT(bert)
-    bert_model.to(device)
-    # bert_model = BERTGRUSentiment(bert,
-    #                               config.HIDDEN_DIM,
-    #                               config.OUTPUT_DIM,
-    #                               config.N_LAYERS,
-    #                               config.BIDIRECTIONAL,
-    #                               config.DROPOUT)
-    bert_model.load_state_dict(torch.load(config.BERT_ft_PATH))
+    # bert_model = BERT(bert)
+    # bert_model.to(device)
+    bert_model = BERTGRUSentiment(bert,
+                                  config.HIDDEN_DIM,
+                                  config.OUTPUT_DIM,
+                                  config.N_LAYERS,
+                                  config.BIDIRECTIONAL,
+                                  config.DROPOUT)
+    bert_model.load_state_dict(torch.load(config.BERT_PATH))
     bert_model.to(device)
     bert_model.eval()
 
