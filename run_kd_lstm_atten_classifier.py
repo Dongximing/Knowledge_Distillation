@@ -272,7 +272,7 @@ def main():
     criterion = nn.CrossEntropyLoss()
     kd_critertion = nn.MSELoss()
     kd_critertion = kd_critertion.to(device)
-    # bert = BertModel.from_pretrained('bert-base-uncased')
+    # bert = Bert Model.from_pretrained('bert-base-uncased')
     criterion = criterion.to(device)
     bert = BertModel.from_pretrained('bert-base-uncased')
     bert_model = BERT(bert)
