@@ -276,8 +276,7 @@ def generate_batch(batch):
 
 
 def prepare_dateset(train_data_path, validation_data_path, test_data_path):
-    # with open(train_data_path,'r') as csvfile:
-    #     csvreader = csv.reader(csvf
+
     training_texts = []
     training_labels = []
     validation_texts = []

@@ -97,12 +97,6 @@ def prepare_dateset(train_data_path, validation_data_path,test_data_path,vocab):
     train_dataset, validation_dataset,testing_dataset = IMDB_indexing(training_texts,training_labels,validation_texts,validation_labels,testing_texts,testing_labels,include_unk=True,vocab= vocab)
     print('building vocab')
 
-    # vocab = train_dataset.get_vocab()
-
-
-    # vocab_size = len(vocab)
-    # print('building vocab length',vocab_size)
-    # logging.info('Build vocab')
 
     return train_dataset,validation_dataset,testing_dataset,labellist
 
@@ -148,11 +142,6 @@ def train(train_dataset,model,criterion,device,optimizer,lr_scheduler,epoche):
     for i,(text, length,label,_) in tqdm(enumerate(train_dataset),total = len(train_dataset)):
         text_length = torch.Tensor(length)
         label = torch.tensor(label,dtype=torch.long)
-
-        # lengths, indices = torch.sort(text_length, dim=0, descending=True)
-        # text = torch.index_select(text, dim=0, index=indices)
-        #
-        # label = torch.index_select(label, dim=0, index=indices)
         text_length= text_length.to(device)
         text = text.to(device,dtype = torch.long)
         label =label.to(device)
@@ -205,15 +194,13 @@ def validate(validation_dataset, model, criterion, device):
 def main():
     parser = argparse.ArgumentParser()
     parser.add_argument('--train_path', type=str,
-                        default='/home/dongxx/projects/def-parimala/dongxx/IMDB_data/train.csv')
+                        default='/home/dongxx/projects/def-parimala/dongxx/data/train.csv')
     parser.add_argument('--validation_path', type=str,
-                        default='/home/dongxx/projects/def-parimala/dongxx/IMDB_data/valid.csv')
+                        default='/home/dongxx/projects/def-parimala/dongxx/data/valid.csv')
     parser.add_argument('--test_path', type=str,
-                        default='/home/dongxx/projects/def-parimala/dongxx/IMDB_data/test.csv')
+                        default='/home/dongxx/projects/def-parimala/dongxx/data/test.csv')
 
-    # parser.add_argument('--train_path',type=str,default='/home/dongxx/projects/def-mercer/dongxx/project/data/train.csv')
-    # parser.add_argument('--validation_path',type= str,default='/home/dongxx/projects/def-mercer/dongxx/project/data/valid.csv')
-    # parser.add_argument('--test_path',type= str,default='/home/dongxx/projects/def-mercer/dongxx/project/data/test.csv')
+
 
     parser.add_argument('--dropout', type=float, default=0.25)
     parser.add_argument('--embedding_dim', type=int, default=100)
