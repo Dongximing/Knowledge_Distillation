@@ -288,7 +288,7 @@ def main():
                                   config.N_LAYERS,
                                   config.BIDIRECTIONAL,
                                   config.DROPOUT)
-    bert_model.load_state_dict(torch.load(config.BERT_PATH))
+    bert_model.load_state_dict(torch.load(config.BERT_ft_PATH))
     bert_model.to(device)
     bert_model.eval()
 
@@ -306,7 +306,7 @@ def main():
 
 
     LSTM_atten_model.embedding_layer.weight.requires_grad = False
-    print(f'The model has {count_parameters(LSTM_atten_model):,} trainable parameters')
+    print(f'The LSTM KD attention model has {count_parameters(LSTM_atten_model):,} trainable parameters')
 
     best_loss = float('inf')
     print("training")

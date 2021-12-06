@@ -146,54 +146,54 @@ class LSTM_atten(nn.Module):
                            batch_first=True)
         self.fc = nn.Linear(hidden_dim*2 , number_class)
         self.dropout = nn.Dropout(dropout)
-        self.att_weight = nn.Parameter(torch.randn(1, self.hidden_size, 1))
-        self.attention_layer = nn.Sequential(
-            nn.Linear(hidden_dim, hidden_dim),
-            nn.ReLU(inplace=True)
-        )
-        self.lstm_dropout = nn.Dropout(0.5)
-        self.w = nn.Linear(hidden_dim, 1)
-        self.tanh = nn.Tanh()
-        self.softmax = nn.Softmax(dim=1)
-        self.fc_out = nn.Sequential(
-            nn.Dropout(dropout),
-            nn.Linear(self.hidden_size*2, self.hidden_size),
-            nn.ReLU(inplace=True),
-            nn.Dropout(dropout),
-            nn.Linear(self.hidden_size, number_class)
-        )
+        # self.att_weight = nn.Parameter(torch.randn(1, self.hidden_size, 1))
+        # self.attention_layer = nn.Sequential(
+        #     nn.Linear(hidden_dim, hidden_dim),
+        #     nn.ReLU(inplace=True)
+        # )
+        # self.lstm_dropout = nn.Dropout(0.5)
+        # self.w = nn.Linear(hidden_dim, 1)
+        # self.tanh = nn.Tanh()
+        # self.softmax = nn.Softmax(dim=1)
+        # self.fc_out = nn.Sequential(
+        #     nn.Dropout(dropout),
+        #     nn.Linear(self.hidden_size*2, self.hidden_size),
+        #     nn.ReLU(inplace=True),
+        #     nn.Dropout(dropout),
+        #     nn.Linear(self.hidden_size, number_class)
+        # )
 
 
-    def attention_net_with_w(self, lstm_out, lstm_hidden):
-
-        lstm_tmp_out = torch.chunk(lstm_out, 2, -1)
-            # h [batch_size, time_step, hidden_dims]
-        h = lstm_tmp_out[0] + lstm_tmp_out[1]
-            # [batch_size, num_layers * num_directions, n_hidden]
-        lstm_hidden = torch.sum(lstm_hidden, dim=1)
-            # [batch_size, 1, n_hidden]
-        lstm_hidden = lstm_hidden.unsqueeze(1)
-            # atten_w [batch_size, 1, hidden_dims]
-        atten_w = self.attention_layer(lstm_hidden)
-            # m [batch_size, time_step, hidden_dims]
-        m = nn.Tanh()(h)
-            # atten_context [batch_size, 1, time_step]
-        atten_context = torch.bmm(atten_w, m.transpose(1, 2))
-            # softmax_w [batch_size, 1, time_step]
-        softmax_w = F.softmax(atten_context, dim=-1)
-            # context [batch_size, 1, hidden_dims]
-        context = torch.bmm(softmax_w, h)
-        result = context.squeeze(1)
-        return result
-
-
-        # self.w_omega = nn.Parameter(torch.Tensor(
-        #     hidden_dim * 2, hidden_dim* 2))
-        # self.u_omega = nn.Parameter(torch.Tensor(hidden_dim * 2, 1))
-        # self.decoder = nn.Linear(2 * hidden_dim, 2)
-        #
-        # nn.init.uniform_(self.w_omega, -0.1, 0.1)
-        # nn.init.uniform_(self.u_omega, -0.1, 0.1)
+    # def attention_net_with_w(self, lstm_out, lstm_hidden):
+    #
+    #     lstm_tmp_out = torch.chunk(lstm_out, 2, -1)
+    #         # h [batch_size, time_step, hidden_dims]
+    #     h = lstm_tmp_out[0] + lstm_tmp_out[1]
+    #         # [batch_size, num_layers * num_directions, n_hidden]
+    #     lstm_hidden = torch.sum(lstm_hidden, dim=1)
+    #         # [batch_size, 1, n_hidden]
+    #     lstm_hidden = lstm_hidden.unsqueeze(1)
+    #         # atten_w [batch_size, 1, hidden_dims]
+    #     atten_w = self.attention_layer(lstm_hidden)
+    #         # m [batch_size, time_step, hidden_dims]
+    #     m = nn.Tanh()(h)
+    #         # atten_context [batch_size, 1, time_step]
+    #     atten_context = torch.bmm(atten_w, m.transpose(1, 2))
+    #         # softmax_w [batch_size, 1, time_step]
+    #     softmax_w = F.softmax(atten_context, dim=-1)
+    #         # context [batch_size, 1, hidden_dims]
+    #     context = torch.bmm(softmax_w, h)
+    #     result = context.squeeze(1)
+    #     return result
+    #
+    #
+    #     # self.w_omega = nn.Parameter(torch.Tensor(
+    #     #     hidden_dim * 2, hidden_dim* 2))
+    #     # self.u_omega = nn.Parameter(torch.Tensor(hidden_dim * 2, 1))
+    #     # self.decoder = nn.Linear(2 * hidden_dim, 2)
+    #     #
+    #     # nn.init.uniform_(self.w_omega, -0.1, 0.1)
+    #     # nn.init.uniform_(self.u_omega, -0.1, 0.1)
     def atten(self,output,finial_state):
         # merged_state = torch.sum(finial_state,dim=0)
         # merged_state = finial_state[-1,:,:]+finial_state[-2,:,:]
@@ -203,33 +203,33 @@ class LSTM_atten(nn.Module):
         soft_max_weights = F.softmax(attent_weight,1)
         context = torch.bmm(output.transpose(1,2),soft_max_weights.unsqueeze(2)).squeeze(2)
         return context
-    def attention(self,finial_state,mask):
-        att_weight = self.att_weight.expand(mask.shape[0], -1, -1)
-        h = self.tanh(finial_state)  # (batch_size, word_pad_len, rnn_size)
-        att_score = torch.bmm(self.tanh(h), att_weight)
-        # eq.10: α = softmax(w^T M)
-        mask = mask.unsqueeze(dim=-1)
-        att_score = att_score.masked_fill(mask.eq(0), float('-inf'))
-        att_weight = F.softmax(att_score, dim=1)
-
-        reps = torch.bmm(h.transpose(1, 2), att_weight).squeeze(dim=-1)  # B*H*L *  B*L*1 -> B*H*1 -> B*H
-        reps = self.tanh(reps)
-
-        # alpha = self.w(M).squeeze(2)  # (batch_size, word_pad_len)
-        # alpha = self.softmax(alpha)  # (batch_size, word_pad_len)
-        #
-        # r = finial_state * alpha.unsqueeze(2)  # (batch_size, word_pad_len, rnn_size)
-        # r = r.sum(dim = 1)  # (batch_size, rnn_size)
-
-        return reps
-
-    def init_hidden(self, b_size):
-        h0 = Variable(torch.zeros(2* 2, b_size, self.hidden_size))
-        c0 = Variable(torch.zeros(2* 2, b_size, self.hidden_size))
-
-        h0 = h0.to(device)
-        c0 = c0.to(device)
-        return (h0, c0)
+    # def attention(self,finial_state,mask):
+    #     att_weight = self.att_weight.expand(mask.shape[0], -1, -1)
+    #     h = self.tanh(finial_state)  # (batch_size, word_pad_len, rnn_size)
+    #     att_score = torch.bmm(self.tanh(h), att_weight)
+    #     # eq.10: α = softmax(w^T M)
+    #     mask = mask.unsqueeze(dim=-1)
+    #     att_score = att_score.masked_fill(mask.eq(0), float('-inf'))
+    #     att_weight = F.softmax(att_score, dim=1)
+    #
+    #     reps = torch.bmm(h.transpose(1, 2), att_weight).squeeze(dim=-1)  # B*H*L *  B*L*1 -> B*H*1 -> B*H
+    #     reps = self.tanh(reps)
+    #
+    #     # alpha = self.w(M).squeeze(2)  # (batch_size, word_pad_len)
+    #     # alpha = self.softmax(alpha)  # (batch_size, word_pad_len)
+    #     #
+    #     # r = finial_state * alpha.unsqueeze(2)  # (batch_size, word_pad_len, rnn_size)
+    #     # r = r.sum(dim = 1)  # (batch_size, rnn_size)
+    #
+    #     return reps
+    #
+    # def init_hidden(self, b_size):
+    #     h0 = Variable(torch.zeros(2* 2, b_size, self.hidden_size))
+    #     c0 = Variable(torch.zeros(2* 2, b_size, self.hidden_size))
+    #
+    #     h0 = h0.to(device)
+    #     c0 = c0.to(device)
+    #     return (h0, c0)
     def forward(self,text,text_length,mask):
 
         a_lengths, idx = text_length.sort(0, descending=True)
