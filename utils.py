@@ -141,16 +141,17 @@ def _create_data_kd_from_iterator(vocab,tokenizer, iterator, include_unk, is_tes
 
                         add_special_tokens=True,
                         max_length=512,
-                        return_token_type_ids=False,
+                        return_token_type_ids=True,
                         pad_to_max_length=False,
                         return_attention_mask=True
                     )
                     bert_ids = encoding['input_ids']
                     attention_mask = encoding['attention_mask']
+                    token_type_ids = encoding['token_type_ids']
                     # print("tokens",tokens)
                 if len(tokens) == 0:
                     logging.info('Row contains no tokens.')
-                data.append((label,tokens,bert_ids,attention_mask))
+                data.append((label,tokens,bert_ids,attention_mask,token_type_ids))
 
                 t.update(1)
             return data

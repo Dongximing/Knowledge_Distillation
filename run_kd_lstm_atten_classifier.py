@@ -134,7 +134,10 @@ def generate_batch(batch):
         attention_mask = [torch.tensor(entry[3]) for entry in batch]
         attention_mask = pad_sequence(attention_mask, batch_first=True)
 
-        return text, text_length, label,bert_id,attention_mask,mask
+        token_type_ids = [torch.tensor(entry[4]) for entry in batch]
+        token_type_ids = pad_sequence(token_type_ids, batch_first=True)
+
+        return text, text_length, label,bert_id,attention_mask,token_type_ids,mask
     else:
         text = [entry for entry in batch]
         text_length = [len(seq) for seq in text]
@@ -157,7 +160,7 @@ def train_kd_fc(data_loader, device, bert_model, model,optimizer, criterion,crit
 
 
     for bi,data in tqdm(enumerate(data_loader),total = len(data_loader)):
-        text, text_length, label, bert_id, attention_mask,mask = data
+        text, text_length, label, bert_id, attention_mask,token_type_ids,mask = data
         text_length = torch.Tensor(text_length)
         label = torch.tensor(label, dtype=torch.long)
         ids = text.to(device, dtype=torch.long)
@@ -170,9 +173,10 @@ def train_kd_fc(data_loader, device, bert_model, model,optimizer, criterion,crit
 
         targets = label.to(device, dtype=torch.long)
         label = label.to(device)
+        token_type_ids = token_type_ids.to(device)
         optimizer.zero_grad()
         with torch.no_grad():
-            bert_output = bert_model(bert_id,bert_mask)
+            bert_output = bert_model(ids=bert_id, mask=bert_mask,token_type_ids =token_type_ids)
 
         outputs = model(ids,lengths,mask)
         loss_soft =criterion_kd(outputs,bert_output)
