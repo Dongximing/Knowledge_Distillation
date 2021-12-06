@@ -50,8 +50,7 @@ def weight_matrix(vocab, vectors, dim=100):
             weight_matrix[i] = np.random.normal(scale=0.5, size=(dim,))
     return torch.from_numpy(weight_matrix)
 def prepare_dateset(train_data_path, validation_data_path,test_data_path,vocab):
-    # with open(train_data_path,'r') as csvfile:
-    #     csvreader = csv.reader(csvf
+
     training_texts = []
     training_labels =[]
     validation_texts = []
@@ -102,9 +101,9 @@ def prepare_dateset(train_data_path, validation_data_path,test_data_path,vocab):
 
     print('prepare training and test sets')
     logging.info('Prepare training and test sets')
-    tokenize = BertTokenizer.from_pretrained('/home/dongxx/projects/def-parimala/dongxx/bert-base-uncased',do_lower_case=True)
+    tokenizers = BertTokenizer.from_pretrained('bert-base-uncased', do_lower_case=True)
 
-    train_dataset, validation_dataset,testing_dataset = IMDB_kd_indexing(training_texts,training_labels,validation_texts,validation_labels,testing_texts,testing_labels,tokenize,vocab=vocab)
+    train_dataset, validation_dataset,testing_dataset = IMDB_kd_indexing(training_texts,training_labels,validation_texts,validation_labels,testing_texts,testing_labels,tokenizers,vocab=vocab)
     print('building vocab')
 
     # vocab = train_dataset.get_vocab()
@@ -280,7 +279,7 @@ def main():
     criterion = nn.CrossEntropyLoss()
     kd_critertion = nn.MSELoss()
     kd_critertion = kd_critertion.to(device)
-    bert = BertModel.from_pretrained('/home/dongxx/projects/def-parimala/dongxx/bert-base-uncased')
+    bert = BertModel.from_pretrained('bert-base-uncased')
     criterion = criterion.to(device)
     bert_model = BERTGRUSentiment(bert,
                                   config.HIDDEN_DIM,
