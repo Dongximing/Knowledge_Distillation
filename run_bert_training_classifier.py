@@ -391,11 +391,11 @@ def validate(validation_dataset, model, criterion, device):
 def main():
     parser = argparse.ArgumentParser()
     parser.add_argument('--train_path', type=str,
-                        default='/home/dongxx/projects/def-mercer/dongxx/project/data/train.csv')
+                        default='/home/dongxx/projects/def-parimala/dongxx/data/train.csv')
     parser.add_argument('--validation_path', type=str,
-                        default='/home/dongxx/projects/def-mercer/dongxx/project/data/valid.csv')
+                        default='/home/dongxx/projects/def-parimala/dongxx/data/valid.csv')
     parser.add_argument('--test_path', type=str,
-                        default='/home/dongxx/projects/def-mercer/dongxx/project/data/test.csv')
+                        default='/home/dongxx/projects/def-parimala/dongxx/data/test.csv')
 
 
 
@@ -434,7 +434,7 @@ def main():
         optimizer, num_warmup_steps=0, num_training_steps=int(20000/8*5)
     )
 
-    print(f'The model has {count_parameters(Bert_model):,} trainable parameters')
+    print(f'The Bert training model has {count_parameters(Bert_model):,} trainable parameters')
 
     criterion = nn.CrossEntropyLoss()
     criterion.to(device)

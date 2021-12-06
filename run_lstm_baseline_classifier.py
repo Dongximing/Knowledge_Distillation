@@ -34,16 +34,14 @@ def epoch_time(start_time, end_time):
 def weight_matrix(vocab, vectors, dim=100):
     weight_matrix = np.zeros([len(vocab.itos), dim])
     for i, token in enumerate(vocab.stoi):
-        # print(token)
-        # print(i)
+
         try:
             weight_matrix[i] = vectors.__getitem__(token)
         except KeyError:
             weight_matrix[i] = np.random.normal(scale=0.5, size=(dim,))
     return torch.from_numpy(weight_matrix)
 def prepare_dateset(train_data_path, validation_data_path,test_data_path,vocab):
-    # with open(train_data_path,'r') as csvfile:
-    #     csvreader = csv.reader(csvf
+
     training_texts = []
     training_labels =[]
     validation_texts = []
@@ -96,7 +94,7 @@ def prepare_dateset(train_data_path, validation_data_path,test_data_path,vocab):
     print('prepare training and test sets')
     logging.info('Prepare training and test sets')
 
-    train_dataset, validation_dataset,testing_dataset = IMDB_indexing(training_texts,training_labels,validation_texts,validation_labels,testing_texts,testing_labels,include_unk=False,vocab= vocab)
+    train_dataset, validation_dataset,testing_dataset = IMDB_indexing(training_texts,training_labels,validation_texts,validation_labels,testing_texts,testing_labels,include_unk=True,vocab= vocab)
     print('building vocab')
 
     # vocab = train_dataset.get_vocab()
