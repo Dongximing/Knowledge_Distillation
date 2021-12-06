@@ -203,7 +203,7 @@ def validate(validation_dataset, model, criterion, device):
     epoch_acc = 0
 
     for i,data in enumerate(validation_dataset):
-        text, text_length, label, _, _ ,mask= data
+        text, text_length, label, _, _ ,token_type_ids,mask= data
         text_length = torch.Tensor(text_length)
         label = torch.tensor(label, dtype=torch.long)
         text = text.to(device, dtype=torch.long)
