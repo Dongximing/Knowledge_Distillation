@@ -648,19 +648,19 @@ def main():
     testing = DataLoader(test_dataset, collate_fn= generate_batch, batch_size=args.batch_sz, shuffle=False)
     #loading vocab
 
-
-
-
-    LSTM_atten_model.embedding_layer.weight.data.copy_(weight_matrix(vocab,glove)).to(device)
-    LSTM_atten_model.embedding_layer.weight.data[1] = torch.zeros(100)
-    LSTM_atten_model.embedding_layer.weight.data[0] = torch.zeros(100)
-
-
-    LSTM_atten_model.embedding_layer.weight.requires_grad = False
-    print(f'The lstm atten model model has {count_parameters(LSTM_atten_model):,} trainable parameters')
-
-    best_loss = float('inf')
-    print("training")
+    #
+    #
+    #
+    # LSTM_atten_model.embedding_layer.weight.data.copy_(weight_matrix(vocab,glove)).to(device)
+    # LSTM_atten_model.embedding_layer.weight.data[1] = torch.zeros(100)
+    # LSTM_atten_model.embedding_layer.weight.data[0] = torch.zeros(100)
+    #
+    #
+    # LSTM_atten_model.embedding_layer.weight.requires_grad = False
+    # print(f'The lstm atten model model has {count_parameters(LSTM_atten_model):,} trainable parameters')
+    #
+    # best_loss = float('inf')
+    # print("training")
     # for epoch in range(25):
     #     start_time = time.time()
     #
