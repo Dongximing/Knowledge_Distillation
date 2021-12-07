@@ -230,7 +230,7 @@ class LSTM_atten(nn.Module):
     #     h0 = h0.to(device)
     #     c0 = c0.to(device)
     #     return (h0, c0)
-    def forward(self,text,text_length,mask):
+    def forward(self,text,text_length):
 
         a_lengths, idx = text_length.sort(0, descending=True)
         _, un_idx = t.sort(idx, dim=0)
