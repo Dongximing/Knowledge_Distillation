@@ -630,15 +630,15 @@ def validate(validation_dataset, model, criterion, device):
 def main():
     parser = argparse.ArgumentParser()
     parser.add_argument('--train_path', type=str,
-                        default='/home/dongxx/projects/def-mercer/dongxx/project/data/train.csv')
+                        default='/home/dongxx/projects/def-parimala/dongxx/data/train.csv')
     parser.add_argument('--validation_path', type=str,
-                        default='/home/dongxx/projects/def-mercer/dongxx/project/data/valid.csv')
+                        default='/home/dongxx/projects/def-parimala/dongxx/data/valid.csv')
     parser.add_argument('--test_path', type=str,
-                        default='/home/dongxx/projects/def-mercer/dongxx/project/data/test.csv')
+                        default='/home/dongxx/projects/def-parimala/dongxx/data/test.csv')
 
     parser.add_argument('--dropout', type=float, default=0.25)
     parser.add_argument('--embedding_dim', type=int, default=100)
-    parser.add_argument('--num_epochs', type=int, default=12)
+    parser.add_argument('--num_epochs', type=int, default=10)
     parser.add_argument('--batch_sz', type=int, default=32)
     parser.add_argument('--lr', type=float, default=1e-3)
 
