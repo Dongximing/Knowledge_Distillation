@@ -612,6 +612,8 @@ def main():
     f.close()
 
     counter1.update(counter2)
+    vocab = Vocab(counter1)
+    #     vocab_size = vocab.__len__()
     vocab_size=vocab.__len__()
     print("vocab_size:",vocab_size)
     # print(vocab.stoi)
