@@ -648,7 +648,7 @@ def main():
 
 
     LSTM_atten_model.embedding_layer.weight.requires_grad = False
-    print(f'The lstm atten no kd model model has {count_parameters(LSTM_atten_model):,} trainable parameters')
+    print(f'The lstm attenmodel model has {count_parameters(LSTM_atten_model):,} trainable parameters')
 
     best_loss = float('inf')
     print("training")

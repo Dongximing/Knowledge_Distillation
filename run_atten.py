@@ -292,7 +292,7 @@ def main():
 
 
     LSTM_model.embedding_layer.weight.requires_grad = False
-    print(f'The model has {count_parameters(LSTM_model):,} trainable parameters')
+    print(f'The model atten no kd has {count_parameters(LSTM_model):,} trainable parameters')
     # ret = glove.get_vecs_by_tokens(['<unk>'])
     # print(ret)
 
