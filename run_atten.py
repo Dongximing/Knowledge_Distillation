@@ -144,32 +144,15 @@ def train(train_dataset,model,criterion,device,optimizer,lr_scheduler,epoche):
     model.train()
     epoch_loss = 0
     epoch_acc = 0
-    # if epoche>1:
-    #     model.embedding_layer.weight.requires_grad = False
-
 
     for i,(text, length,label,mask) in tqdm(enumerate(train_dataset),total = len(train_dataset)):
         text_length = torch.Tensor(length)
         label = torch.tensor(label,dtype=torch.long)
-
-        # lengths, indices = torch.sort(text_length, dim=0, descending=True)
-        # text = torch.index_select(text, dim=0, index=indices)
-        #
-        # label = torch.index_select(label, dim=0, index=indices)
         text_length= text_length.to(device)
         text = text.to(device,dtype = torch.long)
         label =label.to(device)
-        mask =mask.to(device)
-        # print("mask")
-        # print(mask)
-        # print("text")
-        # print(text)
-        # print("text_length")
-        # print(text_length)
-
-
         optimizer.zero_grad()
-        output = model(text,text_length,mask)
+        output = model(text,text_length)
         loss = criterion(output,label)
         acc,_ = categorical_accuracy(output, label)
         epoch_loss += loss.item()
@@ -320,10 +303,7 @@ def main():
 
     LSTM_model.load_state_dict(torch.load(config.MODEL_Base_PATH_fk))
     test_loss, test_acc,flat_list = validate(testing,LSTM_model,criterion,device)
-    # print(flat_list)
-    # print(len(flat_list))
-    # print(labellist)
-    # print(len(labellist))
+
 
     print(f'Test Loss: {test_loss:.3f} | Test Acc: {test_acc * 100:.2f}%')
     print("testing done")
