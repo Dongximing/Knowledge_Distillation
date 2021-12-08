@@ -184,7 +184,7 @@ def validate(validation_dataset, model, criterion, device):
 
 
         with torch.no_grad():
-            output = model(text,text_length,mask)
+            output = model(text,text_length)
         loss = criterion(output,label)
         acc, pred = categorical_accuracy(output, label)
         total_pred.append(pred)
