@@ -97,7 +97,7 @@ def prepare_dateset(train_data_path, validation_data_path,test_data_path,vocab):
 
     print('prepare training and test sets')
     logging.info('Prepare training and test sets')
-    tokenize = BertTokenizer.from_pretrained('/home/dongxx/projects/def-parimala/dongxx/bert-base-uncased',do_lower_case=True)
+    tokenize = BertTokenizer.from_pretrained('bert-base-uncased',do_lower_case=True)
 
     train_dataset, validation_dataset,testing_dataset = IMDB_kd_indexing(training_texts,training_labels,validation_texts,validation_labels,testing_texts,testing_labels,tokenize,vocab=vocab)
     print('building vocab')
@@ -119,7 +119,7 @@ def generate_batch(batch):
         cls: a tensor saving the labels of individual text entries.
     """
     # check if the dataset if train or test
-    if len(batch[0]) == 4:
+    if len(batch[0]) == 5:
         label = [entry[0] for entry in batch]
 
         # padding according to the maximum sequence length in batch
@@ -233,9 +233,9 @@ def validate(validation_dataset, model, criterion, device):
 
 def main():
     parser = argparse.ArgumentParser()
-    parser.add_argument('--train_path',type=str,default='/home/dongxx/projects/def-parimala/dongxx/IMDB_data/train.csv')
-    parser.add_argument('--validation_path',type= str,default='/home/dongxx/projects/def-parimala/dongxx/IMDB_data/valid.csv')
-    parser.add_argument('--test_path',type= str,default='/home/dongxx/projects/def-parimala/dongxx/IMDB_data/test.csv')
+    parser.add_argument('--train_path',type=str,default='/home/dongxx/projects/def-parimala/dongxx/data/train.csv')
+    parser.add_argument('--validation_path',type= str,default='/home/dongxx/projects/def-parimala/dongxx/data/valid.csv')
+    parser.add_argument('--test_path',type= str,default='/home/dongxx/projects/def-parimala/dongxx/data/test.csv')
 
     parser.add_argument('--dropout', type=float, default=0.25)
     parser.add_argument('--embedding_dim', type=int, default=100)
