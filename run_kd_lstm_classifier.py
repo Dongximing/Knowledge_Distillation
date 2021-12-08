@@ -299,10 +299,6 @@ def main():
     training = DataLoader(train_dataset,collate_fn = generate_batch, batch_size=args.batch_sz,shuffle=True)
     validation = DataLoader(validation_dataset, collate_fn= generate_batch, batch_size=args.batch_sz, shuffle=False)
     testing = DataLoader(test_dataset, collate_fn= generate_batch, batch_size=args.batch_sz, shuffle=False)
-    #l oadingdd vocab
-
-
-
 
     LSTM_model.embedding_layer.weight.data.copy_(weight_matrix(vocab,glove)).to(device)
     LSTM_model.embedding_layer.weight.data[1] = torch.zeros(100)

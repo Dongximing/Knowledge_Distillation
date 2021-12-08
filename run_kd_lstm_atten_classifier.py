@@ -449,21 +449,13 @@ def prepare_dateset(train_data_path, validation_data_path,test_data_path,vocab):
     return train_dataset,validation_dataset,testing_dataset
 
 def generate_batch(batch):
-    """
-    Output:
-        text: the text entries in the data_batch are packed into a list and
-            concatenated as a single tensor for the input of nn.EmbeddingBag.
-        cls: a tensor saving the labels of individual text entries.
-    """
-    # check if the dataset if train or test
+
     if len(batch[0]) == 5:
         label = [entry[0] for entry in batch]
 
         # padding according to the maximum sequence length in batch
         text = [entry[1] for entry in batch]
-        # print(text)
-        # text_length = [len(seq) for seq in text]
-        # print(text_length)
+
         text, text_length,_= pad_sequencing(text, ksz = 512, batch_first=True)
 
 
