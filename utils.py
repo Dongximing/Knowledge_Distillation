@@ -128,8 +128,10 @@ def _create_data_kd_from_iterator(vocab,tokenizer, iterator, include_unk, is_tes
                 else:
 
 
-                    token_ids = list(filter(lambda x: x is not 0, [vocab[token]
-                                                                      for token in text]))
+                    # token_ids = list(filter(lambda x: x is not 0, [vocab[token]
+                    #                                                   for token in text]))
+                    token_ids = list(filter(lambda x: x is not Vocab.UNK, [vocab[token]
+                                                                           for token in text]))
 
 
 

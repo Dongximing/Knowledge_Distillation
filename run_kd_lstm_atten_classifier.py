@@ -648,39 +648,39 @@ def main():
     testing = DataLoader(test_dataset, collate_fn= generate_batch, batch_size=args.batch_sz, shuffle=False)
     #loading vocab
 
-    #
-    #
-    #
-    # LSTM_atten_model.embedding_layer.weight.data.copy_(weight_matrix(vocab,glove)).to(device)
-    # LSTM_atten_model.embedding_layer.weight.data[1] = torch.zeros(100)
-    # LSTM_atten_model.embedding_layer.weight.data[0] = torch.zeros(100)
-    #
-    #
-    # LSTM_atten_model.embedding_layer.weight.requires_grad = False
-    # print(f'The lstm atten model model has {count_parameters(LSTM_atten_model):,} trainable parameters')
-    #
-    # best_loss = float('inf')
-    # print("training")
-    # for epoch in range(25):
-    #     start_time = time.time()
-    #
-    #
-    #
-    #     train_loss, train_acc,hard, soft  = train_kd_fc(training, device, bert_model,LSTM_atten_model,optimizer, criterion,kd_critertion,lr_scheduler)
-    #
-    #     valid_loss, valid_acc = validate(validation,LSTM_atten_model,criterion,device)
-    #     end_time = time.time()
-    #     epoch_mins, epoch_secs = epoch_time(start_time, end_time)
-    #     print(f'Epoch: {epoch + 1:02} | Epoch Time: {epoch_mins}m {epoch_secs}s')
-    #     print(f'\tTrain Loss: {train_loss:.3f} | Train Acc: {train_acc * 100:.2f}%')
-    #     print(f'\t Val. Loss: {valid_loss:.3f} |  Val. Acc: {valid_acc * 100:.2f}%')
-    #     # print("hard", hard)
-    #     # print("soft", soft)
-    #
-    #     if valid_loss < best_loss:
-    #         best_loss = valid_loss
-    #         torch.save(LSTM_atten_model.state_dict(), '/home/dongxx/projects/def-parimala/dongxx/Model_parameter/kd_atten.pt')
-    # print("training done")
+
+
+
+    LSTM_atten_model.embedding_layer.weight.data.copy_(weight_matrix(vocab,glove)).to(device)
+    LSTM_atten_model.embedding_layer.weight.data[1] = torch.zeros(100)
+    LSTM_atten_model.embedding_layer.weight.data[0] = torch.zeros(100)
+
+
+    LSTM_atten_model.embedding_layer.weight.requires_grad = False
+    print(f'The lstm atten model model has {count_parameters(LSTM_atten_model):,} trainable parameters')
+
+    best_loss = float('inf')
+    print("training")
+    for epoch in range(25):
+        start_time = time.time()
+
+
+
+        train_loss, train_acc,hard, soft  = train_kd_fc(training, device, bert_model,LSTM_atten_model,optimizer, criterion,kd_critertion,lr_scheduler)
+
+        valid_loss, valid_acc = validate(validation,LSTM_atten_model,criterion,device)
+        end_time = time.time()
+        epoch_mins, epoch_secs = epoch_time(start_time, end_time)
+        print(f'Epoch: {epoch + 1:02} | Epoch Time: {epoch_mins}m {epoch_secs}s')
+        print(f'\tTrain Loss: {train_loss:.3f} | Train Acc: {train_acc * 100:.2f}%')
+        print(f'\t Val. Loss: {valid_loss:.3f} |  Val. Acc: {valid_acc * 100:.2f}%')
+        # print("hard", hard)
+        # print("soft", soft)
+
+        if valid_loss < best_loss:
+            best_loss = valid_loss
+            torch.save(LSTM_atten_model.state_dict(), '/home/dongxx/projects/def-parimala/dongxx/Model_parameter/kd_atten.pt')
+    print("training done")
 
     print("testing")
     LSTM_atten_model.load_state_dict(torch.load('/home/dongxx/projects/def-parimala/dongxx/Model_parameter/kd_atten.pt'))
