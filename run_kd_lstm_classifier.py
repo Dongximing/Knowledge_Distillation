@@ -240,12 +240,12 @@ def main():
     parser.add_argument('--dropout', type=float, default=0.25)
     parser.add_argument('--embedding_dim', type=int, default=100)
     parser.add_argument('--num_epochs', type=int, default=20)
-    parser.add_argument('--batch_sz', type=int, default=32)
+    parser.add_argument('--batch_sz', type=int, default=16)
     parser.add_argument('--lr', type=float, default=1e-3)
 
     parser.add_argument('--weight_decay', type=float, default=0.5)
     parser.add_argument('--scheduler_step_sz', type=int, default=6)
-    parser.add_argument('--lr_gamma', type=float, default=0.5)
+    parser.add_argument('--lr_gamma', type=float, default=0.1)
     parser.add_argument('--number_class', type=int, default=2)
 
     args = parser.parse_args()
@@ -272,17 +272,7 @@ def main():
     vocab = Vocab(counter1)
     vocab_size = vocab.__len__()
     print("vocab_size:", vocab_size)
-    # counter1 =  copy.deepcopy(glove.stoi)
-    #
-    # counter1.update(counter2)
-    # # print(counter1)
-    #
-    # vocab = Vocab(counter1)
-    # vocab_size=vocab.__len__()
-    # print("vocab_size:",vocab_size)
-    # print(vocab.stoi)
-    #
-    # print(vocab.itos[2])
+
     # train_dataset, validation_dataset, test_dataset, vocab, vocab_size = prepare_dateset(args.train_path,args.validation_path)
     train_dataset, validation_dataset,test_dataset = prepare_dateset(args.train_path, args.validation_path, args.test_path, vocab)
     # modelvocab_size,hidden_dim,n_layers,dropout,number_class,bidirectional,embedding_dim =10
@@ -294,7 +284,7 @@ def main():
     criterion = nn.CrossEntropyLoss()
     kd_critertion = nn.MSELoss()
     kd_critertion = kd_critertion.to(device)
-    bert = BertModel.from_pretrained('/home/dongxx/projects/def-parimala/dongxx/bert-base-uncased')
+    bert = BertModel.from_pretrained('bert-base-uncased')
     criterion = criterion.to(device)
     bert_model = BERTGRUSentiment(bert,
                                   config.HIDDEN_DIM,
