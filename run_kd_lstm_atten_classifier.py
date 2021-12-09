@@ -558,7 +558,7 @@ def main():
     parser.add_argument('--dropout', type=float, default=0.25)
     parser.add_argument('--embedding_dim', type=int, default=100)
     parser.add_argument('--num_epochs', type=int, default=10)
-    parser.add_argument('--batch_sz', type=int, default=16)
+    parser.add_argument('--batch_sz', type=int, default=32)
     parser.add_argument('--lr', type=float, default=1e-3)
 
     parser.add_argument('--weight_decay', type=float, default=0.5)
@@ -572,30 +572,30 @@ def main():
     # device = torch.device(args.device if torch.cuda.is_available() else "cpu")
     device = torch.device('cuda' if torch.cuda.is_available() else 'cpu')
     # dataset
-    # glove = torchtext.vocab.GloVe(name='6B', dim=100,)
-    # # print(glove.get_vecs_by_tokens(['picture']))
-    # counter2 = Counter({'<unk>': 400000, '<pad>': 400001,'the':1})
-    # counter1 =  copy.deepcopy(glove.stoi)
-    #
-    # counter1.update(counter2)
-    # # print(counter1)
-    #
-    # vocab = Vocab(counter1)
-    counter2 = Counter({'<unk>': 400002, '<pad>': 400001})
-    glove = Vectors(name='/home/dongxx/projects/def-parimala/dongxx/glove.6B.100d.txt')
-    f = open('/home/dongxx/projects/def-parimala/dongxx/glove.6B.{}d.txt'.format(100), 'r')
-    loop = tqdm(f)
-    vob = {}
-    loop.set_description('Load Glove')
-    for i, line in enumerate(loop):
-        values = line.split()
-        word = values[0]
-        vob[word] = 400000 - i
-    counter1 = copy.deepcopy(vob)
-    f.close()
+    glove = torchtext.vocab.GloVe(name='6B', dim=100,)
+    # print(glove.get_vecs_by_tokens(['picture']))
+    counter2 = Counter({'<unk>': 400000, '<pad>': 400001,'the':1})
+    counter1 =  copy.deepcopy(glove.stoi)
 
     counter1.update(counter2)
+    # print(counter1)
+
     vocab = Vocab(counter1)
+    # counter2 = Counter({'<unk>': 400002, '<pad>': 400001})
+    # glove = Vectors(name='/home/dongxx/projects/def-parimala/dongxx/glove.6B.100d.txt')
+    # f = open('/home/dongxx/projects/def-parimala/dongxx/glove.6B.{}d.txt'.format(100), 'r')
+    # loop = tqdm(f)
+    # vob = {}
+    # loop.set_description('Load Glove')
+    # for i, line in enumerate(loop):
+    #     values = line.split()
+    #     word = values[0]
+    #     vob[word] = 400000 - i
+    # counter1 = copy.deepcopy(vob)
+    # f.close()
+    #
+    # counter1.update(counter2)
+    # vocab = Vocab(counter1)
     #     vocab_size = vocab.__len__()
     vocab_size=vocab.__len__()
     print("vocab_size:",vocab_size)

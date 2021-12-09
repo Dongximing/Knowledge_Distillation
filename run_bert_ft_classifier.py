@@ -515,8 +515,7 @@ def generate_batch(batch):
 
 
 def prepare_dateset(train_data_path, validation_data_path, test_data_path):
-    # with open(train_data_path,'r') as csvfile:
-    #     csvreader = csv.reader(csvf
+
     training_texts = []
     training_labels = []
     validation_texts = []
@@ -588,8 +587,7 @@ def train(train_dataset, model, criterion, device, optimizer, lr_scheduler):
     model.train()
     epoch_loss = 0
     epoch_acc = 0
-    # if epoche>1:
-    #     model.embedding_layer.weight.requires_grad = False
+
 
     for i, data in tqdm(enumerate(train_dataset), total=len(train_dataset)):
         input_ids, attention_mask, label = data
