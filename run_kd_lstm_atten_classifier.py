@@ -450,22 +450,22 @@ def prepare_dateset(train_data_path, validation_data_path,test_data_path,vocab):
 
 def generate_batch(batch):
 
-    if len(batch[0]) == 5:
+    if len(batch[0]) == 4:
         label = [entry[0] for entry in batch]
 
         # padding according to the maximum sequence length in batch
         text = [entry[1] for entry in batch]
 
-        text, text_length,_= pad_sequencing(text, ksz = 512, batch_first=True)
+        text, text_length = pad_sequencing(text, ksz = 512, batch_first=True)
 
 
         bert_id = [torch.tensor(entry[2]) for entry in batch]
         # print(bert_id)
         bert_id = pad_sequence(bert_id, batch_first=True)
-        attention_mask = [torch.tensor(entry[3]) for entry in batch]
-        attention_mask = pad_sequence(attention_mask, batch_first=True)
+        # attention_mask = [torch.tensor(entry[3]) for entry in batch]
+        # attention_mask = pad_sequence(attention_mask, batch_first=True)
 
-        return text, text_length, label,bert_id,attention_mask
+        return text, text_length, label,bert_id
     else:
         text = [entry for entry in batch]
         text_length = [len(seq) for seq in text]
@@ -503,7 +503,7 @@ def train_kd_fc(data_loader, device, bert_model, model,optimizer, criterion,crit
         with torch.no_grad():
             bert_output = bert_model(bert_id,bert_mask)
 
-        outputs = model(ids,lengths,)
+        outputs = model(ids,lengths)
         loss_soft =criterion_kd(outputs,bert_output)
         loss_hard = criterion(outputs, targets)
         loss = loss_hard*a + (1-a)*loss_soft
@@ -558,7 +558,7 @@ def main():
     parser.add_argument('--dropout', type=float, default=0.25)
     parser.add_argument('--embedding_dim', type=int, default=100)
     parser.add_argument('--num_epochs', type=int, default=10)
-    parser.add_argument('--batch_sz', type=int, default=32)
+    parser.add_argument('--batch_sz', type=int, default=16)
     parser.add_argument('--lr', type=float, default=1e-3)
 
     parser.add_argument('--weight_decay', type=float, default=0.5)
@@ -640,11 +640,11 @@ def main():
 
 
     LSTM_atten_model.embedding_layer.weight.requires_grad = False
-    print(f'The lstm attenmodel model has {count_parameters(LSTM_atten_model):,} trainable parameters')
+    print(f'The lstm atten model model has {count_parameters(LSTM_atten_model):,} trainable parameters')
 
     best_loss = float('inf')
     print("training")
-    for epoch in range(20):
+    for epoch in range(21):
         start_time = time.time()
 
 
@@ -657,8 +657,8 @@ def main():
         print(f'Epoch: {epoch + 1:02} | Epoch Time: {epoch_mins}m {epoch_secs}s')
         print(f'\tTrain Loss: {train_loss:.3f} | Train Acc: {train_acc * 100:.2f}%')
         print(f'\t Val. Loss: {valid_loss:.3f} |  Val. Acc: {valid_acc * 100:.2f}%')
-        # print("hard", hard)
-        # print("soft", soft)
+        print("hard", hard)
+        print("soft", soft)
 
         if valid_loss < best_loss:
             best_loss = valid_loss
