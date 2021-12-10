@@ -462,10 +462,10 @@ def generate_batch(batch):
         bert_id = [torch.tensor(entry[2]) for entry in batch]
         # print(bert_id)
         bert_id = pad_sequence(bert_id, batch_first=True)
-        # attention_mask = [torch.tensor(entry[3]) for entry in batch]
-        # attention_mask = pad_sequence(attention_mask, batch_first=True)
+        attention_mask = [torch.tensor(entry[3]) for entry in batch]
+        attention_mask = pad_sequence(attention_mask, batch_first=True)
 
-        return text, text_length, label,bert_id
+        return text, text_length, label,bert_id,attention_mask
     else:
         text = [entry for entry in batch]
         text_length = [len(seq) for seq in text]
