@@ -258,7 +258,7 @@ def main():
     LSTM_model.to(device)
     #opt scheduler criterion
     optimizer = torch.optim.Adam(LSTM_model.parameters(), lr=args.lr)
-    lr_scheduler = torch.optim.lr_scheduler.StepLR(optimizer, gamma=args.lr_gamma, step_size=6)
+    lr_scheduler = torch.optim.lr_scheduler.StepLR(optimizer, gamma=args.lr_gamma, step_size=8)
     criterion = nn.CrossEntropyLoss()
     criterion.to(device)
 
