@@ -456,7 +456,7 @@ def generate_batch(batch):
         # padding according to the maximum sequence length in batch
         text = [entry[1] for entry in batch]
 
-        text, text_length = pad_sequencing(text, ksz = 512, batch_first=True)
+        text, text_length,mask = pad_sequencing(text, ksz = 512, batch_first=True)
 
 
         bert_id = [torch.tensor(entry[2]) for entry in batch]
@@ -465,7 +465,7 @@ def generate_batch(batch):
         attention_mask = [torch.tensor(entry[3]) for entry in batch]
         attention_mask = pad_sequence(attention_mask, batch_first=True)
 
-        return text, text_length, label,bert_id,attention_mask
+        return text, text_length, label,bert_id,attention_mask,mask
     else:
         text = [entry for entry in batch]
         text_length = [len(seq) for seq in text]
@@ -489,12 +489,13 @@ def train_kd_fc(data_loader, device, bert_model, model,optimizer, criterion,crit
     soft_loss = 0
 
     for bi,data in tqdm(enumerate(data_loader),total = len(data_loader)):
-        text, text_length, label, bert_id, attention_mask = data
+        text, text_length, label, bert_id, attention_mask,mask = data
         text_length = torch.Tensor(text_length)
         label = torch.tensor(label, dtype=torch.long)
         ids = text.to(device, dtype=torch.long)
         bert_id = bert_id.to(device, dtype=torch.long)
         bert_mask = attention_mask.to(device, dtype=torch.long)
+        mask = mask.to(device)
 
         lengths = text_length.to(device, dtype=torch.int)
 
@@ -504,7 +505,7 @@ def train_kd_fc(data_loader, device, bert_model, model,optimizer, criterion,crit
             bert_output = bert_model(bert_id,bert_mask)
 
         outputs = model(ids,lengths)
-        loss_soft =criterion_kd(outputs,bert_output)
+        loss_soft =criterion_kd(outputs,bert_output,mask)
         loss_hard = criterion(outputs, targets)
         loss = loss_hard*a + (1-a)*loss_soft
         acc = categorical_accuracy(outputs, targets)
@@ -526,17 +527,18 @@ def validate(validation_dataset, model, criterion, device):
     epoch_acc = 0
 
     for i,data in enumerate(validation_dataset):
-        text, text_length, label, _, _ = data
+        text, text_length, label, _, _,mask = data
         text_length = torch.Tensor(text_length)
         label = torch.tensor(label, dtype=torch.long)
         text = text.to(device, dtype=torch.long)
 
         text_length = text_length.to(device,dtype=torch.int)
+        mask = mask.to(device)
 
         label = label.to(device)
 
         with torch.no_grad():
-            output = model(text,text_length)
+            output = model(text,text_length,mask)
         loss = criterion(output,label)
         acc = categorical_accuracy(output, label)
         epoch_loss += loss.item()
