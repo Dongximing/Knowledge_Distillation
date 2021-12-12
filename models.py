@@ -153,7 +153,7 @@ class LSTM_atten(nn.Module):
         # )
         # self.lstm_dropout = nn.Dropout(0.5)
         # self.w = nn.Linear(hidden_dim, 1)
-        # self.tanh = nn.Tanh()
+        self.tanh = nn.Tanh()
         # self.softmax = nn.Softmax(dim=1)
         # self.fc_out = nn.Sequential(
         #     nn.Dropout(dropout),
