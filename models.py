@@ -144,7 +144,7 @@ class LSTM_atten(nn.Module):
         self.hidden_size = hidden_dim
         self.rnn = nn.LSTM(embedding_dim, hidden_dim, num_layers=n_layers, dropout=dropout, bidirectional=bidirectional,
                            batch_first=True)
-        self.fc = nn.Linear(hidden_dim*2 , number_class)
+        self.fc = nn.Linear(hidden_dim , number_class)
         self.dropout = nn.Dropout(dropout)
         self.att_weight = nn.Parameter(torch.randn(1, self.hidden_size, 1))
         # self.attention_layer = nn.Sequential(
