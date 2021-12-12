@@ -231,14 +231,14 @@ class LSTM_atten(nn.Module):
         c0 = c0.to(device)
         return (h0, c0)
     def forward(self,text,text_length,mask):
-
-        a_lengths, idx = text_length.sort(0, descending=True)
-        _, un_idx = t.sort(idx, dim=0)
-        seq = text[idx]
+        #
+        # a_lengths, idx = text_length.sort(0, descending=True)
+        # _, un_idx = t.sort(idx, dim=0)
+        # seq = text[idx]
         self.hidden = self.init_hidden(text.size(0))
 
         seq = self.dropout(self.embedding_layer(seq))
-        a_packed_input = t.nn.utils.rnn.pack_padded_sequence(input=seq, lengths=a_lengths.to('cpu'), batch_first=True)
+        a_packed_input = t.nn.utils.rnn.pack_padded_sequence(input=seq, lengths=a_lengths.to('cpu'), batch_first=True,enforce_sorted=False)
         packed_output, (hidden, cell) = self.rnn(a_packed_input,self.hidden)
         out, _ = t.nn.utils.rnn.pad_packed_sequence(packed_output, batch_first=True)
         # batch_size = hidden.shape[1]
@@ -299,7 +299,7 @@ class LSTM_atten(nn.Module):
         # concatenated_vector = torch.cat([hidden, context], dim=1)
         # concatenated_vector =self.dropout(concatenated_vector)
 
-        context = t.index_select(context, 0, un_idx)
+        # context = t.index_select(context, 0, un_idx)
         # context = t.index_select(context, 0, un_idx)
         # context = self.dropout(context)
         return self.fc(context)
