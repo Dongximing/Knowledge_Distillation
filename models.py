@@ -146,7 +146,7 @@ class LSTM_atten(nn.Module):
                            batch_first=True)
         self.fc = nn.Linear(hidden_dim*2 , number_class)
         self.dropout = nn.Dropout(dropout)
-        # self.att_weight = nn.Parameter(torch.randn(1, self.hidden_size, 1))
+        self.att_weight = nn.Parameter(torch.randn(1, self.hidden_size, 1))
         # self.attention_layer = nn.Sequential(
         #     nn.Linear(hidden_dim, hidden_dim),
         #     nn.ReLU(inplace=True)
@@ -203,43 +203,43 @@ class LSTM_atten(nn.Module):
         soft_max_weights = F.softmax(attent_weight,1)
         context = torch.bmm(output.transpose(1,2),soft_max_weights.unsqueeze(2)).squeeze(2)
         return context
-    # def attention(self,finial_state,mask):
-    #     att_weight = self.att_weight.expand(mask.shape[0], -1, -1)
-    #     h = self.tanh(finial_state)  # (batch_size, word_pad_len, rnn_size)
-    #     att_score = torch.bmm(self.tanh(h), att_weight)
-    #     # eq.10: α = softmax(w^T M)
-    #     mask = mask.unsqueeze(dim=-1)
-    #     att_score = att_score.masked_fill(mask.eq(0), float('-inf'))
-    #     att_weight = F.softmax(att_score, dim=1)
+    def attention(self,finial_state,mask):
+        att_weight = self.att_weight.expand(mask.shape[0], -1, -1)
+        h = self.tanh(finial_state)  # (batch_size, word_pad_len, rnn_size)
+        att_score = torch.bmm(self.tanh(h), att_weight)
+        # eq.10: α = softmax(w^T M)
+        mask = mask.unsqueeze(dim=-1)
+        att_score = att_score.masked_fill(mask.eq(0), float('-inf'))
+        att_weight = F.softmax(att_score, dim=1)
+
+        reps = torch.bmm(h.transpose(1, 2), att_weight).squeeze(dim=-1)  # B*H*L *  B*L*1 -> B*H*1 -> B*H
+        reps = self.tanh(reps)
+
+        # alpha = self.w(M).squeeze(2)  # (batch_size, word_pad_len)
+        # alpha = self.softmax(alpha)  # (batch_size, word_pad_len)
+        #
+        # r = finial_state * alpha.unsqueeze(2)  # (batch_size, word_pad_len, rnn_size)
+        # r = r.sum(dim = 1)  # (batch_size, rnn_size)
+
+        return reps
     #
-    #     reps = torch.bmm(h.transpose(1, 2), att_weight).squeeze(dim=-1)  # B*H*L *  B*L*1 -> B*H*1 -> B*H
-    #     reps = self.tanh(reps)
-    #
-    #     # alpha = self.w(M).squeeze(2)  # (batch_size, word_pad_len)
-    #     # alpha = self.softmax(alpha)  # (batch_size, word_pad_len)
-    #     #
-    #     # r = finial_state * alpha.unsqueeze(2)  # (batch_size, word_pad_len, rnn_size)
-    #     # r = r.sum(dim = 1)  # (batch_size, rnn_size)
-    #
-    #     return reps
-    #
-    # def init_hidden(self, b_size):
-    #     h0 = Variable(torch.zeros(2* 2, b_size, self.hidden_size))
-    #     c0 = Variable(torch.zeros(2* 2, b_size, self.hidden_size))
-    #
-    #     h0 = h0.to(device)
-    #     c0 = c0.to(device)
-    #     return (h0, c0)
-    def forward(self,text,text_length):
+    def init_hidden(self, b_size):
+        h0 = Variable(torch.zeros(2* 2, b_size, self.hidden_size))
+        c0 = Variable(torch.zeros(2* 2, b_size, self.hidden_size))
+
+        h0 = h0.to(device)
+        c0 = c0.to(device)
+        return (h0, c0)
+    def forward(self,text,text_length,mask):
 
         a_lengths, idx = text_length.sort(0, descending=True)
         _, un_idx = t.sort(idx, dim=0)
         seq = text[idx]
-        # self.hidden = self.init_hidden(text.size(0))
+        self.hidden = self.init_hidden(text.size(0))
 
         seq = self.dropout(self.embedding_layer(seq))
         a_packed_input = t.nn.utils.rnn.pack_padded_sequence(input=seq, lengths=a_lengths.to('cpu'), batch_first=True)
-        packed_output, (hidden, cell) = self.rnn(a_packed_input)
+        packed_output, (hidden, cell) = self.rnn(a_packed_input,self.hidden)
         out, _ = t.nn.utils.rnn.pad_packed_sequence(packed_output, batch_first=True)
         # batch_size = hidden.shape[1]
         # h_n_final_layer = hidden.view(2,
@@ -287,19 +287,19 @@ class LSTM_atten(nn.Module):
         # hidden = self.dropout(t.cat((hidden[-2, :, :], hidden[-1, :, :]), dim=1))
 
         # # print(hidden.size())
-        # out = out[:, :, : self.hidden_size] + out[:, :, self.hidden_size:]
+        out = out[:, :, : self.hidden_size] + out[:, :, self.hidden_size:]
         # context, alphas = self.attention(H)
         # context = self.tanh(context)
 
-        # context = self.attention(out,mask)
+        context = self.attention(out,mask)
         # hidden = hidden.permute(1, 0, 2)
         # final_hidden_state = torch.cat([h_n_final_layer[i, :, :] for i in range(h_n_final_layer.shape[0])], dim=1)
         # out =self.dropout(out)
-        context = self.atten(out, hidden)
+        # context = self.atten(out, hidden)
         # concatenated_vector = torch.cat([hidden, context], dim=1)
         # concatenated_vector =self.dropout(concatenated_vector)
 
-        out = t.index_select(out, 0, un_idx)
+        context = t.index_select(context, 0, un_idx)
         context = t.index_select(context, 0, un_idx)
         # context = self.dropout(context)
         return self.fc(context)

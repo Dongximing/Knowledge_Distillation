@@ -151,8 +151,9 @@ def train(train_dataset,model,criterion,device,optimizer,lr_scheduler,epoche):
         text_length= text_length.to(device)
         text = text.to(device,dtype = torch.long)
         label =label.to(device)
+        mask = mask.to(device)
         optimizer.zero_grad()
-        output = model(text,text_length)
+        output = model(text,text_length,mask)
         loss = criterion(output,label)
         acc,_ = categorical_accuracy(output, label)
         epoch_loss += loss.item()
@@ -184,7 +185,7 @@ def validate(validation_dataset, model, criterion, device):
 
 
         with torch.no_grad():
-            output = model(text,text_length)
+            output = model(text,text_length,mask)
         loss = criterion(output,label)
         acc, pred = categorical_accuracy(output, label)
         total_pred.append(pred)
