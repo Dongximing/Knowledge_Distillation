@@ -300,7 +300,7 @@ class LSTM_atten(nn.Module):
         # concatenated_vector =self.dropout(concatenated_vector)
 
         context = t.index_select(context, 0, un_idx)
-        context = t.index_select(context, 0, un_idx)
+        # context = t.index_select(context, 0, un_idx)
         # context = self.dropout(context)
         return self.fc(context)
 class BERT(nn.Module):
