@@ -65,8 +65,10 @@ def _create_data_from_iterator(vocab,  iterator, include_unk, is_test=False):
 
                 else:
 
-                    token_ids = list(filter(lambda x: x is not Vocab.UNK, [vocab[token]
-                                                                           for token in text]))
+                    # token_ids = list(filter(lambda x: x is not Vocab.UNK, [vocab[token]
+                    #                                                        for token in text]))
+                    token_ids = list(filter(lambda x: x is not 0, [vocab[token]
+                                                                   for token in text]))
                     # print(token_ids)
                     tokens = torch.tensor(token_ids)
 
@@ -128,10 +130,10 @@ def _create_data_kd_from_iterator(vocab,tokenizer, iterator, include_unk, is_tes
                 else:
 
 
-                    # token_ids = list(filter(lambda x: x is not 0, [vocab[token]
-                    #                                                   for token in text]))
-                    token_ids = list(filter(lambda x: x is not Vocab.UNK, [vocab[token]
-                                                                           for token in text]))
+                    token_ids = list(filter(lambda x: x is not 0, [vocab[token]
+                                                                      for token in text]))
+                    # token_ids = list(filter(lambda x: x is not Vocab.UNK, [vocab[token]
+                    #                                                        for token in text]))
 
                     tokens = torch.tensor(token_ids)
                     encoding = tokenizer.encode_plus(
