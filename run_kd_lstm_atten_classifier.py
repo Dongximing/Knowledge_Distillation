@@ -611,7 +611,7 @@ def main():
     LSTM_atten_model.to(device)
     #opt scheduler criterion
     optimizer = torch.optim.Adam(LSTM_atten_model.parameters(), lr=args.lr)
-    lr_scheduler = torch.optim.lr_scheduler.StepLR(optimizer, gamma=args.lr_gamma, step_size=10)
+    lr_scheduler = torch.optim.lr_scheduler.StepLR(optimizer, gamma=args.lr_gamma, step_size=5)
     criterion = nn.CrossEntropyLoss()
     kd_critertion = nn.MSELoss()
     kd_critertion = kd_critertion.to(device)
@@ -641,12 +641,12 @@ def main():
     LSTM_atten_model.embedding_layer.weight.data[0] = torch.zeros(100)
 
 
-    LSTM_atten_model.embedding_layer.weight.requires_grad = False
+    LSTM_atten_model.embedding_layer.weight.requires_grad = True
     print(f'The lstm atten model model has {count_parameters(LSTM_atten_model):,} trainable parameters')
 
     best_loss = float('inf')
     print("training")
-    for epoch in range(25):
+    for epoch in range(15):
         start_time = time.time()
 
 
