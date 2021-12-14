@@ -144,7 +144,7 @@ class LSTM_atten(nn.Module):
         self.hidden_size = hidden_dim
         self.rnn = nn.LSTM(embedding_dim, hidden_dim, num_layers=n_layers, dropout=dropout, bidirectional=bidirectional,
                            batch_first=True)
-        self.fc = nn.Linear(hidden_dim , number_class)
+        self.fc = nn.Linear(hidden_dim*2 , number_class)
         self.dropout = nn.Dropout(dropout)
         self.att_weight = nn.Parameter(torch.randn(1, self.hidden_size, 1))
         # self.attention_layer = nn.Sequential(
@@ -291,11 +291,11 @@ class LSTM_atten(nn.Module):
         # context, alphas = self.attention(H)
         # context = self.tanh(context)
 
-        context = self.attention(out,mask)
+        # context = self.attention(out,mask)
         # hidden = hidden.permute(1, 0, 2)
         # final_hidden_state = torch.cat([h_n_final_layer[i, :, :] for i in range(h_n_final_layer.shape[0])], dim=1)
         # out =self.dropout(out)
-        # context = self.atten(out, hidden)
+        context = self.atten(out, hidden)
         # concatenated_vector = torch.cat([hidden, context], dim=1)
         # concatenated_vector =self.dropout(concatenated_vector)
 
