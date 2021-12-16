@@ -100,7 +100,7 @@ def prepare_dateset(train_data_path, validation_data_path,test_data_path, vocab)
     labellist = list(testing.Sentiment)
     print('prepare training and test sets')
     logging.info('Prepare training and test sets')
-    tokenize = BertTokenizer.from_pretrained('/home/dongxx/projects/def-mercer/dongxx/bert-base-uncased',do_lower_case=True)
+    tokenize = BertTokenizer.from_pretrained('bert-base-uncased',do_lower_case=True)
 
     train_dataset, validation_dataset,testing_dataset = IMDB_kd_indexing(training_texts,training_labels,validation_texts,validation_labels,testing_texts,testing_labels,tokenize,vocab= vocab)
     print('building vocab')
@@ -176,20 +176,20 @@ def train_kd_fc(data_loader, device, bert_model, model,optimizer, criterion,crit
             bert_output = bert_model(bert_id,bert_mask)
 
         outputs = model(ids)
-        # loss_soft =criterion_kd(outputs,bert_output)
-        # loss_hard = criterion(outputs, targets)
-        # loss = loss_hard*a + (1-a)*loss_soft
-        loss = loss_fn_kd(outputs,label,bert_output,T=10,alpha=0.5)
+        loss_soft =criterion_kd(outputs,bert_output)
+        loss_hard = criterion(outputs, targets)
+        loss = loss_hard*a + (1-a)*loss_soft
+        # loss = loss_fn_kd(outputs,label,bert_output,T=10,alpha=0.5)
 
         acc,_ = categorical_accuracy(outputs, targets)
         loss.backward()
         optimizer.step()
-        # soft_loss += loss_soft.item()
-        # hard_loss += loss_hard.item()
+        soft_loss += loss_soft.item()
+        hard_loss += loss_hard.item()
         epoch_loss += loss.item()
         epoch_acc += acc.item()
     scheduler.step()
-    return epoch_loss / len(data_loader), epoch_acc / len(data_loader)
+    return epoch_loss / len(data_loader), epoch_acc / len(data_loader),hard_loss / len(data_loader), soft_loss/ len(data_loader)
 
 # def train(train_dataset,model,bert_model,criterion,device,optimizer,lr_scheduler):
 #     model.train()
@@ -297,7 +297,7 @@ def main():
     # model
     cnn_model =CNN_Baseline(vocab_size = vocab_size, nKernel = args.nKernel, ksz = args.ksz,number_class = args.number_class)
     cnn_model.to(device)
-    bert = BertModel.from_pretrained('/home/dongxx/projects/def-mercer/dongxx/bert-base-uncased')
+    bert = BertModel.from_pretrained('bert-base-uncased')
 
     bert_model = BERTGRUSentiment(bert,
                                   config.HIDDEN_DIM,
@@ -328,7 +328,7 @@ def main():
     best_loss = float('inf')
     for epoch in range(args.num_epochs):
 
-        train_loss, train_acc =train_kd_fc(training,device,bert_model,cnn_model,optimizer,criterion,kd_critertion,lr_scheduler)
+        train_loss, train_acc,soft_loss,hard_loss =train_kd_fc(training,device,bert_model,cnn_model,optimizer,criterion,kd_critertion,lr_scheduler)
 
         valid_loss, valid_acc,_ = validate(validation,cnn_model,criterion,device)
         print("epoch is ",epoch)
