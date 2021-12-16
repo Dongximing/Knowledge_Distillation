@@ -194,11 +194,11 @@ def validate(validation_dataset, model, criterion, device):
 def main():
     parser = argparse.ArgumentParser()
     parser.add_argument('--train_path', type=str,
-                        default='/home/dongxx/projects/def-mercer/dongxx/IMDB_data/train.csv')
+                        default='/home/dongxx/projects/def-parimala/dongxx/data/train.csv')
     parser.add_argument('--validation_path', type=str,
-                        default='/home/dongxx/projects/def-mercer/dongxx/IMDB_data/valid.csv')
+                        default='/home/dongxx/projects/def-parimala/dongxx/data/valid.csv')
     parser.add_argument('--test_path', type=str,
-                        default='/home/dongxx/projects/def-mercer/dongxx/IMDB_data/test.csv')
+                        default='/home/dongxx/projects/def-parimala/dongxx/data/test.csv')
     parser.add_argument('--nKernel', type=int, default=64)
     parser.add_argument('--ksz', type=list, default=[3,4,5])
     parser.add_argument('--dropout', type=float, default=0.2)
