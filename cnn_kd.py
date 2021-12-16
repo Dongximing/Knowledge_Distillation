@@ -260,7 +260,7 @@ def main():
     parser.add_argument('--ksz', type=list, default=[3,4,5])
     parser.add_argument('--dropout', type=float, default=0.2)
     parser.add_argument('--embedding_dim', type=int, default=100)
-    parser.add_argument('--num_epochs', type=int, default=15)
+    parser.add_argument('--num_epochs', type=int, default=20)
     parser.add_argument('--batch_sz', type=int, default=32)
     parser.add_argument('--lr', type=float, default=1e-3)
 
@@ -305,12 +305,12 @@ def main():
                                   config.N_LAYERS,
                                   config.BIDIRECTIONAL,
                                   config.DROPOUT)
-    bert_model.load_state_dict(torch.load(config.BERT_PATH))
+    bert_model.load_state_dict(torch.load('/home/dongxx/projects/def-mercer/dongxx/project/Model_parameter/new_bert.pt'))
     bert_model.to(device)
     bert_model.eval()
     #opt scheduler criterion
     optimizer = torch.optim.Adam(cnn_model.parameters(), lr=args.lr)
-    lr_scheduler = torch.optim.lr_scheduler.StepLR(optimizer, gamma=args.lr_gamma, step_size=8)
+    lr_scheduler = torch.optim.lr_scheduler.StepLR(optimizer, gamma=args.lr_gamma, step_size=10)
     criterion = nn.CrossEntropyLoss()
 
     kd_critertion = nn.MSELoss()
