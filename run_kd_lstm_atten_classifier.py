@@ -535,6 +535,7 @@ def validate(validation_dataset, model, criterion, device):
         text_length = text_length.to(device,dtype=torch.int)
         mask = mask.to(device)
 
+
         label = label.to(device)
 
         with torch.no_grad():
