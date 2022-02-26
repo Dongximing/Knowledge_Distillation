@@ -563,6 +563,7 @@ def prepare_dateset(train_data_path, validation_data_path, test_data_path):
 
     print('prepare training and test sets')
     logging.info('Prepare training and test sets')
+    labellist = list(testing.Sentiment)
 
     tokenizers = BertTokenizer.from_pretrained('bert-base-uncased', do_lower_case=True)
 
@@ -570,7 +571,7 @@ def prepare_dateset(train_data_path, validation_data_path, test_data_path):
                                                                    validation_labels, testing_texts, testing_labels,
                                                                    tokenizer=tokenizers, max_len=512)
 
-    return train_dataset, validation_dataset, testing_dataset
+    return train_dataset, validation_dataset, testing_dataset,labellist
 
 
 def categorical_accuracy(preds, y):
@@ -665,7 +666,7 @@ def main():
     lr_scheduler = torch.optim.lr_scheduler.StepLR(optimizer, gamma=args.lr_gamma, step_size=5)
     criterion = nn.CrossEntropyLoss()
     criterion.to(device)
-    train_dataset, validation_dataset, test_dataset = prepare_dateset(args.train_path, args.validation_path,
+    train_dataset, validation_dataset, test_dataset,labellist = prepare_dateset(args.train_path, args.validation_path,
                                                                       args.test_path)
 
     training = DataLoader(train_dataset, collate_fn=generate_batch, batch_size=args.batch_sz, shuffle=True)
