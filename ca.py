@@ -204,6 +204,16 @@ print(b.size())
 print("=====================")
 
 
+a = [1,2,3]
+c= a[-3:]
+print(c)
+
+print('================================-------------------------')
+a = torch.randn(2,3,1)
+print(a)
+a = a.squeeze()
+print(a)
+
 # print(a)
 # concatenated_vector = torch.cat([a, a], dim=1)
 # print(concatenated_vector)
