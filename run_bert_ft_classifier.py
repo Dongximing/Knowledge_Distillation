@@ -683,7 +683,7 @@ def main():
 
         train_loss, train_acc = train(training, BertGRU_model, criterion, device, optimizer, lr_scheduler)
         # print("testing emebedding")
-        valid_loss, valid_acc,flat_list = validate(validation, BertGRU_model, criterion, device)
+        valid_loss, valid_acc,_ = validate(validation, BertGRU_model, criterion, device)
         end_time = time.time()
         epoch_mins, epoch_secs = epoch_time(start_time, end_time)
         print(f'Epoch: {epoch + 1:02} | Epoch Time: {epoch_mins}m {epoch_secs}s')
