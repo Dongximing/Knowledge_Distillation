@@ -581,7 +581,7 @@ def categorical_accuracy(preds, y):
     top_pred = preds.argmax(1, keepdim=True)
     correct = top_pred.eq(y.view_as(top_pred)).sum()
     acc = correct.float() / y.shape[0]
-    return acc
+    return acc,top_pred
 
 
 def train(train_dataset, model, criterion, device, optimizer, lr_scheduler):
@@ -598,7 +598,7 @@ def train(train_dataset, model, criterion, device, optimizer, lr_scheduler):
         optimizer.zero_grad()
         output = model(ids=input_ids, mask=attention_mask)
         loss = criterion(output, label)
-        acc = categorical_accuracy(output, label)
+        acc,_ = categorical_accuracy(output, label)
         epoch_loss += loss.item()
         epoch_acc += acc.item()
         loss.backward()
@@ -612,6 +612,8 @@ def validate(validation_dataset, model, criterion, device):
 
     epoch_loss = 0
     epoch_acc = 0
+    total_pred =[]
+
 
     for i, data in enumerate(validation_dataset):
         input_ids, attention_mask, label = data
@@ -620,9 +622,10 @@ def validate(validation_dataset, model, criterion, device):
         with torch.no_grad():
             output = model(ids=input_ids, mask=attention_mask)
         loss = criterion(output, label)
-        acc = categorical_accuracy(output, label)
+        acc, pred = categorical_accuracy(output, label)
         epoch_loss += loss.item()
         epoch_acc += acc.item()
+        total_pred.append(pred)
     flat_list = [item for sublist in total_pred for item in sublist]
     return epoch_loss / len(validation_dataset), epoch_acc / len(validation_dataset),flat_list
 
