@@ -658,7 +658,7 @@ def main():
 
         train_loss, train_acc,hard, soft  = train_kd_fc(training, device, bert_model,LSTM_atten_model,optimizer, criterion,kd_critertion,lr_scheduler)
 
-        valid_loss, valid_acc = validate(validation,LSTM_atten_model,criterion,device)
+        valid_loss, valid_acc,_ = validate(validation,LSTM_atten_model,criterion,device)
         end_time = time.time()
         epoch_mins, epoch_secs = epoch_time(start_time, end_time)
         print(f'Epoch: {epoch + 1:02} | Epoch Time: {epoch_mins}m {epoch_secs}s')
@@ -674,7 +674,7 @@ def main():
 
     print("testing")
     LSTM_atten_model.load_state_dict(torch.load('/home/dongxx/projects/def-parimala/dongxx/Model_parameter/kd_atten.pt'))
-    test_loss, test_acc = validate(testing,LSTM_atten_model,criterion,device)
+    test_loss, test_acc,flat_list = validate(testing,LSTM_atten_model,criterion,device)
 
     print(f'Test Loss: {test_loss:.3f} | Test Acc: {test_acc * 100:.2f}%')
     print("testing done")
