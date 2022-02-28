@@ -623,7 +623,8 @@ def validate(validation_dataset, model, criterion, device):
         acc = categorical_accuracy(output, label)
         epoch_loss += loss.item()
         epoch_acc += acc.item()
-    return epoch_loss / len(validation_dataset), epoch_acc / len(validation_dataset)
+    flat_list = [item for sublist in total_pred for item in sublist]
+    return epoch_loss / len(validation_dataset), epoch_acc / len(validation_dataset),flat_list
 
 
 def main():
@@ -679,7 +680,7 @@ def main():
 
         train_loss, train_acc = train(training, BertGRU_model, criterion, device, optimizer, lr_scheduler)
         # print("testing emebedding")
-        valid_loss, valid_acc = validate(validation, BertGRU_model, criterion, device)
+        valid_loss, valid_acc,flat_list = validate(validation, BertGRU_model, criterion, device)
         end_time = time.time()
         epoch_mins, epoch_secs = epoch_time(start_time, end_time)
         print(f'Epoch: {epoch + 1:02} | Epoch Time: {epoch_mins}m {epoch_secs}s')
@@ -692,7 +693,7 @@ def main():
 
     print("testing")
     BertGRU_model.load_state_dict(torch.load(config.BERT_PATH))
-    test_loss, test_acc = validate(testing, BertGRU_model, criterion, device)
+    test_loss, test_acc,flat_list= validate(testing, BertGRU_model, criterion, device)
 
     print(f'Test Loss: {test_loss:.3f} | Test Acc: {test_acc * 100:.2f}%')
     print("testing done")

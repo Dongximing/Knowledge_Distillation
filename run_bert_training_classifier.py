@@ -341,7 +341,7 @@ def categorical_accuracy(preds, y):
     top_pred = preds.argmax(1, keepdim=True)
     correct = top_pred.eq(y.view_as(top_pred)).sum()
     acc = correct.float() / y.shape[0]
-    return acc
+    return acc,top_pred
 
 
 def train(train_dataset, model, criterion, device, optimizer, scheduler):
@@ -359,7 +359,7 @@ def train(train_dataset, model, criterion, device, optimizer, scheduler):
         optimizer.zero_grad()
         output = model(ids=input_ids, mask=attention_mask,token_type_ids =token_type_ids )
         loss = criterion(output, label)
-        acc = categorical_accuracy(output, label)
+        acc,_ = categorical_accuracy(output, label)
         epoch_loss += loss.item()
         epoch_acc += acc.item()
         loss.backward()
@@ -373,6 +373,7 @@ def validate(validation_dataset, model, criterion, device):
 
     epoch_loss = 0
     epoch_acc = 0
+    total_pred = []
 
     for i, data in enumerate(validation_dataset):
         input_ids, attention_mask,token_type_ids, label = data
@@ -381,10 +382,12 @@ def validate(validation_dataset, model, criterion, device):
         with torch.no_grad():
             output = model(ids=input_ids, mask=attention_mask ,token_type_ids = token_type_ids)
         loss = criterion(output, label)
-        acc = categorical_accuracy(output, label)
+        acc, pred = categorical_accuracy(output, label)
+        total_pred.append(pred)
         epoch_loss += loss.item()
         epoch_acc += acc.item()
-    return epoch_loss / len(validation_dataset), epoch_acc / len(validation_dataset)
+    flat_list = [item for sublist in total_pred for item in sublist]
+    return epoch_loss / len(validation_dataset), epoch_acc / len(validation_dataset),flat_list
 
 
 def main():
@@ -450,7 +453,7 @@ def main():
 
         train_loss, train_acc = train(training, Bert_model, criterion, device, optimizer, scheduler)
         # print("testing emebedding")
-        valid_loss, valid_acc = validate(validation, Bert_model, criterion, device)
+        valid_loss, valid_acc,flat_list= validate(validation, Bert_model, criterion, device)
         end_time = time.time()
         epoch_mins, epoch_secs = epoch_time(start_time, end_time)
         print(f'Epoch: {epoch + 1:02} | Epoch Time: {epoch_mins}m {epoch_secs}s')
@@ -463,7 +466,7 @@ def main():
 
     print("testing")
     Bert_model.load_state_dict(torch.load(config.BERT_ft_PATH))
-    test_loss, test_acc = validate(testing, Bert_model, criterion, device)
+    test_loss, test_acc ,flat_list= validate(testing, Bert_model, criterion, device)
 
     print(f'Test Loss: {test_loss:.3f} | Test Acc: {test_acc * 100:.2f}%')
     print("testing done")
