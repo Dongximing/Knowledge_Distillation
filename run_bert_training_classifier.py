@@ -268,11 +268,11 @@ def generate_batch(batch):
     input_ids = pad_sequence(input_ids, batch_first=True)
     attention_mask = [torch.tensor(entry['attention_mask']) for entry in batch]
     attention_mask = pad_sequence(attention_mask, batch_first=True)
-    token_type_ids = [torch.tensor(entry['token_type_ids']) for entry in batch]
-    token_type_ids = pad_sequence(token_type_ids, batch_first=True)
+    # token_type_ids = [torch.tensor(entry['token_type_ids']) for entry in batch]
+    # token_type_ids = pad_sequence(token_type_ids, batch_first=True)
     label = [entry['label'] for entry in batch]
 
-    return input_ids, attention_mask,token_type_ids, label
+    return input_ids, attention_mask, label
 
 
 def prepare_dateset(train_data_path, validation_data_path, test_data_path):
@@ -353,19 +353,37 @@ def train(train_dataset, model, criterion, device, optimizer, scheduler):
     #     model.embedding_layer.weight.requires_grad = False
 
     for i, data in tqdm(enumerate(train_dataset), total=len(train_dataset)):
-        input_ids, attention_mask,token_type_ids, label = data
-        input_ids, attention_mask, token_type_ids, label = input_ids.to(device), attention_mask.to(device),token_type_ids.to(device), torch.LongTensor(label)
+        # input_ids, attention_mask,token_type_ids, label = data
+        # input_ids, attention_mask, token_type_ids, label = input_ids.to(device), attention_mask.to(device),token_type_ids.to(device), torch.LongTensor(label)
+        # label = label.to(device)
+        #
+        # optimizer.zero_grad()
+        # output = model(ids=input_ids, mask=attention_mask,token_type_ids =token_type_ids )
+        # loss = criterion(output, label)
+        # acc,_ = categorical_accuracy(output, label)
+        # epoch_loss += loss.item()
+        # epoch_acc += acc.item()
+        # loss.backward()
+        # optimizer.step()
+        # scheduler.step()
+        input_ids, attention_mask, label = data
+        input_ids, attention_mask, label = input_ids.to(device), attention_mask.to(device), torch.LongTensor(label)
         label = label.to(device)
 
+        inputs = {'input_ids': input_ids, 'attention_mask': attention_mask, 'labels': label}
         optimizer.zero_grad()
-        output = model(ids=input_ids, mask=attention_mask,token_type_ids =token_type_ids )
-        loss = criterion(output, label)
-        acc,_ = categorical_accuracy(output, label)
+        output = model(**inputs)
+        loss = output[0]
+        logits = output[1]
+
+        acc, _ = categorical_accuracy(logits, label)
+
         epoch_loss += loss.item()
         epoch_acc += acc.item()
         loss.backward()
+        torch.nn.utils.clip_grad_norm_(model.parameters(), 1.0)
         optimizer.step()
-        scheduler.step()
+        lr_scheduler.step()
     return epoch_loss / len(train_dataset), epoch_acc / len(train_dataset)
 
 
