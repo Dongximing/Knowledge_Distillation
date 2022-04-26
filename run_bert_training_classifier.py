@@ -388,7 +388,7 @@ def train(train_dataset, model, criterion, device, optimizer, scheduler):
 
 
 def validate(validation_dataset, model, criterion, device):
-    # model.eval()
+    model.eval()
     #
     # epoch_loss = 0
     # epoch_acc = 0
