@@ -388,20 +388,38 @@ def train(train_dataset, model, criterion, device, optimizer, scheduler):
 
 
 def validate(validation_dataset, model, criterion, device):
-    model.eval()
-
+    # model.eval()
+    #
+    # epoch_loss = 0
+    # epoch_acc = 0
+    # total_pred = []
+    #
+    # for i, data in enumerate(validation_dataset):
+    #     input_ids, attention_mask,token_type_ids, label = data
+    #     input_ids, attention_mask, token_type_ids, label = input_ids.to(device), attention_mask.to(device),token_type_ids.to(device), torch.LongTensor(label)
+    #     label = label.to(device)
+    #     with torch.no_grad():
+    #         output = model(ids=input_ids, mask=attention_mask ,token_type_ids = token_type_ids)
+    #     loss = criterion(output, label)
+    #     acc, pred = categorical_accuracy(output, label)
+    #     total_pred.append(pred)
+    #     epoch_loss += loss.item()
+    #     epoch_acc += acc.item()
+    # flat_list = [item for sublist in total_pred for item in sublist]
     epoch_loss = 0
     epoch_acc = 0
     total_pred = []
-
     for i, data in enumerate(validation_dataset):
-        input_ids, attention_mask,token_type_ids, label = data
-        input_ids, attention_mask, token_type_ids, label = input_ids.to(device), attention_mask.to(device),token_type_ids.to(device), torch.LongTensor(label)
+        input_ids, attention_mask, label = data
+        input_ids, attention_mask, label = input_ids.to(device), attention_mask.to(device), torch.LongTensor(label)
         label = label.to(device)
+        inputs = {'input_ids': input_ids, 'attention_mask': attention_mask, 'labels': label}
         with torch.no_grad():
-            output = model(ids=input_ids, mask=attention_mask ,token_type_ids = token_type_ids)
-        loss = criterion(output, label)
-        acc, pred = categorical_accuracy(output, label)
+            output = model(**inputs)
+        loss = output[0]
+        logits = output[1]
+
+        acc, pred = categorical_accuracy(logits, label)
         total_pred.append(pred)
         epoch_loss += loss.item()
         epoch_acc += acc.item()
