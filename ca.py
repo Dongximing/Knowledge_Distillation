@@ -209,10 +209,24 @@ c= a[-3:]
 print(c)
 
 print('================================-------------------------')
-a = torch.randn(2,3,1)
+a = torch.ones(2,10,10)
 print(a)
-a = a.squeeze()
-print(a)
+print('================================-------------------------')
+dropout = nn.Dropout(p=0.2)
+
+print(dropout(a))
+
+x=torch.rand(2,3,5)
+y = torch.rand(2,3,5)
+print(x)
+print(y)
+z = torch.cat((x[-1,:,:],x[-2,:,:]),dim=1)
+i  =x[-1,:,:]
+print('================================-------------------------')
+print(i.size())
+# f = torch.cat((x[-1,:,:],x[-2,:,:]),dim=2)
+print(z)
+# print(f)
 
 # print(a)
 # concatenated_vector = torch.cat([a, a], dim=1)
