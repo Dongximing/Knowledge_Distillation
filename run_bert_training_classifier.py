@@ -438,7 +438,7 @@ def main():
 
 
 
-    parser.add_argument('--num_epochs', type=int, default=5)
+    parser.add_argument('--num_epochs', type=int, default=3)
     parser.add_argument('--batch_sz', type=int, default=8)
 
 
@@ -478,7 +478,7 @@ def main():
 
     # optimizer = AdamW(optimizer_parameters, lr=3e-5)
     scheduler = get_linear_schedule_with_warmup(
-        optimizer, num_warmup_steps=0, num_training_steps=int(20000/8*5)
+        optimizer, num_warmup_steps=0, num_training_steps=int(20000/8*3)
     )
 
     print(f'The Bert training model has {count_parameters(model):,} trainable parameters')

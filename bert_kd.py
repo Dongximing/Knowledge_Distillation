@@ -617,7 +617,7 @@ def main():
         num_labels=2,
         output_attentions=False,
         output_hidden_states=False)
-    bert_model.load_state_dict(torch.load(config.BERT_nft_PATH))
+    bert_model.load_state_dict(torch.load(config.BERT_ft_PATH))
     bert_model.to(device)
     bert_model.eval()
 
