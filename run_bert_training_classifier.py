@@ -403,7 +403,7 @@ def main():
 
 
     parser.add_argument('--num_epochs', type=int, default=5)
-    parser.add_argument('--batch_sz', type=int, default=32)
+    parser.add_argument('--batch_sz', type=int, default=8)
 
 
     parser.add_argument('--number_class', type=int, default=2)
