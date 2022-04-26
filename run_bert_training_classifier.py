@@ -507,7 +507,7 @@ def main():
         print(f'\t Val. Loss: {valid_loss:.3f} |  Val. Acc: {valid_acc * 100:.2f}%')
         if valid_loss < best_loss:
             best_loss = valid_loss
-            torch.save(Bert_model.state_dict(), config.BERT_nft_PATH)
+            torch.save(model.state_dict(), config.BERT_nft_PATH)
     print("training done")
 
     print("testing")
