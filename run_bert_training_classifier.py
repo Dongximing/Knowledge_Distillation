@@ -237,7 +237,7 @@ import sys
 import config
 from transformers import AdamW
 from transformers import get_linear_schedule_with_warmup
-
+from transformers import BertTokenizer,BertForSequenceClassification,AdamW
 config.seed_torch()
 from collections import Counter
 import time
