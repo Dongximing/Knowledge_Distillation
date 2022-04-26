@@ -473,7 +473,7 @@ def main():
         output_hidden_states=False)
     from transformers import get_linear_schedule_with_warmup
     epochs = 5
-    optimizer = AdamW(model.parameters(), lr=2e-5, eps=1e-8)
+    optimizer = AdamW(model.parameters(), lr=3e-5, eps=1e-8)
 
 
     # optimizer = AdamW(optimizer_parameters, lr=3e-5)
@@ -511,7 +511,7 @@ def main():
     print("training done")
 
     print("testing")
-    Bert_model.load_state_dict(torch.load(config.BERT_nft_PATH))
+    model.load_state_dict(torch.load(config.BERT_nft_PATH))
     test_loss, test_acc ,flat_list= validate(testing, model, criterion, device)
 
     print(f'Test Loss: {test_loss:.3f} | Test Acc: {test_acc * 100:.2f}%')
