@@ -485,6 +485,7 @@ def main():
 
     criterion = nn.CrossEntropyLoss()
     criterion.to(device)
+    model.to(device)
     train_dataset, validation_dataset, test_dataset,labellist = prepare_dateset(args.train_path, args.validation_path,
                                                                       args.test_path)
 
