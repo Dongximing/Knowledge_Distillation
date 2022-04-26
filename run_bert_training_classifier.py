@@ -473,7 +473,7 @@ def main():
         output_hidden_states=False)
     from transformers import get_linear_schedule_with_warmup
     epochs = 5
-    optimizer = AdamW(model.parameters(), lr=3e-5, eps=1e-8)
+    optimizer = AdamW(model.parameters(), lr=3e-5)
 
 
     # optimizer = AdamW(optimizer_parameters, lr=3e-5)
