@@ -411,33 +411,41 @@ def main():
     args = parser.parse_args()
 
     device = torch.device('cuda' if torch.cuda.is_available() else 'cpu')
-    bert = BertModel.from_pretrained('bert-base-uncased')
-    Bert_model = BERT(bert)
-    Bert_model.to(device)
-    param_optimizer = list(Bert_model.named_parameters())
-    no_decay = ["bias", "LayerNorm.bias", "LayerNorm.weight"]
-    optimizer_parameters = [
-        {
-            "params": [
-                p for n, p in param_optimizer if not any(nd in n for nd in no_decay)
-            ],
-            "weight_decay": 0.001,
-        },
-        {
-            "params": [
-                p for n, p in param_optimizer if any(nd in n for nd in no_decay)
-            ],
-            "weight_decay": 0.0,
-        },
-    ]
+    # bert = BertModel.from_pretrained('bert-base-uncased')
+    # Bert_model = BERT(bert)
+    # Bert_model.to(device)
+    # param_optimizer = list(Bert_model.named_parameters())
+    # no_decay = ["bias", "LayerNorm.bias", "LayerNorm.weight"]
+    # optimizer_parameters = [
+    #     {
+    #         "params": [
+    #             p for n, p in param_optimizer if not any(nd in n for nd in no_decay)
+    #         ],
+    #         "weight_decay": 0.001,
+    #     },
+    #     {
+    #         "params": [
+    #             p for n, p in param_optimizer if any(nd in n for nd in no_decay)
+    #         ],
+    #         "weight_decay": 0.0,
+    #     },
+    # ]
+    model = BertForSequenceClassification.from_pretrained(
+        'bert-base-uncased',
+        num_labels=2,
+        output_attentions=False,
+        output_hidden_states=False)
+    from transformers import get_linear_schedule_with_warmup
+    epochs = 5
+    optimizer = AdamW(model.parameters(), lr=2e-5, eps=1e-8)
 
 
-    optimizer = AdamW(optimizer_parameters, lr=3e-5)
+    # optimizer = AdamW(optimizer_parameters, lr=3e-5)
     scheduler = get_linear_schedule_with_warmup(
         optimizer, num_warmup_steps=0, num_training_steps=int(20000/8*5)
     )
 
-    print(f'The Bert training model has {count_parameters(Bert_model):,} trainable parameters')
+    print(f'The Bert training model has {count_parameters(model):,} trainable parameters')
 
     criterion = nn.CrossEntropyLoss()
     criterion.to(device)
@@ -452,9 +460,9 @@ def main():
         start_time = time.time()
         # print("training emebedding")
 
-        train_loss, train_acc = train(training, Bert_model, criterion, device, optimizer, scheduler)
+        train_loss, train_acc = train(training,model, criterion, device, optimizer, scheduler)
         # print("testing emebedding")
-        valid_loss, valid_acc,flat_list= validate(validation, Bert_model, criterion, device)
+        valid_loss, valid_acc,flat_list= validate(validation, model, criterion, device)
         end_time = time.time()
         epoch_mins, epoch_secs = epoch_time(start_time, end_time)
         print(f'Epoch: {epoch + 1:02} | Epoch Time: {epoch_mins}m {epoch_secs}s')
