@@ -383,7 +383,7 @@ def train(train_dataset, model, criterion, device, optimizer, scheduler):
         loss.backward()
         torch.nn.utils.clip_grad_norm_(model.parameters(), 1.0)
         optimizer.step()
-        lr_scheduler.step()
+        scheduler.step()
     return epoch_loss / len(train_dataset), epoch_acc / len(train_dataset)
 
 
