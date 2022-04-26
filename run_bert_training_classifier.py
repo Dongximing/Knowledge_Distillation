@@ -470,12 +470,12 @@ def main():
         print(f'\t Val. Loss: {valid_loss:.3f} |  Val. Acc: {valid_acc * 100:.2f}%')
         if valid_loss < best_loss:
             best_loss = valid_loss
-            torch.save(Bert_model.state_dict(), config.BERT_ft_PATH)
+            torch.save(Bert_model.state_dict(), config.BERT_nft_PATH)
     print("training done")
 
     print("testing")
-    Bert_model.load_state_dict(torch.load(config.BERT_ft_PATH))
-    test_loss, test_acc ,flat_list= validate(testing, Bert_model, criterion, device)
+    Bert_model.load_state_dict(torch.load(config.BERT_nft_PATH))
+    test_loss, test_acc ,flat_list= validate(testing, model, criterion, device)
 
     print(f'Test Loss: {test_loss:.3f} | Test Acc: {test_acc * 100:.2f}%')
     print("testing done")

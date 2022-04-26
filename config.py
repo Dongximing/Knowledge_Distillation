@@ -33,3 +33,4 @@ MODEL_Base_PATH_bu = '/home/dongxx/projects/def-mercer/dongxx/Model_parameter/ba
 BERT_ft_PATH = '/home/dongxx/projects/def-parimala/dongxx/Model_parameter/new_ft_bert.pt'
 MODEL_Base_PATH_fk ='/home/dongxx/projects/def-parimala/dongxx/Model_parameter/atten.pt'
 MODEL_CNN_PATH_kd ='/home/dongxx/projects/def-parimala/dongxx/Model_parameter/cnn_kd.pt'
+BERT_nft_PATH = '/home/dongxx/projects/def-parimala/dongxx/Model_parameter/ft_bert.pt'
