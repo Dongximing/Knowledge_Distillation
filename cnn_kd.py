@@ -256,7 +256,7 @@ def main():
                         default='/home/dongxx/projects/def-parimala/dongxx/data/valid.csv')
     parser.add_argument('--test_path', type=str,
                         default='/home/dongxx/projects/def-parimala/dongxx/data/test.csv')
-    parser.add_argument('--nKernel', type=int, default=64)
+    parser.add_argument('--nKernel', type=int, default=128)
     parser.add_argument('--ksz', type=list, default=[3,4,5])
     parser.add_argument('--dropout', type=float, default=0.2)
     parser.add_argument('--embedding_dim', type=int, default=100)
