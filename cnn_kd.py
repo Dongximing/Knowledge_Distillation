@@ -337,11 +337,11 @@ def main():
         print(f'\t Val. Loss: {valid_loss:.3f} |  Val. Acc: {valid_acc * 100:.2f}%')
         if valid_loss < best_loss:
             best_loss = valid_loss
-            torch.save(cnn_model.state_dict(), config.MODEL_CNN_PATH_kd)
+            torch.save(cnn_model.state_dict(), config.MODEL_CNN_PATH_kd_v2)
     print("training done")
 
     print("testing")
-    cnn_model.load_state_dict(torch.load(config.MODEL_CNN_PATH_kd))
+    cnn_model.load_state_dict(torch.load(config.MODEL_CNN_PATH_kd_v2))
     test_loss, test_acc, flat_list = validate(testing, cnn_model, criterion, device)
 
     print(f'Test Loss: {test_loss:.3f} | Test Acc: {test_acc * 100:.2f}%')
