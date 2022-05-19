@@ -10,9 +10,9 @@ class LSTM_atten(nn.Module):
         self.hidden_size = hidden_dim
         self.rnn = nn.LSTM(embedding_dim, hidden_dim, num_layers=n_layers, dropout=dropout, bidirectional=bidirectional,
                            batch_first=True)
-        self.fc = nn.Linear(hidden_dim , number_class)
+        self.fc = nn.Linear(hidden_dim*2 , number_class)
         self.dropout = nn.Dropout(dropout)
-        self.att_weight = nn.Parameter(torch.randn(1, self.hidden_size, 1))
+        self.att_weight = nn.Parameter(torch.randn(1, self.hidden_size*2, 1))
 
         self.tanh = nn.Tanh()
 
@@ -50,8 +50,8 @@ class LSTM_atten(nn.Module):
 
 
         #hidden = self.dropout(t.cat((hidden[-2, :, :], hidden[-1, :, :]), dim=1))
-        out = out.view(-1, out.shape[1], 2, self.hidden_size)
-        out = torch.sum(out, dim=2)
+        # out = out.view(-1, out.shape[1], 2, self.hidden_size)
+        # out = torch.sum(out, dim=2)
 
 
         context = self.attention(out,mask)
@@ -70,3 +70,13 @@ class LSTM_atten(nn.Module):
 #
 # mask =  a[2].to(torch.int32)
 # c = model_1(text,length,mask)
+# a =torch.randn((1,4,2))
+#
+# model = nn.LSTM(2,2,num_layers=2,batch_first=True,bidirectional=True)
+# c,(d,f) = model(a)
+# # print(c)
+# # print(d)
+# q = torch.randn((1,4,1))
+# print(q)
+# c = q.expand(5,-1,-1)
+# print(c)
