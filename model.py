@@ -50,7 +50,7 @@ class LSTM_atten(nn.Module):
 
 
         hidden = self.dropout(t.cat((hidden[-2, :, :], hidden[-1, :, :]), dim=1))
-        out = out.view(-1, hidden.shape[1], 2, self.hidden_size)
+        out = out.view(-1, out.shape[1], 2, self.hidden_size)
         out = torch.sum(out, dim=2)
 
 
