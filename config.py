@@ -35,3 +35,4 @@ MODEL_Base_PATH_fk ='/home/dongxx/projects/def-parimala/dongxx/Model_parameter/a
 MODEL_CNN_PATH_kd ='/home/dongxx/projects/def-parimala/dongxx/Model_parameter/cnn_kd.pt'
 BERT_nft_PATH = '/home/dongxx/projects/def-parimala/dongxx/Model_parameter/ft_bert.pt'
 MODEL_CNN_PATH_kd_v2 = '/home/dongxx/projects/def-parimala/dongxx/Model_parameter/cnn_kd_v2.pt'
+MODEL_Base_PATH_fk_v2 = '/home/dongxx/projects/def-parimala/dongxx/Model_parameter/attenv2.pt'

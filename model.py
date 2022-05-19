@@ -1,112 +1,72 @@
 import torch
 import torch.nn as nn
-
-
-class BERTGRUSentiment(nn.Module):
-    def __init__(self, bert, hidden_dim, output_dim, n_layers, bidirectional, dropout):
-
+import torch as t
+import torch.nn.functional as F
+from utils import IMDB_indexing, pad_sequencing
+class LSTM_atten(nn.Module):
+    def __init__(self,vocab_size,hidden_dim,n_layers,dropout,number_class,bidirectional,embedding_dim =100):
         super().__init__()
-
-        self.bert = bert
-
-        embedding_dim = bert.config.to_dict()['hidden_size']
-        self.LSTM = nn.LSTM(embedding_dim,hidden_dim,num_layers=n_layers,dropout=dropout, bidirectional=bidirectional,batch_first=True)
-
-        self.rnn = nn.GRU(embedding_dim,
-                          hidden_dim,
-                          num_layers=n_layers,
-                          bidirectional=bidirectional,
-                          batch_first=True,
-                          dropout=0 if n_layers < 2 else dropout)
-
-        self.out = nn.Linear(hidden_dim * 2 if bidirectional else hidden_dim, output_dim)
-
+        self.embedding_layer = nn.Embedding(num_embeddings=vocab_size, embedding_dim=embedding_dim, padding_idx=1)
+        self.hidden_size = hidden_dim
+        self.rnn = nn.LSTM(embedding_dim, hidden_dim, num_layers=n_layers, dropout=dropout, bidirectional=bidirectional,
+                           batch_first=True)
+        self.fc = nn.Linear(hidden_dim , number_class)
         self.dropout = nn.Dropout(dropout)
+        self.att_weight = nn.Parameter(torch.randn(1, self.hidden_size, 1))
 
-    def forward(self, ids, mask):
-        with torch.no_grad():
-
-            embedded = self.dropout(self.bert(ids, attention_mask=mask)[0])
-
-        # embedded = [batch size, sent len, emb dim]
-        output,(hidden,ct) = self.LSTM(embedded)
-        #_, hidden = self.rnn(embedded)
-        # print(hidden.shape)
-
-        # hidden = [n layers * n directions, batch size, emb dim]
-
-        if self.rnn.bidirectional:
-            hidden = self.dropout(torch.cat((hidden[-2, :, :], hidden[-1, :, :]), dim=1))
-        else:
-            hidden = self.dropout(hidden[-1, :, :])
-
-        # hidden = [batch size, hid dim]
-
-        output = self.out(hidden)
+        self.tanh = nn.Tanh()
 
 
-        return output
-# class BERTGRUSentiment(nn.Module):
-#     def __init__(self,bert,hidden_dim,output_dim,n_layers,bidirectional,dropout):
-
-#         super().__init__()
-
-#         self.bert = bert
-#         self.bert_drop = nn.Dropout(0.3)
-#         self.out = nn.Linear(768, 1)
-
-#     def forward(self, ids, mask, token_type_ids):
-#         o2 = self.bert(ids, attention_mask=mask, token_type_ids=token_type_ids)[1]
-#         bo = self.bert_drop(o2)
-#         output = self.out(bo)
-#         return output
 
 
-# import torch
-# import torch.nn as nn
+    def attention(self,finial_state,mask):
+        att_weight = self.att_weight.expand(mask.shape[0], -1, -1)
+        h = self.tanh(finial_state)  # (batch_size, word_pad_len, rnn_size)
+
+        # print(att_weight.size())
+        # print(h.size())
+        att_score = torch.bmm(h, att_weight)
+        # eq.10: α = softmax(w^T M)
+        mask = mask.unsqueeze(dim=-1)
+        att_score = att_score.masked_fill(mask.eq(0), float('-inf'))
+        att_weight = F.softmax(att_score, dim=1)
+        print(att_weight)
+
+        reps = torch.bmm(h.transpose(1, 2), att_weight).squeeze(dim=-1)
+        # B*H*L *  B*L*1 -> B*H*1 -> B*H
+        reps = self.tanh(reps)
+
+
+
+        return reps
+    def forward(self,text,text_length,mask):
+
+
+
+        seq = self.dropout(self.embedding_layer(text))
+        a_packed_input = t.nn.utils.rnn.pack_padded_sequence(input=seq, lengths=text_length.to('cpu'), batch_first=True,enforce_sorted=False)
+        packed_output, (hidden, cell) = self.rnn(a_packed_input)
+        out, _ = t.nn.utils.rnn.pad_packed_sequence(packed_output, batch_first=True)
+
+
+        hidden = self.dropout(t.cat((hidden[-2, :, :], hidden[-1, :, :]), dim=1))
+        out = out.view(-1, hidden.shape[1], 2, self.hidden_size)
+        out = torch.sum(out, dim=2)
+
+
+        context = self.attention(out,mask)
+
+
+        return self.fc(context)
+
+# model_1 = LSTM_atten(vocab_size=10,hidden_dim=2,n_layers=2,dropout=0.3,number_class=2,bidirectional=True,embedding_dim =5)
 #
-# class BERTGRUSentiment(nn.Module):
-#     def __init__(self,bert,hidden_dim,output_dim,n_layers,bidirectional,dropout):
+# list= [torch.Tensor([1,2,3,4,5]),torch.Tensor([1,3,4])]
+# a = pad_sequencing(list,batch_first =True,ksz =4)
 #
-#         super().__init__()
+# text = a[0].to(torch.int32)
+# length = a[1]
+# length= torch.Tensor(length)
 #
-#         self.bert = bert
-#
-#         embedding_dim = bert.config.to_dict()['hidden_size']
-#
-#         self.rnn = nn.LSTM(embedding_dim,
-#                           hidden_dim,
-#                           num_layers=n_layers,
-#                           bidirectional=bidirectional,
-#                           batch_first=True,
-#                           dropout=0 if n_layers < 2 else dropout)
-#
-#         self.out = nn.Linear(hidden_dim * 2 if bidirectional else hidden_dim, output_dim)
-#
-#         self.dropout = nn.Dropout(dropout)
-#
-#     def forward(self, text,):
-#
-#         # text = [batch size, sent len]
-#
-#         with torch.no_grad():
-#             embedded = self.bert(text)[0]
-#
-#         # embedded = [batch size, sent len, emb dim]
-#
-#         output, (hidden,h_c) = self.rnn(embedded)
-#
-#         # hidden = [n layers * n directions, batch size, emb dim]
-#         # print(hidden.size())
-#         if self.rnn.bidirectional:
-#             hidden = self.dropout(torch.cat((hidden[-2, :, :], hidden[-1, :, :]), dim=1))
-#         else:
-#             hidden = self.dropout(hidden[-1, :, :])
-#
-#         # hidden = [batch size, hid dim]
-#
-#         output = self.out(hidden)
-#
-#         # output = [batch size, out dim]
-#
-#         return output
+# mask =  a[2].to(torch.int32)
+# c = model_1(text,length,mask)
