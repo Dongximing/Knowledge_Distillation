@@ -49,7 +49,7 @@ class LSTM_atten(nn.Module):
         out, _ = t.nn.utils.rnn.pad_packed_sequence(packed_output, batch_first=True)
 
 
-        hidden = self.dropout(t.cat((hidden[-2, :, :], hidden[-1, :, :]), dim=1))
+        #hidden = self.dropout(t.cat((hidden[-2, :, :], hidden[-1, :, :]), dim=1))
         out = out.view(-1, out.shape[1], 2, self.hidden_size)
         out = torch.sum(out, dim=2)
 
