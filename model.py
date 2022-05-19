@@ -30,7 +30,7 @@ class LSTM_atten(nn.Module):
         mask = mask.unsqueeze(dim=-1)
         att_score = att_score.masked_fill(mask.eq(0), float('-inf'))
         att_weight = F.softmax(att_score, dim=1)
-        print(att_weight)
+
 
         reps = torch.bmm(h.transpose(1, 2), att_weight).squeeze(dim=-1)
         # B*H*L *  B*L*1 -> B*H*1 -> B*H
