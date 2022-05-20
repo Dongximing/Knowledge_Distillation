@@ -66,6 +66,7 @@ def prepare_dateset(train_data_path, validation_data_path,test_data_path,vocab):
     logging.info("Finish loading training data")
 
     # validation #
+
     print('Start loading validation data')
     logging.info("Start loading validation data")
 
@@ -232,7 +233,7 @@ def main():
     # device
     # device = torch.device(args.device if torch.cuda.is_available() else "cpu")
     device = torch.device('cuda' if torch.cuda.is_available() else 'cpu')
-    # dataset
+
     glove = torchtext.vocab.GloVe(name='6B', dim=100,)
     # print(glove.get_vecs_by_tokens(['picture']))
     counter2 = Counter({'<unk>': 400000, '<pad>': 400001,'the':1})
