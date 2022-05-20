@@ -6,6 +6,7 @@ from torchtext.vocab import GloVe,Vocab
 from tqdm import tqdm
 from utils import IMDB_kd_indexing, pad_sequencing
 from model import LSTM_atten
+from models import BERTGRUSentiment
 from torchtext.vocab import GloVe,Vocab,Vectors
 
 import torchtext.vocab
