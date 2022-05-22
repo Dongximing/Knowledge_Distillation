@@ -122,7 +122,7 @@ def generate_batch(batch):
         bert_id = pad_sequence(bert_id, batch_first=True)
         attention_mask = [torch.tensor(entry[3]) for entry in batch]
         attention_mask = pad_sequence(attention_mask, batch_first=True)
-        token_type_ids = [torch.tensor(entry[5]) for entry in batch]
+        token_type_ids = [torch.tensor(entry[4]) for entry in batch]
         token_type_ids = pad_sequence(token_type_ids, batch_first=True)
 
         return text, text_length, label,bert_id,attention_mask,mask,token_type_ids
