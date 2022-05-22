@@ -6,7 +6,7 @@ from torchtext.vocab import GloVe,Vocab
 from tqdm import tqdm
 from utils import IMDB_kd_indexing, pad_sequencing
 from model import LSTM_atten
-from models import BERTGRUSentiment
+from models import BERTGRUSentiment,BERT
 from torchtext.vocab import GloVe,Vocab,Vectors
 
 import torchtext.vocab
@@ -108,7 +108,7 @@ def prepare_dateset(train_data_path, validation_data_path,test_data_path,vocab):
 
 def generate_batch(batch):
 
-    if len(batch[0]) == 4:
+    if len(batch[0]) == 5:
         label = [entry[0] for entry in batch]
 
         # padding according to the maximum sequence length in batch
@@ -122,8 +122,10 @@ def generate_batch(batch):
         bert_id = pad_sequence(bert_id, batch_first=True)
         attention_mask = [torch.tensor(entry[3]) for entry in batch]
         attention_mask = pad_sequence(attention_mask, batch_first=True)
+        token_type_ids = [torch.tensor(entry[5]) for entry in batch]
+        token_type_ids = pad_sequence(token_type_ids, batch_first=True)
 
-        return text, text_length, label,bert_id,attention_mask,mask
+        return text, text_length, label,bert_id,attention_mask,mask,token_type_ids
     else:
         text = [entry for entry in batch]
         text_length = [len(seq) for seq in text]
@@ -147,20 +149,21 @@ def train_kd_fc(data_loader, device, bert_model, model,optimizer, criterion,crit
     soft_loss = 0
 
     for bi,data in tqdm(enumerate(data_loader),total = len(data_loader)):
-        text, text_length, label, bert_id, attention_mask,mask = data
+        text, text_length, label, bert_id, attention_mask,mask,token_type_ids = data
         text_length = torch.Tensor(text_length)
         label = torch.tensor(label, dtype=torch.long)
         ids = text.to(device, dtype=torch.long)
         bert_id = bert_id.to(device, dtype=torch.long)
         bert_mask = attention_mask.to(device, dtype=torch.long)
         mask = mask.to(device)
+        token_type_ids =token_type_ids.to(device, dtype=torch.long)
 
         lengths = text_length.to(device, dtype=torch.int)
 
         targets = label.to(device, dtype=torch.long)
         optimizer.zero_grad()
         with torch.no_grad():
-            bert_output = bert_model(bert_id,bert_mask)
+            bert_output = bert_model(bert_id,bert_mask,token_type_ids)
 
         outputs = model(ids,lengths,mask)
         loss_soft =criterion_kd(outputs,bert_output)
@@ -251,22 +254,25 @@ def main():
     LSTM_atten_model.to(device)
     #opt scheduler criterion
     optimizer = torch.optim.Adam(LSTM_atten_model.parameters(), lr=args.lr)
-    lr_scheduler = torch.optim.lr_scheduler.StepLR(optimizer, gamma=args.lr_gamma, step_size=10)
+    lr_scheduler = torch.optim.lr_scheduler.StepLR(optimizer, gamma=args.lr_gamma, step_size=15)
     criterion = nn.CrossEntropyLoss()
     kd_critertion = nn.MSELoss()
     kd_critertion = kd_critertion.to(device)
     bert = BertModel.from_pretrained('bert-base-uncased')
     criterion = criterion.to(device)
-    bert_model = BERTGRUSentiment(bert,
-                                  config.HIDDEN_DIM,
-                                  config.OUTPUT_DIM,
-                                  config.N_LAYERS,
-                                  config.BIDIRECTIONAL,
-                                  config.DROPOUT)
-    bert_model.load_state_dict(torch.load('/home/dongxx/projects/def-parimala/dongxx/Model_parameter/bert/new_bert.pt'))
-    bert_model.to(device)
-    bert_model.eval()
-
+    # bert_model = BERTGRUSentiment(bert,
+    #                               config.HIDDEN_DIM,
+    #                               config.OUTPUT_DIM,
+    #                               config.N_LAYERS,
+    #                               config.BIDIRECTIONAL,
+    #                               config.DROPOUT)
+    # bert_model.load_state_dict(torch.load('/home/dongxx/projects/def-parimala/dongxx/Model_parameter/bert/new_bert.pt'))
+    # bert_model.to(device)
+    # bert_model.eval()
+    Bert_model = BERT(bert)
+    Bert_model.to(device)
+    Bert_model.load_state_dict(torch.load(config.BERT_ft_PATH))
+    Bert_model.eval()
 
     training = DataLoader(train_dataset,collate_fn = generate_batch, batch_size=args.batch_sz,shuffle=True)
     validation = DataLoader(validation_dataset, collate_fn= generate_batch, batch_size=args.batch_sz, shuffle=False)
@@ -286,7 +292,7 @@ def main():
 
     best_loss = float('inf')
     print("training")
-    for epoch in range(20):
+    for epoch in range(25):
         start_time = time.time()
 
 
