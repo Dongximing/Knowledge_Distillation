@@ -297,7 +297,7 @@ def main():
 
 
 
-        train_loss, train_acc,hard, soft  = train_kd_fc(training, device, bert_model,LSTM_atten_model,optimizer, criterion,kd_critertion,lr_scheduler)
+        train_loss, train_acc,hard, soft  = train_kd_fc(training, device, Bert_model,LSTM_atten_model,optimizer, criterion,kd_critertion,lr_scheduler)
 
         valid_loss, valid_acc,_ = validate(validation,LSTM_atten_model,criterion,device)
         end_time = time.time()
