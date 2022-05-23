@@ -163,69 +163,69 @@ def pad_sequence(sequences, ksz, batch_first=False, padding_value=1):
 
 
     return out_tensor, true,mask_tensor
-import numpy as np
-list = []
-a = np.array([1,6,7])
-b =np.array([1,2,3,1,1,1,1,1])
-a = torch.from_numpy(a)
-
-b = torch.from_numpy(b)
-list.append(b)
-list.append(a)
-
-
-c, d,mask = pad_sequence(list, 5, batch_first=True, padding_value=10)
-print(c)
-print(d)
-print(mask)
-def a(a =10):
-    c = a+10
-    print(c)
-a(20)
-import torch
-a = torch.rand(4,3,6)
-print(a)
-print("=====================")
-c= a.view(2,
-                           2,
-                           3,
-                           6)[-1, :, :, :]
-print(c)
-print("=====================")
-
-d = torch.cat([c[i,:,:] for i in range(c.shape[0])], dim=1)
-print(d)
-print("=====================")
-# a = a.view(2, 2, 3, 6)[-1,:,:,:]
+# import numpy as np
+# list = []
+# a = np.array([1,6,7])
+# b =np.array([1,2,3,1,1,1,1,1])
+# a = torch.from_numpy(a)
+#
+# b = torch.from_numpy(b)
+# list.append(b)
+# list.append(a)
+#
+#
+# c, d,mask = pad_sequence(list, 5, batch_first=True, padding_value=10)
+# print(c)
+# print(d)
+# print(mask)
+# def a(a =10):
+#     c = a+10
+#     print(c)
+# a(20)
+# import torch
+# a = torch.rand(4,3,6)
+# print(a)
 # print("=====================")
-b = torch.cat([a[-2,:,:],a[-1,:,:]],1)
-print(b)
-print(b.size())
-print("=====================")
-
-
-a = [1,2,3]
-c= a[-3:]
-print(c)
-
-print('================================-------------------------')
-a = torch.ones(2,10,10)
-print(a)
-print('================================-------------------------')
-dropout = nn.Dropout(p=0.2)
-
-print(dropout(a))
-
-x=torch.rand(2,3,5)
-y = torch.rand(2,3,5)
-print(x)
-print(y)
-z = torch.cat((x[-1,:,:],x[-2,:,:]),dim=1)
-i  =x[-1,:,:]
-print('================================-------------------------')
-print(i.size())
-# f = torch.cat((x[-1,:,:],x[-2,:,:]),dim=2)
-print(z)
+# c= a.view(2,
+#                            2,
+#                            3,
+#                            6)[-1, :, :, :]
+# print(c)
+# print("=====================")
+#
+# d = torch.cat([c[i,:,:] for i in range(c.shape[0])], dim=1)
+# print(d)
+# print("=====================")
+# # a = a.view(2, 2, 3, 6)[-1,:,:,:]
+# # print("=====================")
+# b = torch.cat([a[-2,:,:],a[-1,:,:]],1)
+# print(b)
+# print(b.size())
+# print("=====================")
+#
+#
+# a = [1,2,3]
+# c= a[-3:]
+# print(c)
+#
+# print('================================-------------------------')
+# a = torch.ones(2,10,10)
+# print(a)
+# print('================================-------------------------')
+# dropout = nn.Dropout(p=0.2)
+#
+# print(dropout(a))
+#
+# x=torch.rand(2,3,5)
+# y = torch.rand(2,3,5)
+# print(x)
+# print(y)
+# z = torch.cat((x[-1,:,:],x[-2,:,:]),dim=1)
+# i  =x[-1,:,:]
+# print('================================-------------------------')
+# print(i.size())
+# # f = torch.cat((x[-1,:,:],x[-2,:,:]),dim=2)
+# print(z)
 # print(f)
 
 # print(a)
@@ -575,4 +575,22 @@ print(z)
 # # Driver code
 # str1 = "Geeks for Geeks"
 # print(Convert(str1))
+from transformers import BertTokenizer, BertForMaskedLM
+import torch
 
+tokenizer = BertTokenizer.from_pretrained("bert-base-uncased")
+model = BertForMaskedLM.from_pretrained("bert-base-uncased")
+
+inputs = tokenizer("The capital of France is [MASK].", return_tensors="pt")
+
+with torch.no_grad():
+    logits = model(**inputs).logits
+
+# retrieve index of [MASK]
+
+print(inputs.input_ids)
+mask_token_index = (inputs.input_ids == tokenizer.mask_token_id)[0].nonzero(as_tuple=True)
+print(mask_token_index)
+
+predicted_token_id = logits[0, mask_token_index].argmax(axis=-1)
+tokenizer.decode(predicted_token_id)

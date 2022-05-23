@@ -142,6 +142,7 @@ def categorical_accuracy(preds, y):
 
 def train_kd_fc(data_loader, device, bert_model, model,optimizer, criterion,criterion_kd,scheduler):
     model.train()
+    bert_model.eval()
     a = 0.5
     epoch_loss = 0
     epoch_acc = 0
@@ -163,7 +164,7 @@ def train_kd_fc(data_loader, device, bert_model, model,optimizer, criterion,crit
         targets = label.to(device, dtype=torch.long)
         optimizer.zero_grad()
         with torch.no_grad():
-            bert_output = bert_model(bert_id,bert_mask,token_type_ids)
+            bert_output = bert_model(bert_id,bert_mask)
 
         outputs = model(ids,lengths,mask)
         loss_soft =criterion_kd(outputs,bert_output)
@@ -220,7 +221,7 @@ def main():
     parser.add_argument('--validation_path',type= str,default='/home/dongxx/projects/def-parimala/dongxx/data/valid.csv')
     parser.add_argument('--test_path',type= str,default='/home/dongxx/projects/def-parimala/dongxx/data/test.csv')
 
-    parser.add_argument('--dropout', type=float, default=0.25)
+    parser.add_argument('--dropout', type=float, default=0.5)
     parser.add_argument('--embedding_dim', type=int, default=100)
     parser.add_argument('--num_epochs', type=int, default=10)
     parser.add_argument('--batch_sz', type=int, default=16)
@@ -260,19 +261,19 @@ def main():
     kd_critertion = kd_critertion.to(device)
     bert = BertModel.from_pretrained('bert-base-uncased')
     criterion = criterion.to(device)
-    # bert_model = BERTGRUSentiment(bert,
-    #                               config.HIDDEN_DIM,
-    #                               config.OUTPUT_DIM,
-    #                               config.N_LAYERS,
-    #                               config.BIDIRECTIONAL,
-    #                               config.DROPOUT)
-    # bert_model.load_state_dict(torch.load('/home/dongxx/projects/def-parimala/dongxx/Model_parameter/bert/new_bert.pt'))
-    # bert_model.to(device)
-    # bert_model.eval()
-    Bert_model = BERT(bert)
-    Bert_model.to(device)
-    Bert_model.load_state_dict(torch.load(config.BERT_ft_PATH))
-    Bert_model.eval()
+    bert_model = BERTGRUSentiment(bert,
+                                  config.HIDDEN_DIM,
+                                  config.OUTPUT_DIM,
+                                  config.N_LAYERS,
+                                  config.BIDIRECTIONAL,
+                                  config.DROPOUT)
+    bert_model.load_state_dict(torch.load('/home/dongxx/projects/def-parimala/dongxx/Model_parameter/bert/new_bert.pt'))
+    bert_model.to(device)
+
+    # Bert_model = BERT(bert)
+    # Bert_model.to(device)
+    # Bert_model.load_state_dict(torch.load(config.BERT_ft_PATH))
+    # Bert_model.eval()
 
     training = DataLoader(train_dataset,collate_fn = generate_batch, batch_size=args.batch_sz,shuffle=True)
     validation = DataLoader(validation_dataset, collate_fn= generate_batch, batch_size=args.batch_sz, shuffle=False)
@@ -297,7 +298,7 @@ def main():
 
 
 
-        train_loss, train_acc,hard, soft  = train_kd_fc(training, device, Bert_model,LSTM_atten_model,optimizer, criterion,kd_critertion,lr_scheduler)
+        train_loss, train_acc,hard, soft  = train_kd_fc(training, device, bert_model,LSTM_atten_model,optimizer, criterion,kd_critertion,lr_scheduler)
 
         valid_loss, valid_acc,_ = validate(validation,LSTM_atten_model,criterion,device)
         end_time = time.time()
