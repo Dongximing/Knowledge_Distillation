@@ -3,6 +3,7 @@ import csv
 training_da = pd.read_csv('/home/dongxx/projects/def-parimala/dongxx/data/datrain.csv')
 training_da.columns= ['Lines','ID','Review','Review_clean','Rating','Sentiment','Set']
 training_da.drop(columns=['Lines','ID','Review_clean','Rating','Set'])
+training_da.to_csv('/home/dongxx/projects/def-parimala/dongxx/data/datrain.csv',encoding='utf-8')
 with open('/home/dongxx/projects/def-parimala/dongxx/data/datrain.csv', 'r') as infile, open('/home/dongxx/projects/def-parimala/dongxx/data/reordered.csv', 'a') as outfile:
     # output dict needs a list for new column ordering
     fieldnames = ['Sentiment','Review']
