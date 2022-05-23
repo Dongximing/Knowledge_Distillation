@@ -144,6 +144,7 @@ def train_kd_fc(data_loader, device, bert_model, model,optimizer, criterion,crit
     model.train()
 
     a = 0.7
+    #a
     epoch_loss = 0
     epoch_acc = 0
     hard_loss = 0
