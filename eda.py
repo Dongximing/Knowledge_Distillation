@@ -17,5 +17,5 @@ import csv
 # txt_file = raw_input('Enter the name of your output file: ')
 with open('eda.txt', "w") as my_output_file:
     with open('/home/dongxx/projects/def-parimala/dongxx/data/reordered.csv', "r") as my_input_file:
-        [ my_output_file.write(" ".join(row)+'\t') for row in csv.reader(my_input_file)]
+        [ my_output_file.write(" ".join(row)+'\n') for row in csv.reader(my_input_file)]
     my_output_file.close()
