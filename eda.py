@@ -15,7 +15,13 @@ import csv
 #         writer.writerow(row)
 # csv_file = raw_input('Enter the name of your input file: ')
 # txt_file = raw_input('Enter the name of your output file: ')
-with open('eda.txt', "w") as my_output_file:
-    with open('/home/dongxx/projects/def-parimala/dongxx/data/reordered.csv', "r") as my_input_file:
-        [ my_output_file.write("\t".join(row)+'\n') for row in csv.reader(my_input_file)]
-    my_output_file.close()
+# with open('eda.txt', "w") as my_output_file:
+#     with open('/home/dongxx/projects/def-parimala/dongxx/data/reordered.csv', "r") as my_input_file:
+#         [ my_output_file.write("\t".join(row)+'\n') for row in csv.reader(my_input_file)]
+#     my_output_file.close()
+print("123")
+print("\t123")
+print("\n123\n456\n789")
+print("\t123\t456\t789")
+print("自然数：\n\t123\n\t456\n\t789")
+print("\t\n123\t\n456\t\n789")

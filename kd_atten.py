@@ -142,8 +142,8 @@ def categorical_accuracy(preds, y):
 
 def train_kd_fc(data_loader, device, bert_model, model,optimizer, criterion,criterion_kd,scheduler):
     model.train()
-    bert_model.eval()
-    a = 0.5
+
+    a = 0.7
     epoch_loss = 0
     epoch_acc = 0
     hard_loss = 0
@@ -221,7 +221,7 @@ def main():
     parser.add_argument('--validation_path',type= str,default='/home/dongxx/projects/def-parimala/dongxx/data/valid.csv')
     parser.add_argument('--test_path',type= str,default='/home/dongxx/projects/def-parimala/dongxx/data/test.csv')
 
-    parser.add_argument('--dropout', type=float, default=0.5)
+    parser.add_argument('--dropout', type=float, default=0.25)
     parser.add_argument('--embedding_dim', type=int, default=100)
     parser.add_argument('--num_epochs', type=int, default=10)
     parser.add_argument('--batch_sz', type=int, default=16)
@@ -269,6 +269,7 @@ def main():
                                   config.DROPOUT)
     bert_model.load_state_dict(torch.load('/home/dongxx/projects/def-parimala/dongxx/Model_parameter/bert/new_bert.pt'))
     bert_model.to(device)
+    bert_model.eval()
 
     # Bert_model = BERT(bert)
     # Bert_model.to(device)
