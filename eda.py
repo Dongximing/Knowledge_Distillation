@@ -13,8 +13,8 @@ import csv
 #     for row in csv.DictReader(infile):
 #         # writes the reordered rows to the new file
 #         writer.writerow(row)
-csv_file = raw_input('Enter the name of your input file: ')
-txt_file = raw_input('Enter the name of your output file: ')
+# csv_file = raw_input('Enter the name of your input file: ')
+# txt_file = raw_input('Enter the name of your output file: ')
 with open('eda.txt', "w") as my_output_file:
     with open('/home/dongxx/projects/def-parimala/dongxx/data/reordered.csv', "r") as my_input_file:
         [ my_output_file.write(" ".join(row)+'\n') for row in csv.reader(my_input_file)]
