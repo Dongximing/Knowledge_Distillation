@@ -14,7 +14,7 @@ with open('/home/dongxx/projects/def-parimala/dongxx/data/datrain2.csv', 'r') as
         # writes the reordered rows to the new file
         writer.writerow(row)
 
-with open(''/home/dongxx/projects/def-parimala/dongxx/eda.txt', "w") as my_output_file:
+with open('/home/dongxx/projects/def-parimala/dongxx/eda.txt', "w") as my_output_file:
     with open('/home/dongxx/projects/def-parimala/dongxx/data/reordered.csv', "r") as my_input_file:
         [ my_output_file.write("\t".join(row)+'\n') for row in csv.reader(my_input_file)]
     my_output_file.close()
