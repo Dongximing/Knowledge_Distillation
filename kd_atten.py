@@ -143,7 +143,7 @@ def categorical_accuracy(preds, y):
 def train_kd_fc(data_loader, device, bert_model, model,optimizer, criterion,criterion_kd,scheduler):
     model.train()
 
-    a = 0.7
+    a = 0.3
     #a
     epoch_loss = 0
     epoch_acc = 0
@@ -222,7 +222,7 @@ def main():
     parser.add_argument('--validation_path',type= str,default='/home/dongxx/projects/def-parimala/dongxx/data/valid.csv')
     parser.add_argument('--test_path',type= str,default='/home/dongxx/projects/def-parimala/dongxx/data/test.csv')
 
-    parser.add_argument('--dropout', type=float, default=0.25)
+    parser.add_argument('--dropout', type=float, default=0.3)
     parser.add_argument('--embedding_dim', type=int, default=100)
     parser.add_argument('--num_epochs', type=int, default=10)
     parser.add_argument('--batch_sz', type=int, default=16)
