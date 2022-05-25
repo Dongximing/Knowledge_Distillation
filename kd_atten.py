@@ -295,26 +295,26 @@ def main():
 
     best_loss = float('inf')
     print("training")
-    for epoch in range(25):
-        start_time = time.time()
-
-
-
-        train_loss, train_acc,hard, soft  = train_kd_fc(training, device, bert_model,LSTM_atten_model,optimizer, criterion,kd_critertion,lr_scheduler)
-
-        valid_loss, valid_acc,_ = validate(validation,LSTM_atten_model,criterion,device)
-        end_time = time.time()
-        epoch_mins, epoch_secs = epoch_time(start_time, end_time)
-        print(f'Epoch: {epoch + 1:02} | Epoch Time: {epoch_mins}m {epoch_secs}s')
-        print(f'\tTrain Loss: {train_loss:.3f} | Train Acc: {train_acc * 100:.2f}%')
-        print(f'\t Val. Loss: {valid_loss:.3f} |  Val. Acc: {valid_acc * 100:.2f}%')
-        print("hard", hard)
-        print("soft", soft)
-
-        if valid_loss < best_loss:
-            best_loss = valid_loss
-            torch.save(LSTM_atten_model.state_dict(), '/home/dongxx/projects/def-parimala/dongxx/Model_parameter/kd_atten_new1.pt')
-    print("training done")
+    # for epoch in range(25):
+    #     start_time = time.time()
+    #
+    #
+    #
+    #     train_loss, train_acc,hard, soft  = train_kd_fc(training, device, bert_model,LSTM_atten_model,optimizer, criterion,kd_critertion,lr_scheduler)
+    #
+    #     valid_loss, valid_acc,_ = validate(validation,LSTM_atten_model,criterion,device)
+    #     end_time = time.time()
+    #     epoch_mins, epoch_secs = epoch_time(start_time, end_time)
+    #     print(f'Epoch: {epoch + 1:02} | Epoch Time: {epoch_mins}m {epoch_secs}s')
+    #     print(f'\tTrain Loss: {train_loss:.3f} | Train Acc: {train_acc * 100:.2f}%')
+    #     print(f'\t Val. Loss: {valid_loss:.3f} |  Val. Acc: {valid_acc * 100:.2f}%')
+    #     print("hard", hard)
+    #     print("soft", soft)
+    #
+    #     if valid_loss < best_loss:
+    #         best_loss = valid_loss
+    #         torch.save(LSTM_atten_model.state_dict(), '/home/dongxx/projects/def-parimala/dongxx/Model_parameter/kd_atten_new1.pt')
+    # print("training done")
 
     print("testing")
     LSTM_atten_model.load_state_dict(torch.load('/home/dongxx/projects/def-parimala/dongxx/Model_parameter/kd_atten_new1.pt'))
