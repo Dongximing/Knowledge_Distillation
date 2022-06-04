@@ -272,7 +272,7 @@ def main():
     bert_model.to(device)
     bert_model.eval()
 
-    Bert_model = BERT(bert)
+    #Bert_model = BERT(bert)
     # Bert_model.to(device)
     # Bert_model.load_state_dict(torch.load(config.BERT_ft_PATH))
     # Bert_model.eval()
