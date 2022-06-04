@@ -272,11 +272,6 @@ def main():
     bert_model.to(device)
     bert_model.eval()
 
-    #Bert_model = BERT(bert)
-    # Bert_model.to(device)
-    # Bert_model.load_state_dict(torch.load(config.BERT_ft_PATH))
-    # Bert_model.eval()
-
     training = DataLoader(train_dataset,collate_fn = generate_batch, batch_size=args.batch_sz,shuffle=True)
     validation = DataLoader(validation_dataset, collate_fn= generate_batch, batch_size=args.batch_sz, shuffle=False)
     testing = DataLoader(test_dataset, collate_fn= generate_batch, batch_size=args.batch_sz, shuffle=False)
