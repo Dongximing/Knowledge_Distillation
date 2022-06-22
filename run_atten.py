@@ -288,7 +288,7 @@ def main():
 
 
         train_loss, train_acc = train(training,LSTM_model,criterion,device,optimizer,lr_scheduler,epoch)
-        # print("testing emebedding")
+
         valid_loss, valid_acc,_ = validate(validation,LSTM_model,criterion,device)
         end_time = time.time()
         epoch_mins, epoch_secs = epoch_time(start_time, end_time)

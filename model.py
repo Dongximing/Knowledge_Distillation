@@ -21,19 +21,14 @@ class LSTM_atten(nn.Module):
 
     def attention(self,finial_state,mask):
         att_weight = self.att_weight.expand(mask.shape[0], -1, -1)
-        h = self.tanh(finial_state)  # (batch_size, word_pad_len, rnn_size)
-
-        # print(att_weight.size())
-        # print(h.size())
+        h = self.tanh(finial_state)  
         att_score = torch.bmm(h, att_weight)
-        # eq.10: α = softmax(w^T M)
         mask = mask.unsqueeze(dim=-1)
         att_score = att_score.masked_fill(mask.eq(0), float('-inf'))
         att_weight = F.softmax(att_score, dim=1)
 
 
         reps = torch.bmm(h.transpose(1, 2), att_weight).squeeze(dim=-1)
-        # B*H*L *  B*L*1 -> B*H*1 -> B*H
         reps = self.tanh(reps)
 
 
@@ -47,36 +42,8 @@ class LSTM_atten(nn.Module):
         a_packed_input = t.nn.utils.rnn.pack_padded_sequence(input=seq, lengths=text_length.to('cpu'), batch_first=True,enforce_sorted=False)
         packed_output, (hidden, cell) = self.rnn(a_packed_input)
         out, _ = t.nn.utils.rnn.pad_packed_sequence(packed_output, batch_first=True)
-
-
-        #hidden = self.dropout(t.cat((hidden[-2, :, :], hidden[-1, :, :]), dim=1))
-        # out = out.view(-1, out.shape[1], 2, self.hidden_size)
-        # out = torch.sum(out, dim=2)
-
-
         context = self.attention(out,mask)
 
 
         return self.fc(context)
 
-# model_1 = LSTM_atten(vocab_size=10,hidden_dim=2,n_layers=2,dropout=0.3,number_class=2,bidirectional=True,embedding_dim =5)
-#
-# list= [torch.Tensor([1,2,3,4,5]),torch.Tensor([1,3,4])]
-# a = pad_sequencing(list,batch_first =True,ksz =4)
-#
-# text = a[0].to(torch.int32)
-# length = a[1]
-# length= torch.Tensor(length)
-#
-# mask =  a[2].to(torch.int32)
-# c = model_1(text,length,mask)
-# a =torch.randn((1,4,2))
-#
-# model = nn.LSTM(2,2,num_layers=2,batch_first=True,bidirectional=True)
-# c,(d,f) = model(a)
-# # print(c)
-# # print(d)
-# q = torch.randn((1,4,1))
-# print(q)
-# c = q.expand(5,-1,-1)
-# print(c)
