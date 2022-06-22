@@ -27,30 +27,66 @@ def data_process(train_data_path, validation_data_path,test_data_path,res):
     validation_examples = []
     testing_examples = []
 
+    #
+    # with open(train_data_path) as f:
+    #
+    #     train_lines = f.readlines()
+    #
+    # for index, line in enumerate(train_lines):
+    #     text, label = line.split("\t")
+    #     example = InputExample(guid=str(index),text_a=text,label= int(label))
+    #     training_examples.append(example)
+    #
+    # with open(validation_data_path) as f1:
+    #     validation_lines = f1.readlines()
+    #
+    # for index, line in enumerate (validation_lines):
+    #     text, label = line.split("\t")
+    #     example = InputExample(guid=str(index), text_a=text, label=int(label))
+    #     validation_examples.append(example)
+    #
+    # with open(test_data_path) as f2:
+    #     test_lines = f2.readlines()
+    # for  index, line in enumerate (test_lines):
+    #     text, label = line.split("\t")
+    #     example = InputExample(guid=str(index), text_a=text, label=int(label))
+    #     testing_examples.append(example)
+    print('Start loading training data')
+    logging.info("Start loading training data")
+    training = pd.read_csv(train_data_path)
 
-    with open(train_data_path) as f:
+    training_review = training.Review
+    training_sentiment = training.Sentiment
 
-        train_lines = f.readlines()
-
-    for index, line in enumerate(train_lines):
-        text, label = line.split("\t")
-        example = InputExample(guid=str(index),text_a=text,label= int(label))
+    for index,(text, label) in enumerate (zip(training_review, training_sentiment)):
+        example = InputExample(guid=str(index), text_a=text, label=int(label))
         training_examples.append(example)
+    print("Finish loading training data")
+    logging.info("Finish loading training data")
 
-    with open(validation_data_path) as f1:
-        validation_lines = f1.readlines()
+    # validation #
+    print('Start loading validation data')
+    logging.info("Start loading validation data")
 
-    for index, line in enumerate (validation_lines):
-        text, label = line.split("\t")
+    validation = pd.read_csv(validation_data_path)
+    validation_review = validation.Review
+    validation_sentiment = validation.Sentiment
+
+    for index,(text, label) in enumerate(zip(validation_review, validation_sentiment)):
         example = InputExample(guid=str(index), text_a=text, label=int(label))
         validation_examples.append(example)
+    print("Finish loading validation data")
+    logging.info("Finish loading validation data")
+    print('Start loading testing data')
+    logging.info("Start loading testing data")
 
-    with open(test_data_path) as f2:
-        test_lines = f2.readlines()
-    for  index, line in enumerate (test_lines):
-        text, label = line.split("\t")
+    testing = pd.read_csv(test_data_path)
+    testing_review = testing.Review
+    testing_sentiment = testing.Sentiment
+    for index,(text, label) in enumerate(zip(testing_review, testing_sentiment)):
         example = InputExample(guid=str(index), text_a=text, label=int(label))
         testing_examples.append(example)
+
     return training_examples,validation_examples,testing_examples
 def training(criterion,train,optimizer,model,scheduler,device):
     model.train()
