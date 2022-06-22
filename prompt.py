@@ -141,7 +141,7 @@ def main():
     classes = ["negative","positive"]
     label_words = {'negative':["bad","terrible"],"positive":["good", "wonderful", "great"]}
     train_dataset, validation_dataset, test_dataset = data_process(train_data_path=args.train_path,validation_data_path=args.valid_path,test_data_path=args.test_path,res=res)
-    plm, tokenizer, model_config, Wrapperclass = load_plm('bert','bert-base-chinese')
+    plm, tokenizer, model_config, Wrapperclass = load_plm('bert','bert-base-uncased')
     promptTemplate = ManualTemplate(text='"placeholder":"text_a"} It was {"mask"}',tokenizer=tokenizer)
     promptVerbalizar = ManualVerbalizer(classes=classes,label_words=label_words,tokenizer=tokenizer)
     prompt_model = PromptForClassification(template=promptTemplate,plm=plm,verbalizer=promptVerbalizar)
