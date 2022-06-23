@@ -154,7 +154,7 @@ def main():
          'weight_decay': 0.0}
     ]
     epochs = 5
-    batch_size = 32
+    batch_size = 8
     training_dataset = PromptDataLoader(dataset=train_dataset,max_seq_length=256,batch_size=batch_size,shuffle=True,tokenizer_wrapper_class=Wrapperclass,tokenizer=tokenizer,template=promptTemplate)
     validing_dataset = PromptDataLoader(dataset=validation_dataset,max_seq_length=256,batch_size=batch_size,shuffle=False,tokenizer_wrapper_class=Wrapperclass,tokenizer=tokenizer,template=promptTemplate)
     testing_dataset = PromptDataLoader(dataset=test_dataset,max_seq_length=256,batch_size=batch_size,shuffle=False,tokenizer_wrapper_class=Wrapperclass,tokenizer=tokenizer,template=promptTemplate)
