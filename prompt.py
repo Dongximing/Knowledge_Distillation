@@ -12,7 +12,7 @@ from openprompt.prompts import ManualTemplate,ManualVerbalizer
 from openprompt import PromptForClassification,PromptDataLoader
 from transformers import AdamW,get_linear_schedule_with_warmup
 
-
+import logging
 def categorical_accuracy(preds, y):
     """
     Returns accuracy per batch, i.e. if you get 8/10 right, this returns 0.8, NOT 8
