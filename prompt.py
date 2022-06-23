@@ -160,7 +160,7 @@ def main():
     testing_dataset = PromptDataLoader(dataset=test_dataset,max_seq_length=256,batch_size=batch_size,shuffle=False,tokenizer_wrapper_class=Wrapperclass,tokenizer=tokenizer,template=promptTemplate)
     device = torch.device('cuda' if torch.cuda.is_available() else 'cpu')
 
-    optimizer = AdamW(optimizer_grouped_parameters, lr=5e-5)
+    optimizer = AdamW(optimizer_grouped_parameters, lr=3e-5)
     loss_function = torch.nn.CrossEntropyLoss()
     loss_function.to(device)
     prompt_model.to(device)
