@@ -100,12 +100,12 @@ def training(criterion,train,optimizer,model,scheduler,device):
         labels = inputs['label']
         loss = criterion(output,labels)
         acc,_ = categorical_accuracy(output,labels)
-
+        optimizer.zero_grad()
         training_acc+= acc.item()
         training_loss+=loss.item()
         loss.backward()
         optimizer.step()
-        optimizer.zero_grad()
+
         scheduler.step()
     return training_loss/len(train), training_acc/len(train)
 def testing(validation,device,criterion,model):
