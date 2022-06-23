@@ -81,7 +81,7 @@ def training(criterion,train,optimizer,model,scheduler,device):
         loss.backward()
         optimizer.step()
 
-        # scheduler.step()
+    scheduler.step()
     return training_loss/len(train), training_acc/len(train)
 def testing(validation,device,criterion,model):
     model.eval()
