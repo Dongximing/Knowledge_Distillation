@@ -93,7 +93,7 @@ def testing(validation,device,criterion,model):
         output = model(inputs)
         labels = inputs['label']
         loss = criterion(output, labels)
-        print(output.item())
+
         acc, _ = categorical_accuracy(output, labels)
         testing_loss += loss.item()
         testing_acc += acc.item()
