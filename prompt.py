@@ -84,13 +84,13 @@ def training(criterion,train,optimizer,model,scheduler,device):
         scheduler.step()
     return training_loss/len(train), training_acc/len(train)
 def testing(validation,device,criterion,model):
-    model.eval()
+    model.train(False)
     testing_loss = 0
     testing_acc = 0
     for i, inputs in tqdm(enumerate(validation), total=len(validation)):
         inputs = inputs.to(device)
-        with torch.no_grad():
-            output = model(inputs)
+
+        output = model(inputs)
         labels = inputs['label']
         loss = criterion(output, labels)
         print(output.item())
@@ -122,6 +122,7 @@ def main():
     promptVerbalizar = ManualVerbalizer(classes=classes,label_words=label_words,tokenizer=tokenizer)
     prompt_model = PromptForClassification(template=promptTemplate,plm=plm,verbalizer=promptVerbalizar,
                                            freeze_plm=False)
+
     no_decay = ['bias', 'LayerNorm.weight']
     # it's always good practice to set no decay to biase and LayerNorm parameters
     optimizer_grouped_parameters = [
@@ -136,6 +137,7 @@ def main():
     validing_dataset = PromptDataLoader(dataset=validation_dataset,max_seq_length=256,batch_size=batch_size,shuffle=False,tokenizer_wrapper_class=Wrapperclass,tokenizer=tokenizer,template=promptTemplate)
     testing_dataset = PromptDataLoader(dataset=test_dataset,max_seq_length=256,batch_size=batch_size,shuffle=False,tokenizer_wrapper_class=Wrapperclass,tokenizer=tokenizer,template=promptTemplate)
     device = torch.device('cuda' if torch.cuda.is_available() else 'cpu')
+
 
     optimizer = AdamW(optimizer_grouped_parameters, lr=3e-5)
     loss_function = torch.nn.CrossEntropyLoss()
