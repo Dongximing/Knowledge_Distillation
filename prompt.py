@@ -30,8 +30,8 @@ def data_process(train_data_path, validation_data_path,test_data_path,res):
     logging.info("Start loading training data")
     training = pd.read_csv(train_data_path)
 
-    training_review = training.Review[:10]
-    training_sentiment = training.Sentiment[:10]
+    training_review = training.Review
+    training_sentiment = training.Sentiment
 
     for index,(text, label) in enumerate (zip(training_review, training_sentiment)):
         example = InputExample(guid=str(index), text_a=text, label=int(label))
@@ -44,8 +44,8 @@ def data_process(train_data_path, validation_data_path,test_data_path,res):
     logging.info("Start loading validation data")
 
     validation = pd.read_csv(validation_data_path)
-    validation_review = validation.Review[:100]
-    validation_sentiment = validation.Sentiment[:100]
+    validation_review = validation.Review
+    validation_sentiment = validation.Sentiment
 
     for index,(text, label) in enumerate(zip(validation_review, validation_sentiment)):
         example = InputExample(guid=str(index), text_a=text, label=int(label))
@@ -56,8 +56,8 @@ def data_process(train_data_path, validation_data_path,test_data_path,res):
     logging.info("Start loading testing data")
 
     testing = pd.read_csv(test_data_path)
-    testing_review = testing.Review[:100]
-    testing_sentiment = testing.Sentiment[:100]
+    testing_review = testing.Review
+    testing_sentiment = testing.Sentiment
     for index,(text, label) in enumerate(zip(testing_review, testing_sentiment)):
         example = InputExample(guid=str(index), text_a=text, label=int(label))
         testing_examples.append(example)
