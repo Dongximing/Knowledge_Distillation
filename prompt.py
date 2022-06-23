@@ -44,8 +44,8 @@ def data_process(train_data_path, validation_data_path,test_data_path,res):
     logging.info("Start loading validation data")
 
     validation = pd.read_csv(validation_data_path)
-    validation_review = validation.Review[:10]
-    validation_sentiment = validation.Sentiment[:10]
+    validation_review = validation.Review[:100]
+    validation_sentiment = validation.Sentiment[:100]
 
     for index,(text, label) in enumerate(zip(validation_review, validation_sentiment)):
         example = InputExample(guid=str(index), text_a=text, label=int(label))
@@ -56,8 +56,8 @@ def data_process(train_data_path, validation_data_path,test_data_path,res):
     logging.info("Start loading testing data")
 
     testing = pd.read_csv(test_data_path)
-    testing_review = testing.Review[:10]
-    testing_sentiment = testing.Sentiment[:10]
+    testing_review = testing.Review[:100]
+    testing_sentiment = testing.Sentiment[:100]
     for index,(text, label) in enumerate(zip(testing_review, testing_sentiment)):
         example = InputExample(guid=str(index), text_a=text, label=int(label))
         testing_examples.append(example)
