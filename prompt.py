@@ -93,6 +93,7 @@ def testing(validation,device,criterion,model):
             output = model(inputs)
         labels = inputs['label']
         loss = criterion(output, labels)
+        print(output.item())
         acc, _ = categorical_accuracy(output, labels)
         testing_loss += loss.item()
         testing_acc += acc.item()
@@ -119,7 +120,8 @@ def main():
     plm, tokenizer, model_config, Wrapperclass = load_plm('bert','bert-base-uncased')
     promptTemplate = ManualTemplate(text='{"placeholder":"text_a"} It was {"mask"}',tokenizer=tokenizer)
     promptVerbalizar = ManualVerbalizer(classes=classes,label_words=label_words,tokenizer=tokenizer)
-    prompt_model = PromptForClassification(template=promptTemplate,plm=plm,verbalizer=promptVerbalizar)
+    prompt_model = PromptForClassification(template=promptTemplate,plm=plm,verbalizer=promptVerbalizar,
+                                           freeze_plm=False)
     no_decay = ['bias', 'LayerNorm.weight']
     # it's always good practice to set no decay to biase and LayerNorm parameters
     optimizer_grouped_parameters = [
