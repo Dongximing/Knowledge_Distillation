@@ -81,16 +81,16 @@ def training(criterion,train,optimizer,model,scheduler,device):
         loss.backward()
         optimizer.step()
 
-        scheduler.step()
+        # scheduler.step()
     return training_loss/len(train), training_acc/len(train)
 def testing(validation,device,criterion,model):
-    model.train(False)
+    model.eval()
     testing_loss = 0
     testing_acc = 0
     for i, inputs in tqdm(enumerate(validation), total=len(validation)):
         inputs = inputs.to(device)
-
-        output = model(inputs)
+        with torch.no_grad():
+            output = model(inputs)
         labels = inputs['label']
         loss = criterion(output, labels)
 
