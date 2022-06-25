@@ -30,8 +30,8 @@ def data_process(train_data_path, validation_data_path,test_data_path,res):
     logging.info("Start loading training data")
     training = pd.read_csv(train_data_path)
 
-    training_review = training.Review[:100]
-    training_sentiment = training.Sentiment[:100]
+    training_review = training.Review
+    training_sentiment = training.Sentiment
 
     for index,(text, label) in enumerate (zip(training_review, training_sentiment)):
         example = InputExample(guid=str(index), text_a=text, label=int(label))
@@ -44,8 +44,8 @@ def data_process(train_data_path, validation_data_path,test_data_path,res):
     logging.info("Start loading validation data")
 
     validation = pd.read_csv(validation_data_path)
-    validation_review = validation.Review[:100]
-    validation_sentiment = validation.Sentiment[:100]
+    validation_review = validation.Review
+    validation_sentiment = validation.Sentiment
 
     for index,(text, label) in enumerate(zip(validation_review, validation_sentiment)):
         example = InputExample(guid=str(index), text_a=text, label=int(label))
@@ -56,8 +56,8 @@ def data_process(train_data_path, validation_data_path,test_data_path,res):
     logging.info("Start loading testing data")
 
     testing = pd.read_csv(test_data_path)
-    testing_review = testing.Review[:100]
-    testing_sentiment = testing.Sentiment[:100]
+    testing_review = testing.Review
+    testing_sentiment = testing.Sentiment
     for index,(text, label) in enumerate(zip(testing_review, testing_sentiment)):
         example = InputExample(guid=str(index), text_a=text, label=int(label))
         testing_examples.append(example)
@@ -144,7 +144,7 @@ def main():
     loss_function.to(device)
     prompt_model.to(device)
     best_loss = float('inf')
-    scheduler = get_linear_schedule_with_warmup(optimizer=optimizer,num_warmup_steps=0,num_training_steps=100/batch_size*epochs)
+    scheduler = get_linear_schedule_with_warmup(optimizer=optimizer,num_warmup_steps=0,num_training_steps=20000/batch_size*epochs)
     for epoch in range (epochs):
         train_loss, train_acc= training(train = training_dataset,criterion=loss_function,optimizer=optimizer,model=prompt_model,scheduler=scheduler,device=device)
         valid_loss,valid_acc = testing (validation = validing_dataset,criterion=loss_function,model=prompt_model,device= device)
