@@ -30,8 +30,8 @@ def data_process(train_data_path, validation_data_path,test_data_path,res):
     logging.info("Start loading training data")
     training = pd.read_csv(train_data_path)
 
-    training_review = training.Review
-    training_sentiment = training.Sentiment
+    training_review = training.Review[:100]
+    training_sentiment = training.Sentiment[:100]
 
     for index,(text, label) in enumerate (zip(training_review, training_sentiment)):
         example = InputExample(guid=str(index), text_a=text, label=int(label))
@@ -44,8 +44,8 @@ def data_process(train_data_path, validation_data_path,test_data_path,res):
     logging.info("Start loading validation data")
 
     validation = pd.read_csv(validation_data_path)
-    validation_review = validation.Review
-    validation_sentiment = validation.Sentiment
+    validation_review = validation.Review[:100]
+    validation_sentiment = validation.Sentiment[:100]
 
     for index,(text, label) in enumerate(zip(validation_review, validation_sentiment)):
         example = InputExample(guid=str(index), text_a=text, label=int(label))
@@ -56,8 +56,8 @@ def data_process(train_data_path, validation_data_path,test_data_path,res):
     logging.info("Start loading testing data")
 
     testing = pd.read_csv(test_data_path)
-    testing_review = testing.Review
-    testing_sentiment = testing.Sentiment
+    testing_review = testing.Review[:100]
+    testing_sentiment = testing.Sentiment[:100]
     for index,(text, label) in enumerate(zip(testing_review, testing_sentiment)):
         example = InputExample(guid=str(index), text_a=text, label=int(label))
         testing_examples.append(example)
@@ -81,7 +81,7 @@ def training(criterion,train,optimizer,model,scheduler,device):
         loss.backward()
         optimizer.step()
 
-    scheduler.step()
+        scheduler.step()
     return training_loss/len(train), training_acc/len(train)
 def testing(validation,device,criterion,model):
     model.eval()
@@ -123,19 +123,19 @@ def main():
     prompt_model = PromptForClassification(template=promptTemplate,plm=plm,verbalizer=promptVerbalizar,
                                            freeze_plm=False)
 
-    no_decay = ['bias', 'LayerNorm.weight']
+    no_decay = ['bias', 'LayerNorm.weight',"LayerNorm.bias"]
     # it's always good practice to set no decay to biase and LayerNorm parameters
     optimizer_grouped_parameters = [
         {'params': [p for n, p in prompt_model.named_parameters() if not any(nd in n for nd in no_decay)],
-         'weight_decay': 0.01},
+         'weight_decay': 0.001},
         {'params': [p for n, p in prompt_model.named_parameters() if any(nd in n for nd in no_decay)],
          'weight_decay': 0.0}
     ]
     epochs = 5
     batch_size = 8
-    training_dataset = PromptDataLoader(dataset=train_dataset,max_seq_length=256,batch_size=batch_size,shuffle=True,tokenizer_wrapper_class=Wrapperclass,tokenizer=tokenizer,template=promptTemplate)
-    validing_dataset = PromptDataLoader(dataset=validation_dataset,max_seq_length=256,batch_size=batch_size,shuffle=False,tokenizer_wrapper_class=Wrapperclass,tokenizer=tokenizer,template=promptTemplate)
-    testing_dataset = PromptDataLoader(dataset=test_dataset,max_seq_length=256,batch_size=batch_size,shuffle=False,tokenizer_wrapper_class=Wrapperclass,tokenizer=tokenizer,template=promptTemplate)
+    training_dataset = PromptDataLoader(dataset=train_dataset,max_seq_length=512,batch_size=batch_size,shuffle=True,tokenizer_wrapper_class=Wrapperclass,tokenizer=tokenizer,template=promptTemplate)
+    validing_dataset = PromptDataLoader(dataset=validation_dataset,max_seq_length=512,batch_size=batch_size,shuffle=False,tokenizer_wrapper_class=Wrapperclass,tokenizer=tokenizer,template=promptTemplate)
+    testing_dataset = PromptDataLoader(dataset=test_dataset,max_seq_length=512,batch_size=batch_size,shuffle=False,tokenizer_wrapper_class=Wrapperclass,tokenizer=tokenizer,template=promptTemplate)
     device = torch.device('cuda' if torch.cuda.is_available() else 'cpu')
 
 
