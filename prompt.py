@@ -144,7 +144,7 @@ def main():
     loss_function.to(device)
     prompt_model.to(device)
     best_loss = float('inf')
-    scheduler = get_linear_schedule_with_warmup(optimizer=optimizer,num_warmup_steps=100,num_training_steps=20000/batch_size*epochs)
+    scheduler = get_linear_schedule_with_warmup(optimizer=optimizer,num_warmup_steps=10,num_training_steps=100/batch_size*epochs)
     for epoch in range (epochs):
         train_loss, train_acc= training(train = training_dataset,criterion=loss_function,optimizer=optimizer,model=prompt_model,scheduler=scheduler,device=device)
         valid_loss,valid_acc = testing (validation = validing_dataset,criterion=loss_function,model=prompt_model,device= device)
