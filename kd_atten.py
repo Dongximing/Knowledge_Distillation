@@ -143,7 +143,7 @@ def categorical_accuracy(preds, y):
 def train_kd_fc(data_loader, device, bert_model, model,optimizer, criterion,criterion_kd,scheduler):
     model.train()
 
-    a = 0.5
+    a = 0.7
     #a
     epoch_loss = 0
     epoch_acc = 0
