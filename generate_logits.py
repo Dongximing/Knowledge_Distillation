@@ -119,30 +119,14 @@ def generate_batch(batch):
             concatenated as a single tensor for the input of nn.EmbeddingBag.
         cls: a tensor saving the labels of individual text entries.
     """
-    # check if the dataset if train or test
-    if len(batch[0]) == 4:
-        label = [entry[0] for entry in batch]
+    input_ids = [torch.tensor(entry['input_ids']) for entry in batch]
+    input_ids = pad_sequence(input_ids, batch_first=True)
+    attention_mask = [torch.tensor(entry['attention_mask']) for entry in batch]
+    attention_mask = pad_sequence(attention_mask, batch_first=True)
+    label = [entry['label'] for entry in batch]
 
-        # padding according to the maximum sequence length in batch
-        text = [entry[1] for entry in batch]
-        # print(text)
-        # text_length = [len(seq) for seq in text]
-        # print(text_length)
-        text, text_length,_= pad_sequencing(text, ksz = 512, batch_first=True)
+    return input_ids, attention_mask, label
 
-
-        bert_id = [torch.tensor(entry[2]) for entry in batch]
-        # print(bert_id)
-        bert_id = pad_sequence(bert_id, batch_first=True)
-        attention_mask = [torch.tensor(entry[3]) for entry in batch]
-        attention_mask = pad_sequence(attention_mask, batch_first=True)
-
-        return text, text_length, label,bert_id,attention_mask
-    else:
-        text = [entry for entry in batch]
-        text_length = [len(seq) for seq in text]
-        text = pad_sequence(text, ksz=10, batch_first=True)
-        return text, text_length
 def categorical_accuracy(preds, y):
     """
     Returns accuracy per batch, i.e. if you get 8/10 right, this returns 0.8, NOT 8
