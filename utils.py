@@ -7,7 +7,7 @@ from torchtext.data.utils import ngrams_iterator
 from torchtext.vocab import Vocab
 from torchtext.vocab import build_vocab_from_iterator
 from tqdm import tqdm
-
+from openprompt.data_utils import InputExample
 # import nltk
 # nltk.download('stopwords')
 from nltk.corpus import stopwords
@@ -95,6 +95,20 @@ def _text_kd_iterator(text, labels=None, ngrams=1, yield_label=False):
             yield label, bert_text, ngrams_iterator(filtered_text, ngrams)
         else:
             yield ngrams_iterator(filtered_text, ngrams)
+def _text_kd_prompt_iterator(text, labels=None, ngrams=1, yield_label=False):
+    tokenizer = get_tokenizer('basic_english')
+    for i, bert_text in enumerate(text):
+        # print(text)
+        example = InputExample(guid=str(index), text_a=text, label=int(labels[i]))
+        # filtered_text = [word for word in texts ]
+
+        filtered_text = [word for word in texts if word not in stop_words ]
+        # print(filtered_text)
+        if yield_label:
+            label = labels[i]
+            yield label, example, ngrams_iterator(filtered_text, ngrams)
+        else:
+            yield ngrams_iterator(filtered_text, ngrams)
 def _create_data_kd_from_iterator(vocab,tokenizer, iterator, include_unk, is_test=False):
     data = []
     with tqdm(unit_scale=0, unit='lines') as t:
@@ -152,6 +166,45 @@ def _create_data_kd_from_iterator(vocab,tokenizer, iterator, include_unk, is_tes
                 if len(tokens) == 0:
                     logging.info('Row contains no tokens.')
                 data.append((label,tokens,bert_ids,attention_mask,token_type_ids ))
+
+                t.update(1)
+            return data
+def _create_data_kd_prompt_from_iterator(vocab,tokenizer, iterator, include_unk, is_test=False):
+    data = []
+    with tqdm(unit_scale=0, unit='lines') as t:
+        if is_test:
+            for text in iterator:
+                if include_unk:
+                    tokens = torch.tensor([vocab[token] for token in text])
+                else:
+                    token_ids = list(filter(lambda x: x is not Vocab.UNK, [vocab[token]
+                                                                           for token in text]))
+                    tokens = torch.tensor(token_ids)
+                if len(tokens) == 0:
+                    logging.info('Row contains no tokens.')
+                data.append(tokens)
+                t.update(1)
+            return data
+        else:
+            for label,example, text in iterator:
+                if include_unk:
+                    print(text)
+                    tokens = torch.tensor([vocab[token] for token in text])
+
+                else:
+
+
+                    # token_ids = list(filter(lambda x: x is not 0, [vocab[token]
+                    #                                                   for token in text]))
+                    token_ids = list(filter(lambda x: x is not Vocab.UNK, [vocab[token]
+                                                                           for token in text]))
+
+                    tokens = torch.tensor(token_ids)
+
+                    # print("tokens",tokens)
+                if len(tokens) == 0:
+                    logging.info('Row contains no tokens.')
+                data.append((label,tokens,example ))
 
                 t.update(1)
             return data
@@ -227,7 +280,32 @@ def _setup_kd_datasets(train_text, train_labels, validation_text, validation_lab
             IMDBDataset(vocab, test_data)
 
             )
+def _setup_kd_prompt_datasets(train_text, train_labels, validation_text, validation_labels, test_text,test_labels, tokenize,vocab,ngrams=1, include_unk=False):
 
+
+    logging.info('Creating training data')
+    train_data = _create_data_kd_from_iterator(
+        vocab, tokenize,_text_kd_prompt_iterator(train_text,labels=train_labels, ngrams=ngrams, yield_label=True), include_unk,
+        is_test=False)
+    logging.info('Creating validation data')
+    validation_data= _text_kd_prompt_iterator(
+        vocab, tokenize,_text_kd_iterator(validation_text, labels=validation_labels, ngrams=ngrams, yield_label=True), include_unk,
+        is_test=False)
+
+    logging.info('Creating testing data')
+    test_data= _text_kd_prompt_iterator(
+        vocab,tokenize, _text_kd_iterator(test_text, labels=test_labels, ngrams=ngrams, yield_label=True), include_unk,
+        is_test=False)
+    # logging.info('Total number of labels in training set:'.format(len(train_labels)))
+    return (IMDBDataset(vocab, train_data),
+            IMDBDataset(vocab,validation_data),
+            IMDBDataset(vocab, test_data)
+
+            )
+
+def IMDB_kd_prompt_indexing(train_text, train_labels, validation_text, validation_labels, test_text,test_labels,tokenize,vocab,ngrams=1, include_unk=False):
+
+    return _setup_kd_prompt_datasets(train_text, train_labels, validation_text, validation_labels, test_text, test_labels, tokenize,vocab,ngrams, include_unk)
 
 def IMDB_kd_indexing(train_text, train_labels, validation_text, validation_labels, test_text,test_labels,tokenize,vocab,ngrams=1, include_unk=False):
 
