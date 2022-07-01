@@ -275,7 +275,7 @@ def main():
                                   config.N_LAYERS,
                                   config.BIDIRECTIONAL,
                                   config.DROPOUT)
-    bert_model.load_state_dict(torch.load('/home/dongxx/projects/def-mercer/dongxx/project/Model_parameter/new_bert.pt'))
+    bert_model.load_state_dict(torch.load('/home/dongxx/projects/def-parimala/dongxx/Model_parameter/bert/new_bert.pt'))
     bert_model.to(device)
     bert_model.eval()
 
