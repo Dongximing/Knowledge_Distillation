@@ -99,7 +99,9 @@ def prepare_dateset(train_data_path, validation_data_path,test_data_path,vocab):
     logging.info('Prepare training and test sets')
     tokenize = BertTokenizer.from_pretrained('bert-base-uncased',do_lower_case=True)
 
-    train_dataset, validation_dataset,testing_dataset = bert_IMDB(training_texts,training_labels,validation_texts,validation_labels,testing_texts,testing_labels,tokenize,vocab=vocab)
+    train_dataset, validation_dataset,testing_dataset = bert_IMDB(training_texts, training_labels, validation_texts,
+                                                                   validation_labels, testing_texts, testing_labels,
+                                                                   tokenizer=tokenizers, max_len=512)
     print('building vocab')
     labellist = list(testing.Sentiment)
 
