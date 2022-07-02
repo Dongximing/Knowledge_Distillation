@@ -160,7 +160,7 @@ def train(data_loader, device, bert_model, criterion):
 
 
 
-        acc = categorical_accuracy(outputs, targets)
+        acc = categorical_accuracy(bert_output, targets)
         epoch_loss += loss.item()
         epoch_acc += acc.item()
 
