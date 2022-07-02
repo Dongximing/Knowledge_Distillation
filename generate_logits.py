@@ -147,29 +147,22 @@ def train(data_loader, device, bert_model, criterion):
 
 
     for bi,data in tqdm(enumerate(data_loader),total = len(data_loader)):
-        text, text_length, label, bert_id, attention_mask = data
-
-        label = torch.tensor(label, dtype=torch.long)
+        input_ids, attention_mask, label = data
+        input_ids, attention_mask, label = input_ids.to(device), attention_mask.to(device), torch.LongTensor(label)
 
         label = label.to(device)
-        bert_id = bert_id.to(device, dtype=torch.long)
-        bert_mask = attention_mask.to(device, dtype=torch.long)
-
-
-
-        targets = label.to(device, dtype=torch.long)
-
         with torch.no_grad():
-            bert_output = bert_model(bert_id,bert_mask)
+            bert_output = bert_model(input_ids, attention_mask)
         result.append(bert_output)
 
 
-        loss= criterion(bert_output,targets)
-        epoch_loss += loss.item()
-        epoch_acc += acc.item()
+        loss= criterion(bert_output,label)
+
 
 
         acc = categorical_accuracy(outputs, targets)
+        epoch_loss += loss.item()
+        epoch_acc += acc.item()
 
 
 
@@ -184,8 +177,8 @@ def validate(validation_dataset, model, criterion, device):
     epoch_acc = 0
 
     for i,data in enumerate(validation_dataset):
-        text, text_length, label, _, _ = data
-        text_length = torch.Tensor(text_length)
+        text, text_length, label = data
+
         label = torch.tensor(label, dtype=torch.long)
         text = text.to(device, dtype=torch.long)
 
