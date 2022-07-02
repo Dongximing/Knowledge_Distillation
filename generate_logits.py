@@ -88,8 +88,8 @@ def prepare_dateset(train_data_path, validation_data_path,test_data_path,vocab):
     logging.info("Start loading testing data")
 
     testing = pd.read_csv(test_data_path)
-    testing_review = testing.Review[:200]
-    testing_sentiment = testing.Sentiment[:200]
+    testing_review = testing.Review
+    testing_sentiment = testing.Sentiment
     for text, label in zip(testing_review, testing_sentiment):
         testing_texts.append(text)
         testing_labels.append(label)
@@ -234,7 +234,7 @@ def main():
                                   config.DROPOUT)
     bert_model.load_state_dict(torch.load('/home/dongxx/projects/def-parimala/dongxx/Model_parameter/bert/new_bert.pt'))
     bert_model.to(device)
-    bert_model.eval()
+
 
     training = DataLoader(train_dataset,collate_fn = generate_batch, batch_size=128,shuffle=False)
 
