@@ -88,8 +88,8 @@ def prepare_dateset(train_data_path, validation_data_path,test_data_path,vocab):
     logging.info("Start loading testing data")
 
     testing = pd.read_csv(test_data_path)
-    testing_review = testing.Review
-    testing_sentiment = testing.Sentiment
+    testing_review = testing.Review[:200]
+    testing_sentiment = testing.Sentiment[:200]
     for text, label in zip(testing_review, testing_sentiment):
         testing_texts.append(text)
         testing_labels.append(label)
@@ -145,6 +145,8 @@ def train(data_loader, device, bert_model, criterion):
     epoch_acc = 0
     result = []
 
+
+    print(f'The model has {count_parameters(bert_model):,} trainable parameters')
 
     for bi,data in tqdm(enumerate(data_loader),total = len(data_loader)):
         input_ids, attention_mask, label = data
