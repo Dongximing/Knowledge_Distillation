@@ -146,9 +146,11 @@ def train(data_loader, device, bert_model, criterion):
     result = []
 
 
-    print(f'The model has {count_parameters(bert_model):,} trainable parameters')
+
 
     for bi,data in tqdm(enumerate(data_loader),total = len(data_loader)):
+        if bi ==1:
+            print(f'The model has {count_parameters(bert_model):,} trainable parameters')
         input_ids, attention_mask, label = data
         input_ids, attention_mask, label = input_ids.to(device), attention_mask.to(device), torch.LongTensor(label)
 
