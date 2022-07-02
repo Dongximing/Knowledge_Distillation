@@ -259,7 +259,7 @@ def main():
     bert_model.to(device)
     bert_model.eval()
 
-    training = DataLoader(train_dataset,collate_fn = generate_batch, batch_size=args.batch_sz,shuffle=False)
+    training = DataLoader(train_dataset,collate_fn = generate_batch, batch_size=16,shuffle=False)
 
 
 
