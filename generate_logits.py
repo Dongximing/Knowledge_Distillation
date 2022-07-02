@@ -236,7 +236,7 @@ def main():
     bert_model.to(device)
 
 
-    training = DataLoader(train_dataset,collate_fn = generate_batch, batch_size=128,shuffle=False)
+    training = DataLoader(train_dataset,collate_fn = generate_batch, batch_size=8,shuffle=False)
 
 
 
@@ -258,6 +258,7 @@ def main():
         epoch_mins, epoch_secs = epoch_time(start_time, end_time)
 
     flat_list = [x for xs in result for x in xs]
+    print(flat_list)
     df = pd.read_csv('/home/dongxx/projects/def-parimala/dongxx/data/train.csv')
     df['logit'] = flat_list
     df.to_csv('/home/dongxx/projects/def-parimala/dongxx/data/train.csv')
