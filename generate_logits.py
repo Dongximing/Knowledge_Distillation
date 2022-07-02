@@ -170,30 +170,7 @@ def train(data_loader, device, bert_model, criterion):
     return epoch_loss / len(data_loader), epoch_acc / len(data_loader),result
 
 
-def validate(validation_dataset, model, criterion, device):
-    model.eval()
 
-    epoch_loss = 0
-    epoch_acc = 0
-
-    for i,data in enumerate(validation_dataset):
-        text, text_length, label = data
-
-        label = torch.tensor(label, dtype=torch.long)
-        text = text.to(device, dtype=torch.long)
-
-        text_length = text_length.to(device,dtype=torch.int)
-
-        label = label.to(device)
-
-        with torch.no_grad():
-            output = model(text,text_length)
-        loss = criterion(output,label)
-        acc = categorical_accuracy(output, label)
-
-        epoch_loss += loss.item()
-        epoch_acc += acc.item()
-    return epoch_loss / len(validation_dataset), epoch_acc / len(validation_dataset)
 
 
 
@@ -259,7 +236,7 @@ def main():
     bert_model.to(device)
     bert_model.eval()
 
-    training = DataLoader(train_dataset,collate_fn = generate_batch, batch_size=16,shuffle=False)
+    training = DataLoader(train_dataset,collate_fn = generate_batch, batch_size=32,shuffle=False)
 
 
 
