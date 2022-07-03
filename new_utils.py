@@ -39,7 +39,7 @@ def _create_data_kd_from_iterator(vocab,tokenizer, iterator, include_unk, is_tes
                                                                            for token in text]))
 
                 tokens = torch.tensor(token_ids)
-                logit = torch.tensor(logit)
+                logit = torch.tensor(float(logit))
 
                 if len(tokens) == 0:
                     logging.info('Row contains no tokens.')
