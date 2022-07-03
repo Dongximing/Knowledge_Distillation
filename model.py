@@ -2,7 +2,7 @@ import torch
 import torch.nn as nn
 import torch as t
 import torch.nn.functional as F
-from utils import IMDB_indexing, pad_sequencing
+
 class LSTM_atten(nn.Module):
     def __init__(self,vocab_size,hidden_dim,n_layers,dropout,number_class,bidirectional,embedding_dim =100):
         super().__init__()
