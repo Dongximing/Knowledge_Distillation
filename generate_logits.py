@@ -157,7 +157,7 @@ def train(data_loader, device, bert_model, criterion):
         label = label.to(device)
         with torch.no_grad():
             bert_output = bert_model(input_ids, attention_mask)
-        result.append(bert_output)
+        result.append((bert_output.cpu()).tolist())
 
 
         loss= criterion(bert_output,label)
