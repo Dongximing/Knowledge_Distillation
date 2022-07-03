@@ -30,7 +30,7 @@ def _text_kd_iterator(text, labels=None, training_logits= None,ngrams=1, yield_l
         else:
             yield ngrams_iterator(filtered_text, ngrams)
 
-def _create_data_kd_from_iterator(vocab,tokenizer, iterator, include_unk, is_test=False):
+def _create_data_kd_from_iterator(vocab,tokenizer, iterator, include_unk, is_test=False,is_train):
     data = []
     with tqdm(unit_scale=0, unit='lines') as t:
             for label, logit, text in iterator:
@@ -39,10 +39,11 @@ def _create_data_kd_from_iterator(vocab,tokenizer, iterator, include_unk, is_tes
                                                                            for token in text]))
 
                 tokens = torch.tensor(token_ids)
-                logit = logit.strip('[')
-                logit = logit.strip(']')
-                logit = logit.split(",")
-                logit = [float(x) for x in logit]
+                if is_train :
+                    logit = logit.strip('[')
+                    logit = logit.strip(']')
+                    logit = logit.split(",")
+                    logit = [float(x) for x in logit]
                 logit = torch.tensor(logit)
 
                 if len(tokens) == 0:
@@ -116,16 +117,16 @@ def _setup_kd_datasets(train_text, train_labels, training_logits,validation_text
     logging.info('Creating training data')
     train_data = _create_data_kd_from_iterator(
         vocab, tokenize,_text_kd_iterator(train_text,labels=train_labels,training_logits =training_logits, ngrams=ngrams, yield_label=True), include_unk,
-        is_test=False)
+        is_test=False,is_train=True)
     logging.info('Creating validation data')
     validation_data =_create_data_kd_from_iterator(
         vocab, tokenize,_text_kd_iterator(validation_text, labels=validation_labels,training_logits =5000*[1.0], ngrams=ngrams, yield_label=True), include_unk,
-        is_test=False)
+        is_test=False,is_train=False)
 
     logging.info('Creating testing data')
     test_data= _create_data_kd_from_iterator(
         vocab,tokenize, _text_kd_iterator(test_text, labels=test_labels, training_logits =25000*[1.0],ngrams=ngrams, yield_label=True), include_unk,
-        is_test=False)
+        is_test=False,is_train=False)
     # logging.info('Total number of labels in training set:'.format(len(train_labels)))
     return (IMDBDataset(vocab, train_data),
             IMDBDataset(vocab,validation_data),
