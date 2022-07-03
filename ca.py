@@ -608,4 +608,6 @@ print((x.cpu()).tolist())
 #     sub = i
 #     for b in sub:
 #         result.append(b)
-# print(result)
+# priant(result)
+a = [1]
+print(10*a)

@@ -114,12 +114,12 @@ def _setup_kd_datasets(train_text, train_labels, training_logits,validation_text
         is_test=False)
     logging.info('Creating validation data')
     validation_data =_create_data_kd_from_iterator(
-        vocab, tokenize,_text_kd_iterator(validation_text, labels=validation_labels,training_logits =training_logits, ngrams=ngrams, yield_label=True), include_unk,
+        vocab, tokenize,_text_kd_iterator(validation_text, labels=validation_labels,training_logits =5000*[1.0], ngrams=ngrams, yield_label=True), include_unk,
         is_test=False)
 
     logging.info('Creating testing data')
     test_data= _create_data_kd_from_iterator(
-        vocab,tokenize, _text_kd_iterator(test_text, labels=test_labels, training_logits =training_logits,ngrams=ngrams, yield_label=True), include_unk,
+        vocab,tokenize, _text_kd_iterator(test_text, labels=test_labels, training_logits =25000*[1.0],ngrams=ngrams, yield_label=True), include_unk,
         is_test=False)
     # logging.info('Total number of labels in training set:'.format(len(train_labels)))
     return (IMDBDataset(vocab, train_data),
