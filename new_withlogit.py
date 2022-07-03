@@ -292,11 +292,11 @@ def main():
 
         if valid_loss < best_loss:
             best_loss = valid_loss
-            torch.save(LSTM_atten_model.state_dict(), '/home/dongxx/projects/def-parimala/dongxx/Model_parameter/kd_atten_new1.pt')
+            torch.save(LSTM_atten_model.state_dict(), config.MODEL_Base_PATH_fk_v2_withl)
     print("training done")
 
     print("testing")
-    LSTM_atten_model.load_state_dict(torch.load('/home/dongxx/projects/def-parimala/dongxx/Model_parameter/kd_atten_new1.pt'))
+    LSTM_atten_model.load_state_dict(torch.load(config.MODEL_Base_PATH_fk_v2_withl))
     test_loss, test_acc,flat_list = validate(testing,LSTM_atten_model,criterion,device)
 
     print(f'Test Loss: {test_loss:.3f} | Test Acc: {test_acc * 100:.2f}%')
