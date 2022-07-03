@@ -128,7 +128,7 @@ def _setup_kd_datasets(train_text, train_labels, training_logits,validation_text
 
             )
 
-def IMDB_kd_indexing(train_text, train_labels, validation_text, validation_labels, test_text,test_labels,tokenize,vocab,ngrams=1, include_unk=False):
+def IMDB_kd_indexing(train_text, train_labels,training_logits, validation_text, validation_labels, test_text,test_labels,tokenize,vocab,ngrams=1, include_unk=False):
 
     return _setup_kd_datasets(train_text, train_labels, training_logits,validation_text, validation_labels, test_text, test_labels, tokenize,vocab,ngrams, include_unk)
 
