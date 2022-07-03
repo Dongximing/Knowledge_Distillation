@@ -30,7 +30,7 @@ def _text_kd_iterator(text, labels=None, training_logits= None,ngrams=1, yield_l
         else:
             yield ngrams_iterator(filtered_text, ngrams)
 
-def _create_data_kd_from_iterator(vocab,tokenizer, iterator, include_unk, is_test=False,is_train):
+def _create_data_kd_from_iterator(vocab,tokenizer, iterator, include_unk, is_test=False,is_train=True):
     data = []
     with tqdm(unit_scale=0, unit='lines') as t:
             for label, logit, text in iterator:
