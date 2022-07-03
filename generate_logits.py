@@ -166,9 +166,9 @@ def train(data_loader, device, bert_model, criterion):
 
         acc = categorical_accuracy(bert_output, label)
         epoch_loss += loss.item()
-        print(loss.item())
+        # print(loss.item())
         epoch_acc += acc.item()
-    print(epoch_loss)
+    # print(epoch_loss)
 
 
 
