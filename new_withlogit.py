@@ -120,11 +120,7 @@ def generate_batch(batch):
 
 
         return text, text_length, label,logits,mask
-    else:
-        text = [entry for entry in batch]
-        text_length = [len(seq) for seq in text]
-        text = pad_sequence(text, ksz=10, batch_first=True)
-        return text, text_length
+
 def categorical_accuracy(preds, y):
     """
     Returns accuracy per batch, i.e. if you get 8/10 right, this returns 0.8, NOT 8
@@ -149,6 +145,7 @@ def train_kd_fc(data_loader, device, model,optimizer, criterion,criterion_kd,sch
         text_length = torch.Tensor(text_length)
         label = torch.tensor(label, dtype=torch.long)
         ids = text.to(device, dtype=torch.long)
+        logit = torch.stack(logit, dim=1)
         print(logit)
 
         logit = logit.to(device,dtype=torch.float)
