@@ -146,7 +146,7 @@ def train_kd_fc(data_loader, device, model,optimizer, criterion,criterion_kd,sch
         label = torch.tensor(label, dtype=torch.long)
         ids = text.to(device, dtype=torch.long)
         logit = torch.stack(logit, dim=0)
-        print(logit)
+
         mask = mask.to(device)
 
         logit = logit.to(device,dtype=torch.float)
@@ -182,7 +182,7 @@ def validate(validation_dataset, model, criterion, device):
     epoch_acc = 0
     total_pred = []
     for i,data in enumerate(validation_dataset):
-        text, text_length, label, _mask= data
+        text, text_length, label, _,mask= data
         text_length = torch.Tensor(text_length)
         label = torch.tensor(label, dtype=torch.long)
         text = text.to(device, dtype=torch.long)
