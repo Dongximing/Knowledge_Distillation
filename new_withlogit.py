@@ -149,6 +149,7 @@ def train_kd_fc(data_loader, device, model,optimizer, criterion,criterion_kd,sch
         text_length = torch.Tensor(text_length)
         label = torch.tensor(label, dtype=torch.long)
         ids = text.to(device, dtype=torch.long)
+        print(logit)
 
         logit = logit.to(device,dtype=torch.float)
 
