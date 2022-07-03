@@ -597,14 +597,15 @@
 import torch
 
 x = torch.randn(3, 2)
-b = torch.randn(3,2)
-a = []
-a.append(x.tolist())
-a.append(b.tolist())
-print(a)
-result = []
-for i in a:
-    sub = i
-    for b in sub:
-        result.append(b)
-print(result)
+print((x.cpu()).tolist())
+# b = torch.randn(3,2)
+# a = []
+# a.append(x.tolist())
+# a.append(b.tolist())
+# print(a)
+# result = []
+# for i in a:
+#     sub = i
+#     for b in sub:
+#         result.append(b)
+# print(result)
