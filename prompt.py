@@ -99,7 +99,24 @@ def testing(validation,device,criterion,model):
         testing_acc += acc.item()
 
     return testing_loss / len(validation), testing_acc / len(validation)
+def testing_logits(validation,device,criterion,model):
+    model.eval()
+    testing_loss = 0
+    testing_acc = 0
+    result = []
+    for i, inputs in tqdm(enumerate(validation), total=len(validation)):
+        inputs = inputs.to(device)
+        with torch.no_grad():
+            output = model(inputs)
+        labels = inputs['label']
+        loss = criterion(output, labels)
+        result.append((bert_output.cpu()).tolist())
 
+        acc, _ = categorical_accuracy(output, labels)
+        testing_loss += loss.item()
+        testing_acc += acc.item()
+
+    return testing_loss / len(validation), testing_acc / len(validation),result
 
 def main():
     config.seed_torch()
@@ -157,6 +174,15 @@ def main():
             torch.save(prompt_model.state_dict(), config.bert_prompt_base_path)
     print("testing")
     prompt_model.load_state_dict(torch.load(config.bert_prompt_base_path))
+    logit_dataset = PromptDataLoader(dataset=train_dataset,max_seq_length=512,batch_size=batch_size,shuffle=False,tokenizer_wrapper_class=Wrapperclass,tokenizer=tokenizer,template=promptTemplate)
+    logit_loss, logit_acc,result = testing_logits(validation=logit_dataset, criterion=loss_function , model= prompt_model,device =device)
+    print(f'logit Loss: {logit_loss:.3f} | logit Acc: {logit_acc * 100:.2f}%')
+    flat_list = [x for xs in result for x in xs]
+
+    df = pd.read_csv('/home/dongxx/projects/def-parimala/dongxx/data/train.csv')
+    df['prompt_logit'] = flat_list
+    df.to_csv('/home/dongxx/projects/def-parimala/dongxx/data/train.csv')
+
     test_loss, test_acc = testing(validation=testing_dataset, criterion=loss_function , model= prompt_model,device =device)
     print(f'Test Loss: {test_loss:.3f} | Test Acc: {test_acc * 100:.2f}%')
     print("testing done")

@@ -39,3 +39,4 @@ MODEL_Base_PATH_fk_v2 = '/home/dongxx/projects/def-parimala/dongxx/Model_paramet
 bert_prompt_base_path = '/home/dongxx/projects/def-parimala/dongxx/Model_parameter/prompt.pt'
 MODEL_Base_PATH_fk_v2_red = '/home/dongxx/projects/def-parimala/dongxx/Model_parameter/attenv2reduce.pt'
 MODEL_Base_PATH_fk_v2_withl = '/home/dongxx/projects/def-parimala/dongxx/Model_parameter/attenv2withl.pt'
+MODEL_Base_PATH_prompt_kd = '/home/dongxx/projects/def-parimala/dongxx/Model_parameter/prompt_kd.pt'
