@@ -147,9 +147,12 @@ def train_kd_fc(data_loader, device, model,optimizer, criterion,criterion_kd,sch
         ids = text.to(device, dtype=torch.long)
         logit = torch.stack(logit, dim=0)
 
+
         mask = mask.to(device)
 
         logit = logit.to(device,dtype=torch.float)
+        print(text)
+        print(logit)
 
 
 

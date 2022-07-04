@@ -159,6 +159,7 @@ def train_kd_fc(data_loader, device, bert_model, model,optimizer, criterion,crit
         bert_mask = attention_mask.to(device, dtype=torch.long)
         mask = mask.to(device)
         token_type_ids =token_type_ids.to(device, dtype=torch.long)
+        print(text)
 
         lengths = text_length.to(device, dtype=torch.int)
 
