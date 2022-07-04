@@ -110,7 +110,7 @@ def testing_logits(validation,device,criterion,model):
             output = model(inputs)
         labels = inputs['label']
         loss = criterion(output, labels)
-        result.append((bert_output.cpu()).tolist())
+        result.append((output.cpu()).tolist())
 
         acc, _ = categorical_accuracy(output, labels)
         testing_loss += loss.item()
@@ -148,7 +148,7 @@ def main():
         {'params': [p for n, p in prompt_model.named_parameters() if any(nd in n for nd in no_decay)],
          'weight_decay': 0.0}
     ]
-    epochs = 5
+    epochs = 2
     batch_size = 8
     training_dataset = PromptDataLoader(dataset=train_dataset,max_seq_length=512,batch_size=batch_size,shuffle=True,tokenizer_wrapper_class=Wrapperclass,tokenizer=tokenizer,template=promptTemplate)
     validing_dataset = PromptDataLoader(dataset=validation_dataset,max_seq_length=512,batch_size=batch_size,shuffle=False,tokenizer_wrapper_class=Wrapperclass,tokenizer=tokenizer,template=promptTemplate)
