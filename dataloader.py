@@ -1,6 +1,9 @@
 import torch
 from torch.utils.data import Dataset
 
+from transformers import BertTokenizer
+
+tokenizers = BertTokenizer.from_pretrained('bert-base-uncased', do_lower_case=True)
 import config
 
 config.seed_torch()
@@ -16,14 +19,23 @@ class IMDBDataset(Dataset):
         def __getitem__(self, item):
             review = str(self.review[item])
             review = " ".join(review.split())
+            inputs = tokenizers.encode_plus(review, None,
+                                                add_special_tokens=True,
+                                                max_length=512,
+                                                pad_to_max_length=True)
+            bert_ids = inputs["input_ids"]
+            mask = inputs["attention_mask"]
+            
             review = review.split()
             review = convert(review)
             ids = word2id(review,self.wor2id)
             ids, length = pad_samples(ids,512,0)
 
             return {
+                "ids": torch.tensor(bert_ids, dtype=torch.long),
+                "mask": torch.tensor(mask, dtype=torch.long),
                 "text":torch.tensor(ids,dtype=torch.long),
-                "target":torch.tensor(self.target[item],dtype=torch.float),
+                "target":torch.tensor(self.target[item],dtype=torch.long),
                 "length":torch.tensor(length,dtype=torch.int)
             }
 def convert(lst):

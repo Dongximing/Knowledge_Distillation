@@ -1,0 +1,312 @@
+import torch
+import torch.nn as nn
+import numpy as np
+from torch.utils.data import DataLoader
+from torchtext.vocab import GloVe,Vocab
+from tqdm import tqdm
+from new_utils import IMDB_kd_indexing, pad_sequencing
+from model import LSTM_atten
+
+from torchtext.vocab import GloVe,Vocab,Vectors
+
+import torchtext.vocab
+import csv
+import pandas as pd
+import argparse
+import logging
+import os
+import pickle
+import sys
+import config
+config.seed_torch()
+from collections import Counter
+import time
+import copy
+from transformers import BertTokenizer, BertModel
+from torch.nn.utils.rnn import pad_sequence
+
+def count_parameters(model):
+    return sum(p.numel() for p in model.parameters() if p.requires_grad)
+
+
+
+def epoch_time(start_time, end_time):
+    elapsed_time = end_time - start_time
+    elapsed_mins = int(elapsed_time / 60)
+    elapsed_secs = int(elapsed_time - (elapsed_mins * 60))
+    return elapsed_mins, elapsed_secs
+def weight_matrix(vocab, vectors, dim=100):
+    weight_matrix = np.zeros([len(vocab.itos), dim])
+    for i, token in enumerate(vocab.stoi):
+        try:
+            weight_matrix[i] = vectors.__getitem__(token)
+        except KeyError:
+            weight_matrix[i] = np.random.normal(scale=0.5, size=(dim,))
+    return torch.from_numpy(weight_matrix)
+def prepare_dateset(train_data_path, validation_data_path,test_data_path,vocab):
+
+    training_texts = []
+    training_labels =[]
+    validation_texts = []
+    validation_labels = []
+    testing_texts = []
+    testing_labels = []
+    # training #
+    print('Start loading training data')
+    logging.info("Start loading training data")
+    training = pd.read_csv(train_data_path)
+
+    training_review = training.Review
+    training_sentiment = training.Sentiment
+    training_logits = training.logit
+    for text,label in zip(training_review,training_sentiment):
+        training_texts.append(text)
+        training_labels.append(label)
+    print("Finish loading training data")
+    logging.info("Finish loading training data")
+
+    # validation #
+
+    print('Start loading validation data')
+    logging.info("Start loading validation data")
+
+    validation = pd.read_csv(validation_data_path)
+    validation_review = validation.Review
+    validation_sentiment = validation.Sentiment
+
+
+    for text,label in zip(validation_review,validation_sentiment):
+        validation_texts.append(text)
+        validation_labels.append(label)
+    print("Finish loading validation data")
+    logging.info("Finish loading validation data")
+
+    # testing #
+
+    print('Start loading testing data')
+    logging.info("Start loading testing data")
+
+    testing = pd.read_csv(test_data_path)
+    testing_review = testing.Review
+    testing_sentiment = testing.Sentiment
+    for text, label in zip(testing_review, testing_sentiment):
+        testing_texts.append(text)
+        testing_labels.append(label)
+    print("Finish loading testing data")
+    logging.info("Finish loading testing data")
+    labellist = list(testing.Sentiment)
+
+    print('prepare training and test sets')
+    logging.info('Prepare training and test sets')
+    tokenize = BertTokenizer.from_pretrained('bert-base-uncased',do_lower_case=True)
+
+    train_dataset, validation_dataset,testing_dataset = IMDB_kd_indexing(training_texts,training_labels,training_logits,validation_texts,validation_labels,testing_texts,testing_labels,tokenize,vocab=vocab)
+    print('building vocab')
+
+
+    return train_dataset,validation_dataset,testing_dataset,labellist
+
+def generate_batch(batch):
+
+    if len(batch[0]) == 3:
+        label = [entry[0] for entry in batch]
+
+        # padding according to the maximum sequence length in batch
+        text = [entry[1] for entry in batch]
+        logits = [entry[2] for entry in batch]
+
+        text, text_length,mask = pad_sequencing(text, ksz = 512, batch_first=True)
+
+
+
+        return text, text_length, label,logits,mask
+
+def categorical_accuracy(preds, y):
+    """
+    Returns accuracy per batch, i.e. if you get 8/10 right, this returns 0.8, NOT 8
+    """
+    top_pred = preds.argmax(1, keepdim = True)
+    correct = top_pred.eq(y.view_as(top_pred)).sum()
+    acc = correct.float() / y.shape[0]
+    return acc,top_pred
+
+def train_kd_fc(data_loader, device, model,optimizer, criterion,criterion_kd,scheduler):
+    model.train()
+
+    a = 0.7
+    #a
+    epoch_loss = 0
+    epoch_acc = 0
+    hard_loss = 0
+    soft_loss = 0
+
+    for bi,data in tqdm(enumerate(data_loader),total = len(data_loader)):
+        text, text_length, label, logit,mask = data
+        text_length = torch.Tensor(text_length)
+        label = torch.tensor(label, dtype=torch.long)
+        ids = text.to(device, dtype=torch.long)
+        logit = torch.stack(logit, dim=0)
+
+
+        mask = mask.to(device)
+
+        logit = logit.to(device,dtype=torch.float)
+        print(text)
+        print(logit)
+
+
+
+
+        lengths = text_length.to(device, dtype=torch.int)
+
+        targets = label.to(device, dtype=torch.long)
+        optimizer.zero_grad()
+
+
+        outputs = model(ids,lengths,mask)
+        loss_soft =criterion_kd(outputs,logit)
+        loss_hard = criterion(outputs, targets)
+        loss = loss_hard*a + (1-a)*loss_soft
+        acc,_ = categorical_accuracy(outputs, targets)
+        loss.backward()
+        optimizer.step()
+        soft_loss += loss_soft.item()
+        hard_loss += loss_hard.item()
+        epoch_loss += loss.item()
+        epoch_acc += acc.item()
+    scheduler.step()
+    return epoch_loss / len(data_loader), epoch_acc / len(data_loader) ,hard_loss / len(data_loader), soft_loss/ len(data_loader)
+
+
+def validate(validation_dataset, model, criterion, device):
+    model.eval()
+
+    epoch_loss = 0
+    epoch_acc = 0
+    total_pred = []
+    for i,data in enumerate(validation_dataset):
+        text, text_length, label, _,mask= data
+        text_length = torch.Tensor(text_length)
+        label = torch.tensor(label, dtype=torch.long)
+        text = text.to(device, dtype=torch.long)
+
+        text_length = text_length.to(device,dtype=torch.int)
+        mask = mask.to(device)
+
+
+        label = label.to(device)
+
+        with torch.no_grad():
+            output = model(text,text_length,mask)
+        loss = criterion(output,label)
+        acc,pred = categorical_accuracy(output, label)
+        epoch_loss += loss.item()
+        total_pred.append(pred)
+        epoch_acc += acc.item()
+    flat_list = [item for sublist in total_pred for item in sublist]
+    return epoch_loss / len(validation_dataset), epoch_acc / len(validation_dataset),flat_list
+
+
+
+
+
+
+
+def main():
+    parser = argparse.ArgumentParser()
+    parser.add_argument('--train_path',type=str,default='/home/dongxx/projects/def-parimala/dongxx/data/train.csv')
+    parser.add_argument('--validation_path',type= str,default='/home/dongxx/projects/def-parimala/dongxx/data/valid.csv')
+    parser.add_argument('--test_path',type= str,default='/home/dongxx/projects/def-parimala/dongxx/data/test.csv')
+
+    parser.add_argument('--dropout', type=float, default=0.3)
+    parser.add_argument('--embedding_dim', type=int, default=100)
+    parser.add_argument('--num_epochs', type=int, default=10)
+    parser.add_argument('--batch_sz', type=int, default=16)
+    parser.add_argument('--lr', type=float, default=1e-3)
+
+    parser.add_argument('--weight_decay', type=float, default=0.5)
+    parser.add_argument('--scheduler_step_sz', type=int, default=6)
+    parser.add_argument('--lr_gamma', type=float, default=0.1)
+    parser.add_argument('--number_class', type=int, default=2)
+
+    args = parser.parse_args()
+
+    # device
+    # device = torch.device(args.device if torch.cuda.is_available() else "cpu")
+    device = torch.device('cuda' if torch.cuda.is_available() else 'cpu')
+
+    glove = torchtext.vocab.GloVe(name='6B', dim=100,)
+    # print(glove.get_vecs_by_tokens(['picture']))
+    counter2 = Counter({'<unk>': 400000, '<pad>': 400001,'the':1})
+    counter1 =  copy.deepcopy(glove.stoi)
+
+    counter1.update(counter2)
+    vocab = Vocab(counter1)
+
+
+    vocab_size=vocab.__len__()
+
+    train_dataset, validation_dataset,test_dataset,labellist = prepare_dateset(args.train_path, args.validation_path, args.test_path, vocab)
+
+    LSTM_atten_model =LSTM_atten(vocab_size = vocab_size,hidden_dim = config.HIDDEN_DIM, n_layers =config.N_LAYERS, dropout = args.dropout, number_class = args.number_class, bidirectional = True, embedding_dim =100)
+    LSTM_atten_model.to(device)
+    #opt scheduler criterion
+    optimizer = torch.optim.Adam(LSTM_atten_model.parameters(), lr=args.lr)
+    lr_scheduler = torch.optim.lr_scheduler.StepLR(optimizer, gamma=args.lr_gamma, step_size=15)
+    criterion = nn.CrossEntropyLoss()
+    kd_critertion = nn.MSELoss()
+    kd_critertion = kd_critertion.to(device)
+
+
+    training = DataLoader(train_dataset,collate_fn = generate_batch, batch_size=args.batch_sz,shuffle=True)
+    validation = DataLoader(validation_dataset, collate_fn= generate_batch, batch_size=args.batch_sz, shuffle=False)
+    testing = DataLoader(test_dataset, collate_fn= generate_batch, batch_size=args.batch_sz, shuffle=False)
+
+
+
+
+
+    LSTM_atten_model.embedding_layer.weight.data.copy_(weight_matrix(vocab,glove)).to(device)
+    LSTM_atten_model.embedding_layer.weight.data[1] = torch.zeros(100)
+    LSTM_atten_model.embedding_layer.weight.data[0] = torch.zeros(100)
+
+
+    LSTM_atten_model.embedding_layer.weight.requires_grad = False
+    print(f'The lstm atten model model has {count_parameters(LSTM_atten_model):,} trainable parameters')
+
+    best_loss = float('inf')
+    print("training")
+    for epoch in range(25):
+        start_time = time.time()
+
+
+
+        train_loss, train_acc,hard, soft  = train_kd_fc(training, device,LSTM_atten_model,optimizer, criterion,kd_critertion,lr_scheduler)
+
+        valid_loss, valid_acc,_ = validate(validation,LSTM_atten_model,criterion,device)
+        end_time = time.time()
+        epoch_mins, epoch_secs = epoch_time(start_time, end_time)
+        print(f'Epoch: {epoch + 1:02} | Epoch Time: {epoch_mins}m {epoch_secs}s')
+        print(f'\tTrain Loss: {train_loss:.3f} | Train Acc: {train_acc * 100:.2f}%')
+        print(f'\t Val. Loss: {valid_loss:.3f} |  Val. Acc: {valid_acc * 100:.2f}%')
+        print("hard", hard)
+        print("soft", soft)
+
+        if valid_loss < best_loss:
+            best_loss = valid_loss
+            torch.save(LSTM_atten_model.state_dict(), config.MODEL_Base_PATH_fk_v2_withl)
+    print("training done")
+
+    print("testing")
+    LSTM_atten_model.load_state_dict(torch.load(config.MODEL_Base_PATH_fk_v2_withl))
+    test_loss, test_acc,flat_list = validate(testing,LSTM_atten_model,criterion,device)
+
+    print(f'Test Loss: {test_loss:.3f} | Test Acc: {test_acc * 100:.2f}%')
+    print("testing done")
+
+
+
+
+
+if __name__ == "__main__":
+    main()
